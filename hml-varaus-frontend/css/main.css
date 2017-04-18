@@ -1,0 +1,123 @@
+@font-face {
+    font-family: shareBold;
+    src: url(/fonts/Share-Bold.ttf);
+}
+
+@font-face {
+    font-family: Verdana;
+    src: url(/fonts/Verdana.ttf);
+}
+
+@media screen and (min-width: 0px) and (max-width: 500px) {
+	#root {
+		padding-left: 0px;
+		padding-right: 0px;
+	}
+}
+
+.manage-view-count {
+	font-size: 20px;
+}
+
+#root {
+	padding-left: 15%;
+	padding-right: 15%;
+}
+
+@media screen and (min-width: 0px) and (max-width: 500px) {
+	#root {
+		padding-left: 0px;
+		padding-right: 0px;
+	}
+}
+
+#notification-container {
+	top: 10px;
+}
+
+.filter-container {
+	margin-bottom: 10px;
+}
+
+body, #header > .navbar {
+	background-color: #e0d6b9;
+}
+
+#root > div {
+	background-color: white;
+	padding-left: 1%;
+	padding-right: 1%;
+}
+
+body, #root,  #root > div{
+	height: 100%;
+}
+
+html {
+	height: auto;
+
+}
+
+#header, #header .navbar > li.main-nav-item > a , thead > tr > th {
+	font-family: shareBold;
+	font-size: 18pt;
+	color: #1e3250;
+}
+
+body {
+	font-family: Verdana;
+	font-size: 12pt;
+}
+
+
+#header-logo {
+    background-position: 0 -88px!important;
+    height: 49px;
+    width: 283px;
+}
+
+#header-logo {
+    background: url(/img/hml-logot.png) 0 0 no-repeat transparent!important;
+    overflow: hidden;
+    background-position: 0 -88px!important;
+    height: 49px;
+    width: 283px;
+    clear: left;
+}
+
+.manage-view-count {
+	text-align: center;
+	font-family: shareBold;
+	font-size: 32pt;
+	border: 1px solid rgba(0, 0, 0, .1);
+	color: #f77952;
+}
+
+.manage-view-header {
+	font-family: shareBold;
+	font-size: 16pt;
+	border: 1px solid rgba(0, 0, 0, .1);
+	padding: 2px;
+	color: #1e3250;
+}
+
+#logo-container {
+	width: 100%;
+	height: 100px;
+}
+
+.navbar-default .navbar-nav > li.main-nav-item > a {
+	color: #1e3250;
+}
+
+.navbar-default .navbar-nav > li.main-nav-item > a:hover {
+	color: #f77952;
+}
+
+.navbar-default .navbar-nav > li.main-nav-item > a:focus {
+	color: #1e3250;
+}
+
+nav.navbar-default {
+	border-bottom: solid 3px #1e3250;
+}

@@ -1,0 +1,103 @@
+<form id="new-reservation-form">
+  	<div class="form-group">
+    	<label for="reservation-resource">Varauskohde</label>
+		<select name="resource" class="form-control" id="reservation-resource">
+			<% boat_resource_collection.each(function(resource) { %>
+				<option value="{{resource.getId()}}">{{resource.getName()}}</option>
+			<%})%>
+		</select>
+  	</div>
+  	<div class="form-group">
+    	<label for="reservation-reserver">Varaaja</label>
+		<select name="user" class="form-control" id="reservation-reserver">
+				<option value="">Määritellään käsin</option>
+			<% user_collection.each(function(user) { %>
+				<option value="{{user.getId()}}">{{user.getFullName()}} ({{user.getUserName()}})</option>
+			<%})%>
+		</select>
+  	</div>
+
+	<div class="form-group">
+		<label for="reservation-begin">Aloitusaika</label>
+	    <div class='input-group date' id='reservation-begin-datepicker'>
+	        <input name="begin" id="reservation-begin" type='text' class="form-control" />
+	        <span class="input-group-addon">
+	            <span class="glyphicon glyphicon-calendar"></span>
+	        </span>
+	    </div>
+	</div>
+
+
+
+	<div class="form-group">
+		<label for="reservation-end">Lopetusaika</label>
+	    <div class='input-group date' id='reservation-end-datepicker'>
+	        <input name="end" id="reservation-end" type='text' class="form-control" />
+	        <span class="input-group-addon">
+	            <span class="glyphicon glyphicon-calendar"></span>
+	        </span>
+	    </div>
+	</div>
+
+  	<div class="form-group">
+    	<label for="reservation-state">Tila</label>
+		<select name="state" class="form-control" id="reservation-state">
+			<option value="confirmed">Vahvistettu</option>
+			<option value="requested">Anottu</option>
+			<option value="cancelled">Peruutettu</option>
+			<option value="denied">Evätty</option>
+		</select>
+  	</div>
+
+  	<div class="form-group">
+    	<label for="reservation-description">Kuvaus</label>
+		<textarea name="event_description" id="reservation-description" class="form-control" rows="3"></textarea>
+  	</div>
+
+	<div class="form-group">
+		<label for="reservation-reserver-organization">Varaajan yritys</label>
+		<input name="company" type="text" class="form-control" id="reservation-reserver-organization">
+	</div>
+
+	<div class="form-group">
+		<label for="reservation-reserver-bid">Varaajan y-tunnus</label>
+		<input name="business_id" type="text" class="form-control" id="reservation-reserver-bid">
+	</div>
+
+	<div class="form-group">
+		<label for="reservation-reserver-name">Varaajan nimi</label>
+		<input name="reserver_name" type="text" class="form-control" id="reservation-reserver-name">
+	</div>
+
+	<div class="form-group">
+		<label for="reservation-reserver-email">Varaajan sähköpostiosoite</label>
+		<input name="reserver_email_address" type="email" class="form-control" id="reservation-reserver-email">
+	</div>
+
+	<div class="form-group">
+		<label for="reservation-reserver-phone">Varaajan puhelinnumero</label>
+		<input name="reserver_phone_number" type="numbe" class="form-control" id="reservation-reserver-phone">
+	</div>
+
+	<div class="form-group">
+		<label for="reservation-reserver-address">Varaajan katuosoite</label>
+		<input name="reserver_address_street" type="text" class="form-control" id="reservation-reserver-address">
+	</div>
+
+	<div class="form-group">
+		<label for="reservation-reserver-zip">Varaajan postinumero</label>
+		<input name="reserver_address_zip" type="number" class="form-control" id="reservation-reserver-zip">
+	</div>
+
+	<div class="form-group">
+		<label for="reservation-billing-address">Laskutusosoite</label>
+		<input name="billing_address_street" type="text" class="form-control" id="reservation-billing-address">
+	</div>
+
+	<div class="form-group">
+		<label for="reservation-billing-zip">Laskutuspostinumero</label>
+		<input name="billing_address_zip" type="number" class="form-control" id="reservation-billing-zip">
+	</div>
+
+  <button id="reservation-submit" type="submit" class="btn btn-default">Lisää varaus</button>
+</form>
