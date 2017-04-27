@@ -40,6 +40,46 @@ define(["jquery", "backbone", 'moment'],
                 });
 
                 return isReserved;
+            },
+
+            cmToMeter: function(cm) {
+                var meters = Number(cm) / 100;
+                meters = meters.toFixed(2);
+                meters = meters.toString().replace('.', ',');
+                return meters;
+            },
+
+            getWidth: function() {
+                return this.cmToMeter(this.get('width_cm'));
+            },
+
+            getLength: function() {
+                return this.cmToMeter(this.get('length_cm'));
+            },
+
+            getDepth: function() {
+                return this.cmToMeter(this.get('depth_cm'));
+            },
+
+            getUnit: function() {
+                return this.get('unit');
+            },
+
+            getType: function() {
+                var type = '';
+                switch(this.get('type')) {
+                    case 'dock':
+                        type = 'Laituripaikka';
+                        break;
+                    case 'ground':
+                        type = 'Polettipaikka';
+                        break;
+                    case 'number':
+                        type = 'Numeropaikka';
+                        break;
+                }
+
+                return type;
             }
 
         });

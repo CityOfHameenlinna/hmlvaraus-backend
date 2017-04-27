@@ -1,19 +1,11 @@
-define(["jquery","backbone", "moment", "models/BoatReservationModel"],
-  function($, Backbone, moment, BoatReservationModel) {
-    var Collection = Backbone.Collection.extend({
+define(["jquery","backbone", "moment", "collections/BaseCollection", "models/BoatReservationModel"],
+  function($, Backbone, moment, BaseCollection, BoatReservationModel) {
+    var Collection = BaseCollection.extend({
         url: '/api/reservation/',
         model: BoatReservationModel,
         
         initialize: function() {
             this.deferred = this.fetch();
-        },
-
-        parse: function(response) {
-            var obj = response.results;
-
-            return _.map(obj, function (value, key) {
-              return obj[key];
-            });
         },
 
         filterByCurrent: function() {

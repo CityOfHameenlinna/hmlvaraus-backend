@@ -1,0 +1,41 @@
+<form id="new-resource-form">
+    <div class="form-group">
+        <label for="resource-berth-unit">Kohde</label>
+        <select name="unit" class="form-control" id="resource-berth-unit">
+            <% unit_collection.each(function(unit) { %>
+                <option value="{{unit.getId()}}">{{unit.getName()}}</option>
+            <%})%>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="resource-berth-name">Nimi</label>
+        <input name="name" type="text" class="form-control" id="resource-berth-name">
+    </div>
+
+    <div class="form-group">
+        <label for="resource-berth-length">Pituus (metriä)</label>
+        <input name="length_cm" type="number" step=".01" class="form-control" id="resource-berth-length">
+    </div>
+
+    <div class="form-group">
+        <label for="resource-berth-width">Leveys (metriä)</label>
+        <input name="width_cm" type="number" step=".01" class="form-control" id="resource-berth-width">
+    </div>
+
+    <div class="form-group">
+        <label for="resource-berth-depth">Syväys (metriä)</label>
+        <input name="depth_cm" type="number" step=".01" class="form-control" id="resource-berth-depth">
+    </div>
+
+    <div class="form-group">
+        <label for="resource-berth-type">Tyyppi</label>
+        <select name="type" class="form-control" id="resource-berth-type">
+            <option value="dock">Laituripaikka</option>
+            <option value="ground">Polettipaikka</option>
+            <option value="number">Numeropaikka</option>
+        </select>
+    </div>
+
+  <button id="resource-submit" type="submit" class="btn btn-default submit-button">Lisää venepaikka</button>
+</form>

@@ -17,12 +17,13 @@ define([
     'views/ContentTableView',
     'collections/BoatResourceCollection',
     'collections/BoatReservationCollection',
-    'collections/UserCollection'
+    'collections/UserCollection',
+    'collections/UnitCollection'
     ],
     function ($, Backbone, Radio, Marionette, _, Router, LayoutView, WelcomeView, BoatManageView, 
     BoatReservationListView, BoatResourceListView, BoatNewReservationView, BoatNewResourceView,
     BoatReservationDetailsView, BoatResourceDetailsView, ContentTableView,
-    BoatResourceCollection, BoatReservationCollection, UserCollection) {
+    BoatResourceCollection, BoatReservationCollection, UserCollection, UnitCollection) {
 
         var App = new Marionette.Application({
             region: '#root',
@@ -40,6 +41,7 @@ define([
                 this.boatResourceCollection = new BoatResourceCollection();
                 this.boatReservationCollection = new BoatReservationCollection();
                 this.userCollection = new UserCollection();
+                this.unitCollection = new UnitCollection();
 
                 this.mainRadioChannel = Radio.channel('main');
 
@@ -50,7 +52,15 @@ define([
                         $('.main-nav-item.active').removeClass('active');
                         $('a[href="' + location.hash + '"]').closest('.main-nav-item').addClass('active'); 
                     });
+                });
 
+                this.mainRadioChannel.on("resource-added", function() {
+                    me.boatReservationCollection.fetch();
+                    me.boatResourceCollection.fetch().done(function() {
+                        me.router.navigate('boat-resources', {trigger: true});
+                        $('.main-nav-item.active').removeClass('active');
+                        $('a[href="' + location.hash + '"]').closest('.main-nav-item').addClass('active'); 
+                    });
                 });
 
                 this.layoutView = new LayoutView()
@@ -106,6 +116,17 @@ define([
                     boatResourceCollection: App.boatResourceCollection,
                     boatReservationCollection: App.boatReservationCollection,
                     userCollection: App.userCollection
+                }));
+            });
+        }
+
+        App.showBoatResourceNew = function() {
+            $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred, App.userCollection.deferred, App.unitCollection.deferred).done(function() {
+                App.layoutView.showChildView('contentRegion', new BoatNewResourceView({
+                    boatResourceCollection: App.boatResourceCollection,
+                    boatReservationCollection: App.boatReservationCollection,
+                    userCollection: App.userCollection,
+                    unitCollection: App.unitCollection
                 }));
             });
         }

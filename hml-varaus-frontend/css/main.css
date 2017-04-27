@@ -121,3 +121,7 @@ body {
 nav.navbar-default {
 	border-bottom: solid 3px #1e3250;
 }
+
+.submit-button {
+	margin-bottom: 5px;
+}
