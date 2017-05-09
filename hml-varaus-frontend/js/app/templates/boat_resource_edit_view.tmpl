@@ -1,0 +1,60 @@
+<form id="edit-resource-form">
+    <div class="form-group">
+        <label for="resource-berth-unit">Kohde</label>
+        <select name="unit" class="form-control" id="resource-berth-unit">
+            <% unit_collection.each(function(unit) { %>
+                <%if(resource.getUnit() == unit.getId()) {%>
+                    <option selected value="{{unit.getId()}}">{{unit.getName()}}</option>
+                <%} else {%>
+                    <option value="{{unit.getId()}}">{{unit.getName()}}</option>
+                <%}%>
+            <%})%>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="resource-berth-name">Nimi</label>
+        <input name="name" type="text" class="form-control" id="resource-berth-name" value="{{resource.getName()}}">
+    </div>
+
+    <div class="form-group">
+        <label for="resource-berth-length">Pituus (metriä)</label>
+        <input name="length_cm" type="number" step=".01" class="form-control" id="resource-berth-length" value="{{resource.getLength('.')}}">
+    </div>
+
+    <div class="form-group">
+        <label for="resource-berth-width">Leveys (metriä)</label>
+        <input name="width_cm" type="number" step=".01" class="form-control" id="resource-berth-width" value="{{resource.getWidth('.')}}">
+    </div>
+
+    <div class="form-group">
+        <label for="resource-berth-depth">Syväys (metriä)</label>
+        <input name="depth_cm" type="number" step=".01" class="form-control" id="resource-berth-depth" value="{{resource.getDepth('.')}}">
+    </div>
+
+    <div class="form-group">
+        <label for="resource-berth-type">Tyyppi</label>
+        <select name="type" class="form-control" id="resource-berth-type">
+            <%if(resource.getType() == 'dock') {%>
+                <option selected value="dock">Laituripaikka</option>
+            <%} else {%>
+                <option value="dock">Laituripaikka</option>
+            <%}%>
+
+            <%if(resource.getType() == 'ground') {%>
+                <option selected value="ground">Polettipaikka</option>
+            <%} else {%>
+                <option value="ground">Polettipaikka</option>
+            <%}%>
+
+            <%if(resource.getType() == 'number') {%>
+                <option selected value="number">Numeropaikka</option>
+            <%} else {%>
+                <option value="number">Numeropaikka</option>
+            <%}%>
+        </select>
+    </div>
+
+  <button id="resource-submit" class="btn btn-default submit-button">Tallenna</button>
+  <button id="resource-delete" class="btn btn-danger submit-button">Poista</button>
+</form>

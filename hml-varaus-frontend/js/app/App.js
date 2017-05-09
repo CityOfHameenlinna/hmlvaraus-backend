@@ -14,6 +14,7 @@ define([
     'views/BoatNewResourceView',
     'views/BoatReservationDetailsView',
     'views/BoatResourceDetailsView',
+    'views/BoatResourceEditView',
     'views/ContentTableView',
     'collections/BoatResourceCollection',
     'collections/BoatReservationCollection',
@@ -22,7 +23,7 @@ define([
     ],
     function ($, Backbone, Radio, Marionette, _, Router, LayoutView, WelcomeView, BoatManageView, 
     BoatReservationListView, BoatResourceListView, BoatNewReservationView, BoatNewResourceView,
-    BoatReservationDetailsView, BoatResourceDetailsView, ContentTableView,
+    BoatReservationDetailsView, BoatResourceDetailsView, BoatResourceEditView, ContentTableView,
     BoatResourceCollection, BoatReservationCollection, UserCollection, UnitCollection) {
 
         var App = new Marionette.Application({
@@ -54,7 +55,7 @@ define([
                     });
                 });
 
-                this.mainRadioChannel.on("resource-added", function() {
+                this.mainRadioChannel.on("resource-changed", function() {
                     me.boatReservationCollection.fetch();
                     me.boatResourceCollection.fetch().done(function() {
                         me.router.navigate('boat-resources', {trigger: true});
@@ -75,7 +76,7 @@ define([
             evaluate: /\<\%(.+?)\%\>/g
         };
 
-        Backbone.emulateJSON = true;
+        Backbone.emulateJSON = false;
 
         window.App = App;
 
@@ -101,21 +102,30 @@ define([
             });
         }
 
-        App.showBoatResourceList = function() {
-            $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred, App.userCollection.deferred).done(function() {
-                App.layoutView.showChildView('contentRegion', new ContentTableView({
-                    collection: App.boatResourceCollection,
-                    contentType: "boatResources"
-                }));
-            });
-        }
-
         App.showBoatReservationNew = function() {
             $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred, App.userCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new BoatNewReservationView({
                     boatResourceCollection: App.boatResourceCollection,
                     boatReservationCollection: App.boatReservationCollection,
                     userCollection: App.userCollection
+                }));
+            });
+        }
+
+        App.showBoatReservationDetails = function(id) {
+            $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred, App.userCollection.deferred).done(function() {
+                App.layoutView.showChildView('contentRegion', new BoatReservationDetailsView({
+                    model: App.boatReservationCollection.get(id),
+                    unit: App.unitCollection.get(App.boatReservationCollection.get(id).getUnit())
+                }));
+            });
+        }
+
+        App.showBoatResourceList = function() {
+            $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred, App.userCollection.deferred).done(function() {
+                App.layoutView.showChildView('contentRegion', new ContentTableView({
+                    collection: App.boatResourceCollection,
+                    contentType: "boatResources"
                 }));
             });
         }
@@ -132,20 +142,24 @@ define([
         }
 
         App.showBoatResourceDetails = function(id) {
-            $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred, App.userCollection.deferred).done(function() {
+            $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred, App.userCollection.deferred, App.unitCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new BoatResourceDetailsView({
-                    model: App.boatResourceCollection.get(id)
+                    model: App.boatResourceCollection.get(id),
+                    unitCollection: App.unitCollection
                 }));
             });
         }
 
-        App.showBoatReservationDetails = function(id) {
-            $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred, App.userCollection.deferred).done(function() {
-                App.layoutView.showChildView('contentRegion', new BoatReservationDetailsView({
-                    model: App.boatReservationCollection.get(id)
+        App.showBoatResourceEdit = function(id) {
+            $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred, App.userCollection.deferred, App.unitCollection.deferred).done(function() {
+                App.layoutView.showChildView('contentRegion', new BoatResourceEditView({
+                    model: App.boatResourceCollection.get(id),
+                    unitCollection: App.unitCollection
                 }));
             });
         }
+
+
 
         App.start();
 

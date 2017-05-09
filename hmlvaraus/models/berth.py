@@ -36,8 +36,7 @@ class Berth(models.Model):
 		(NUMBER, _('number')),
 	)
 
-	resource = models.ForeignKey(Resource, verbose_name=_('Resource'), null=True,
-							 blank=True, db_index=True)
+	resource = models.OneToOneField(Resource, verbose_name=_('Resource'), db_index=True, on_delete=models.CASCADE)
 	width_cm = models.PositiveSmallIntegerField(verbose_name=_('Berth width'),
 																	null=True, blank=True)
 	depth_cm = models.PositiveSmallIntegerField(verbose_name=_('Berth depth'),

@@ -11,7 +11,8 @@ require.config({
         "bootstrap":"../libs/plugins/bootstrap",
         "text":"../libs/plugins/text",
         "moment":"../libs/moment",
-        "bootstrap-datepicker":"../libs/plugins/bootstrap-datetimepicker"
+        "bootstrap-datepicker":"../libs/plugins/bootstrap-datetimepicker",
+        "bootbox":"../libs/plugins/bootbox.min"
     },
 
     shim:{
@@ -33,6 +34,11 @@ require.config({
             "deps":["underscore", "backbone", "jquery"],
             "exports":"Marionette"
         },
+
+        "bootbox":{
+            "deps":["bootstrap"],
+            "exports":"bootbox"
+        }
 
     }
 });

@@ -2,6 +2,11 @@ define(["jquery", "backbone", 'moment'],
     function($, Backbone, moment) {
         var Model = Backbone.Model.extend({
 
+            url: function() {
+                var origUrl = Backbone.Model.prototype.url.call(this);
+                return origUrl += origUrl.endsWith('/') ? '' : '/';
+            },
+
             initialize: function() {
 
             },
@@ -15,16 +20,20 @@ define(["jquery", "backbone", 'moment'],
             },
 
             getName: function() {
-                return this.get('name').fi;
+                return this.get('resource').name.fi;
             },
 
             getId: function() {
                 return this.get('id');
             },
 
+            getResourceId: function() {
+                return this.get('resource').id
+            },
+
             getMainImageUrl: function() {
                 var url = '';
-                this.get('images').forEach(function(image) {
+                this.get('resource').images.forEach(function(image) {
                     if(image.type == 'main')
                         url = image.url;
                 });
@@ -35,37 +44,43 @@ define(["jquery", "backbone", 'moment'],
                 var me = this;
                 var isReserved = false;
                 collection.each(function(reservation) {
-                    if(me.getId() == reservation.getResourceId() && moment().isBetween(moment(reservation.getBeginTime()), moment(reservation.getEndTime())))
+                    if(me.getResourceId() == reservation.getResourceId() && moment().isBetween(moment(reservation.getBeginTime()), moment(reservation.getEndTime())))
                         isReserved = true;
                 });
 
                 return isReserved;
             },
 
-            cmToMeter: function(cm) {
+            cmToMeter: function(cm, separator) {
+                if(!separator)
+                    separator = ',';
                 var meters = Number(cm) / 100;
                 meters = meters.toFixed(2);
-                meters = meters.toString().replace('.', ',');
+                meters = meters.toString().replace('.', separator);
                 return meters;
             },
 
-            getWidth: function() {
-                return this.cmToMeter(this.get('width_cm'));
+            getWidth: function(separator) {
+                return this.cmToMeter(this.get('width_cm'), separator);
             },
 
-            getLength: function() {
-                return this.cmToMeter(this.get('length_cm'));
+            getLength: function(separator) {
+                return this.cmToMeter(this.get('length_cm'), separator);
             },
 
-            getDepth: function() {
-                return this.cmToMeter(this.get('depth_cm'));
+            getDepth: function(separator) {
+                return this.cmToMeter(this.get('depth_cm'), separator);
             },
 
             getUnit: function() {
-                return this.get('unit');
+                return this.get('resource').unit;
             },
 
-            getType: function() {
+            getType: function() {
+                return this.get('type');
+            },
+
+            getTypeFinnish: function() {
                 var type = '';
                 switch(this.get('type')) {
                     case 'dock':

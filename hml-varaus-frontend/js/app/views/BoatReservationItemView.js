@@ -13,7 +13,7 @@ define( ['App', 'backbone', 'marionette', 'jquery', 'text!templates/boat_reserva
             render: function() {
             	var variables = {
             		model: this.model,
-                    resource_model: this.boatResourceCollection.get(this.model.getResourceId()),
+                    resource_model: this.boatResourceCollection.getByResourceId(this.model.getResourceId()),
                     user_collection: this.userCollection
             	}
             	var tmpl = _.template(template);

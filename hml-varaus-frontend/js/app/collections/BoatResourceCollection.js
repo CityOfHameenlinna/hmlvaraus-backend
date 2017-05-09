@@ -8,7 +8,7 @@ define(["jquery","backbone", "collections/BaseCollection", "models/BoatResourceM
             this.deferred = this.fetch();
         },
 
-        parse: function(response) {
+        /*parse: function(response) {
             var obj = response.results;
 
             return _.map(obj, function (value, key) {
@@ -18,7 +18,7 @@ define(["jquery","backbone", "collections/BaseCollection", "models/BoatResourceM
                 delete value.resource;
                 return value;
             });
-        }
+        }*/
     });
 
     return Collection;

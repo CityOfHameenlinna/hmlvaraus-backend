@@ -28,9 +28,9 @@ define( ['App',
                 data.resource = {
                     name: data.name,
                     name_fi: data.name,
-                    type: 'avggovhcw76q',
+                    type_id: 'avggovhcw76q',
                     slug: data.name,
-                    unit: data.unit,
+                    unit_id: data.unit,
                     authentication: 'none'
                 }
                 delete data.name;
@@ -57,7 +57,7 @@ define( ['App',
                     contentType: 'application/json'
                 })
                 .done(function() {
-                    me.mainRadioChannel.trigger('resource-added');
+                    me.mainRadioChannel.trigger('resource-changed');
                 })
                 .fail(function() {
                     

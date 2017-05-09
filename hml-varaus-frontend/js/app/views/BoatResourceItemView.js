@@ -8,6 +8,10 @@ define( ['App', 'backbone', 'marionette', 'jquery', 'text!templates/boat_resourc
                 this.boatReservationCollection = window.App.boatReservationCollection;
         	},
 
+            events: {
+                'click td': 'viewResource'
+            },
+
             render: function() {
             	var variables = {
             		model: this.model,
@@ -16,6 +20,10 @@ define( ['App', 'backbone', 'marionette', 'jquery', 'text!templates/boat_resourc
             	}
             	var tmpl = _.template(template);
             	this.$el.html(tmpl(variables));
+            },
+
+            viewResource: function() {
+                window.App.router.navigate('boat-resource-details/' + this.model.getId(), {trigger: true});
             }
         });
     });

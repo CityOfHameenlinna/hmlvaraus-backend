@@ -3,7 +3,7 @@
     	<label for="reservation-resource">Varauskohde</label>
 		<select name="resource" class="form-control" id="reservation-resource">
 			<% boat_resource_collection.each(function(resource) { %>
-				<option value="{{resource.getId()}}">{{resource.getName()}}</option>
+				<option value="{{resource.getResourceId()}}">{{resource.getName()}}</option>
 			<%})%>
 		</select>
   	</div>

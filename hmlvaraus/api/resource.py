@@ -31,8 +31,8 @@ class ResourceSerializer(ResourceSerializer):
     #id = serializers.CharField(read_only=True)
     #name = serializers.CharField(max_length=200)
     #name_fi = serializers.CharField(max_length=200)
-    type = serializers.CharField(max_length=100)
-    unit = serializers.CharField(max_length=50)
+    type_id = serializers.CharField(max_length=100)
+    unit_id = serializers.CharField(max_length=50)
     #slug = serializers.CharField(max_length=200)
 
     #class Meta:
@@ -54,8 +54,8 @@ class ResourceSerializer(ResourceSerializer):
         return data
 
     def to_internal_value(self, data):
-        unit_instance = Unit.objects.get(pk=data.get('unit'))
-        type_instance = ResourceType.objects.get(pk=data.get('type'))
+        unit_instance = Unit.objects.get(pk=data.get('unit_id'))
+        type_instance = ResourceType.objects.get(pk=data.get('type_id'))
 
         return {
             #'slug': data.get('slug'),
