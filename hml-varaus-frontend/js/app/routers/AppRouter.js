@@ -9,7 +9,11 @@ define(['backbone', 'marionette'], function(Backbone, Marionette) {
             "boat-resource-edit/:id": "showBoatResourceEdit",
             "boat-reservations": "showBoatReservationList",
             "boat-reservation-details/:id": "showBoatReservationDetails",
-            "boat-reservation-new": "showBoatReservationNew"
+            "boat-reservation-new": "showBoatReservationNew",
+            "units": "showUnitList",
+            "unit-details/:id": "showUnitDetails",
+            "unit-new": "showUnitNew",
+            "unit-edit/:id": "showUnitEdit"
        }
    });
 });

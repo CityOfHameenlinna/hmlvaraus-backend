@@ -15,6 +15,9 @@ define([
     'views/BoatReservationDetailsView',
     'views/BoatResourceDetailsView',
     'views/BoatResourceEditView',
+    'views/UnitEditView',
+    'views/UnitDetailsView',
+    'views/UnitNewView',
     'views/ContentTableView',
     'collections/BoatResourceCollection',
     'collections/BoatReservationCollection',
@@ -23,7 +26,8 @@ define([
     ],
     function ($, Backbone, Radio, Marionette, _, Router, LayoutView, WelcomeView, BoatManageView, 
     BoatReservationListView, BoatResourceListView, BoatNewReservationView, BoatNewResourceView,
-    BoatReservationDetailsView, BoatResourceDetailsView, BoatResourceEditView, ContentTableView,
+    BoatReservationDetailsView, BoatResourceDetailsView, BoatResourceEditView, 
+    UnitEditView, UnitDetailsView, UnitNewView, ContentTableView,
     BoatResourceCollection, BoatReservationCollection, UserCollection, UnitCollection) {
 
         var App = new Marionette.Application({
@@ -59,6 +63,14 @@ define([
                     me.boatReservationCollection.fetch();
                     me.boatResourceCollection.fetch().done(function() {
                         me.router.navigate('boat-resources', {trigger: true});
+                        $('.main-nav-item.active').removeClass('active');
+                        $('a[href="' + location.hash + '"]').closest('.main-nav-item').addClass('active'); 
+                    });
+                });
+
+                this.mainRadioChannel.on("unit-changed", function() {
+                    me.unitCollection.fetch().done(function() {
+                        me.router.navigate('units', {trigger: true});
                         $('.main-nav-item.active').removeClass('active');
                         $('a[href="' + location.hash + '"]').closest('.main-nav-item').addClass('active'); 
                     });
@@ -159,7 +171,37 @@ define([
             });
         }
 
+        App.showUnitList = function() {
+            $.when(App.boatResourceCollection.deferred, App.unitCollection.deferred).done(function() {
+                App.layoutView.showChildView('contentRegion', new ContentTableView({
+                    collection: App.unitCollection,
+                    contentType: "units"
+                }));
+            });
+        }
 
+        App.showUnitDetails = function(id) {
+            $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred, App.userCollection.deferred, App.unitCollection.deferred).done(function() {
+                App.layoutView.showChildView('contentRegion', new UnitDetailsView({
+                    model: App.unitCollection.get(id)
+                }));
+            });
+        }
+
+        App.showUnitNew = function() {
+            $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred, App.userCollection.deferred, App.unitCollection.deferred).done(function() {
+                App.layoutView.showChildView('contentRegion', new UnitNewView({
+                }));
+            });
+        }
+
+        App.showUnitEdit = function(id) {
+            $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred, App.userCollection.deferred, App.unitCollection.deferred).done(function() {
+                App.layoutView.showChildView('contentRegion', new UnitEditView({
+                    model: App.unitCollection.get(id)
+                }));
+            });
+        }
 
         App.start();
 

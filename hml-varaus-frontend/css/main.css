@@ -29,6 +29,9 @@
 		padding-left: 0px;
 		padding-right: 0px;
 	}
+	.hide-in-mobile {
+		display:none !important;
+	}
 }
 
 #notification-container {
