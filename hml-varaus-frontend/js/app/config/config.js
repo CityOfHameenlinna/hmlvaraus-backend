@@ -10,6 +10,7 @@ require.config({
         "json2":"../libs/json2",
         "bootstrap":"../libs/plugins/bootstrap",
         "text":"../libs/plugins/text",
+        "async":"../libs/async",
         "moment":"../libs/moment",
         "bootstrap-datepicker":"../libs/plugins/bootstrap-datetimepicker",
         "bootbox":"../libs/plugins/bootbox.min"

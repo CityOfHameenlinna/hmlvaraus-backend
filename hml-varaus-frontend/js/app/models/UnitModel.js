@@ -41,6 +41,18 @@ define(["jquery", "backbone"],
 
             getEmail: function() {
                 return this.get('email');
+            },
+
+            getLocation: function() {
+                if(this.get('location')) {
+                    return {
+                        lng: Number(this.get('location').coordinates[0]),
+                        lat: Number(this.get('location').coordinates[1])
+                    };
+                }
+                else {
+                    return false;
+                }
             }
         });
 

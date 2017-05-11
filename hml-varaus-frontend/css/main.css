@@ -128,3 +128,12 @@ nav.navbar-default {
 .submit-button {
 	margin-bottom: 5px;
 }
+
+#google-map {
+	width: 400px;
+	height: 400px;
+}
+
+#footer {
+	min-height: 20px;
+}
