@@ -50,8 +50,6 @@ class BerthSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer)
         
         resource = instance.resource
 
-        print(vars(resource))
-
         instance.width_cm = validated_data.get('width_cm', instance.width_cm)
         instance.depth_cm = validated_data.get('depth_cm', instance.depth_cm)
         instance.length_cm = validated_data.get('length_cm', instance.length_cm)
