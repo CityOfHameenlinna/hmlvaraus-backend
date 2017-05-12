@@ -9,16 +9,12 @@ define( ['App', 'backbone', 'marionette', 'jquery', 'text!templates/boat_resourc
             render: function() {
                 var variables = {
                     resource: this.model,
-
                 }
                 var tmpl = _.template(template);
                 this.$el.html(tmpl(variables));
 
-                this.addGoogleMap();
             },
-            addGoogleMap: function() {
 
-            },
             editResource: function() {
                 window.App.router.navigate('boat-resource-edit/' + this.model.getId(), {trigger: true});
             }

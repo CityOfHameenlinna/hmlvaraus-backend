@@ -18,7 +18,7 @@ from guardian.shortcuts import get_objects_for_user
 from helusers.jwt import JWTAuthentication
 from munigeo import api as munigeo_api
 from resources.models import Reservation, Resource, Unit, ResourceType
-from resources.api.reservation import ReservationSerializer
+from hmlvaraus.api.reservation import ReservationSerializer
 from hmlvaraus.api.resource import ResourceSerializer
 from hmlvaraus.models.hml_reservation import HMLReservation
 from resources.models.reservation import RESERVATION_EXTRA_FIELDS

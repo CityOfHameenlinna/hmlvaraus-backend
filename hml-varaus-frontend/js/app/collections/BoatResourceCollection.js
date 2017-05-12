@@ -8,17 +8,15 @@ define(["jquery","backbone", "collections/BaseCollection", "models/BoatResourceM
             this.deferred = this.fetch();
         },
 
-        /*parse: function(response) {
-            var obj = response.results;
-
-            return _.map(obj, function (value, key) {
-                value.resource.type = value.resource.resource_type;
-                delete value.resource.type;
-                Object.assign(value, value.resource);
-                delete value.resource;
-                return value;
+        getByResourceId: function(id) {
+            var needle = undefined; 
+            this.each(function(item) {
+                if(id == item.get('resource').id)
+                    needle = item
             });
-        }*/
+
+            return needle;
+        }
     });
 
     return Collection;

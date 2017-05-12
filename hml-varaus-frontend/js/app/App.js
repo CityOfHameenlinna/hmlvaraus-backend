@@ -128,7 +128,7 @@ define([
             $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred, App.userCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new BoatReservationDetailsView({
                     model: App.boatReservationCollection.get(id),
-                    unit: App.unitCollection.get(App.boatReservationCollection.get(id).getUnit())
+                    resourceCollection: App.boatResourceCollection
                 }));
             });
         }

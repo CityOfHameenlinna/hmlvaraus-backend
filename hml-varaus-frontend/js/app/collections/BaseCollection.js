@@ -8,16 +8,6 @@ define(["jquery","backbone"],
               return obj[key];
             });
         },
-
-        getByResourceId: function(id) {
-            var needle = undefined; 
-            this.each(function(item) {
-                if(id == item.get('resource').id)
-                    needle = item
-            });
-
-            return needle;
-        }
     });
     return Collection;
   });

@@ -1,6 +1,6 @@
-define(["jquery", "backbone", 'moment'],
-    function($, Backbone, moment) {
-        var Model = Backbone.Model.extend({
+define(["jquery", "backbone", 'moment', "models/BaseModel"],
+    function($, Backbone, moment, BaseModel) {
+        var Model = BaseModel.extend({
 
             url: function() {
                 var origUrl = Backbone.Model.prototype.url.call(this);

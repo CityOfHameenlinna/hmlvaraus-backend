@@ -10,6 +10,14 @@ define( ['App', 'backbone', 'marionette', 'jquery', 'text!templates/boat_reserva
                 this.listenTo(this.model, 'change', this.render);
         	},
 
+            events: {
+                'click td': 'viewReservation'
+            },
+
+            viewReservation: function() {
+                window.App.router.navigate('boat-reservation-details/' + this.model.getId(), {trigger: true});
+            },
+
             render: function() {
             	var variables = {
             		model: this.model,
@@ -18,6 +26,6 @@ define( ['App', 'backbone', 'marionette', 'jquery', 'text!templates/boat_reserva
             	}
             	var tmpl = _.template(template);
             	this.$el.html(tmpl(variables));
-        }
+            }
         });
     });

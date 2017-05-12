@@ -1,7 +1,7 @@
-define(["jquery", "backbone", "moment"],
-    function($, Backbone, moment) {
+define(["jquery", "backbone", "moment", "models/BaseModel"],
+    function($, Backbone, moment, BaseModel) {
         // Creates a new Backbone Model class object
-        var Model = Backbone.Model.extend({
+        var Model = BaseModel.extend({
 
             initialize: function() {
 
@@ -72,6 +72,30 @@ define(["jquery", "backbone", "moment"],
                     return 'Ei tietoja';
 
                 return userModel.get('first_name') + ' ' + userModel.get('last_name') + ' (' + userModel.get('username') + ')';
+            },
+
+            getReserverName: function() {
+                return this.get('reservation').reserver_name;
+            },
+
+            getReserverAddress: function() {
+                return this.get('reservation').reserver_address_street;
+            },
+
+            getReserverZip: function() {
+                return this.get('reservation').reserver_address_zip;
+            },
+
+            getReserverCity: function() {
+                return this.get('reservation').reserver_address_city;
+            },
+
+            getReserverEmail: function() {
+                return this.get('reservation').reserver_email_address;
+            },
+
+            getReserverPhone: function() {
+                return this.get('reservation').reserver_phone_number;
             },
 
             getRespaReservationId: function() {
