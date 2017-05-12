@@ -47,7 +47,17 @@ define( ['App',
                     id: data.user
                 }
 
-                return data;
+                var reserverSSN = data.reserver_ssn;
+
+                delete data.reserver_ssn;
+
+                hmlreservationData = {
+                    reservation: data,
+                    is_paid: false,
+                    reserver_ssn: reserverSSN
+                }
+
+                return hmlreservationData;
             },
 
             save: function(e) {
@@ -58,7 +68,7 @@ define( ['App',
                 bodyJson = this.validateAndReformatData(bodyJson);
                 
                 $.ajax({
-                    url: '/api/reservation/',
+                    url: '/api/hml_reservation/',
                     method: 'post',
                     data: JSON.stringify(bodyJson),
                     dataType: 'json',

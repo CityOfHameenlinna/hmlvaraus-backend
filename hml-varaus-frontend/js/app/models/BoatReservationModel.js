@@ -16,7 +16,7 @@ define(["jquery", "backbone", "moment"],
             },
 
             getStateFinnish: function() {
-                switch(this.get('state')) {
+                switch(this.get('reservation').state) {
                     case 'cancelled':
                         return "Peruutettu";
                         break;
@@ -33,28 +33,28 @@ define(["jquery", "backbone", "moment"],
             },
 
             getState: function() {
-                return this.get('state');
+                return this.get('reservation').state;
             },
 
             getResourceId: function() {
-                return this.get('resource');
+                return this.get('reservation').resource;
             },
 
             getBeginTime: function() {
-                return this.get('begin');
+                return this.get('reservation').begin;
             },
 
             getEndTime: function() {
-                return this.get('end');
+                return this.get('reservation').end;
             },
 
             getBeginTimeFinnish: function() {
-                var time = moment(this.get('begin'));
+                var time = moment(this.get('reservation').begin);
                 return time.format("D.M.YYYY HH:mm");
             },
 
             getEndTimeFinnish: function() {
-                var time = moment(this.get('end'));
+                var time = moment(this.get('reservation').end);
                 return time.format("D.M.YYYY HH:mm");
             },
 
@@ -63,15 +63,19 @@ define(["jquery", "backbone", "moment"],
             },
 
             getReserver: function(userCollection) {
-                if(!this.get('user') || !this.get('user').id)
+                if(!this.get('reservation').user || !this.get('reservation').user.id)
                     return "Ei tietoja";
 
-                var userModel = userCollection.getByUID(this.get('user').id);
+                var userModel = userCollection.getByUID(this.get('reservation').user.id);
 
                 if(!userModel)
                     return 'Ei tietoja';
 
                 return userModel.get('first_name') + ' ' + userModel.get('last_name') + ' (' + userModel.get('username') + ')';
+            },
+
+            getRespaReservationId: function() {
+                return this.get('reservation').id;
             }
         });
         return Model;

@@ -1,7 +1,7 @@
 define(["jquery","backbone", "moment", "collections/BaseCollection", "models/BoatReservationModel"],
   function($, Backbone, moment, BaseCollection, BoatReservationModel) {
     var Collection = BaseCollection.extend({
-        url: '/api/reservation/',
+        url: '/api/hml_reservation/',
         model: BoatReservationModel,
         
         initialize: function() {
