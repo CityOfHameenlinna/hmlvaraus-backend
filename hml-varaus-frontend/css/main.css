@@ -8,23 +8,16 @@
     src: url(/fonts/Verdana.ttf);
 }
 
-@media screen and (min-width: 0px) and (max-width: 500px) {
-	#root {
-		padding-left: 0px;
-		padding-right: 0px;
-	}
-}
-
 .manage-view-count {
 	font-size: 20px;
 }
 
 #root {
-	padding-left: 15%;
-	padding-right: 15%;
+	padding-left: 10%;
+	padding-right: 10%;
 }
 
-@media screen and (min-width: 0px) and (max-width: 500px) {
+@media screen and (min-width: 0px) and (max-width: 758px) {
 	#root {
 		padding-left: 0px;
 		padding-right: 0px;
@@ -125,15 +118,19 @@ nav.navbar-default {
 	border-bottom: solid 3px #1e3250;
 }
 
-.submit-button {
+.submit-button,.edit-button {
 	margin-bottom: 5px;
 }
 
 #google-map {
-	width: 400px;
-	height: 400px;
+	width: 350px;
+	height: 350px;
 }
 
 #footer {
 	min-height: 20px;
+}
+
+.table-container {
+	overflow-x: auto; 
 }
