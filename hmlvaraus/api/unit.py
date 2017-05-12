@@ -53,7 +53,9 @@ class UnitSerializer(UnitSerializer):
             'location': location,
             'address_zip': data.get('address_zip', None),
             'phone': data.get('phone', None),
-            'email': data.get('email', None)
+            'email': data.get('email', None),
+            'description': data.get('description', {}).get('fi', None),
+            'description_fi': data.get('description', {}).get('fi', None),
         }
 
 class UnitViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):

@@ -25,6 +25,10 @@
                 <label for="unit-location">Sijainti</label>
                 <input disabled name="location" type="text" class="form-control" id="unit-location" value="{{unit.getLocation().lng}} {{unit.getLocation().lat}}">
             </div>
+            <div class="form-group">
+                <label for="unit-description">Kuvaus</label>
+                <textarea name="description" class="form-control" id="unit-description">{{unit.getDescription()}}</textarea>
+            </div>
             <button id="unit-submit" class="btn btn-default submit-button">Tallenna</button>
             <button id="unit-delete" class="btn btn-danger submit-button">Poista</button>
         </form>

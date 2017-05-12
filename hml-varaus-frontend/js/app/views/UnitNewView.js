@@ -83,6 +83,7 @@ define( ['App',
             validateAndReformatData: function(data) {
                 data.street_address = {fi: data.street_address}
                 data.name = {fi: data.name}
+                data.description = {fi:data.description};
 
                 if(this.unitMarker) {
                     data.location = {

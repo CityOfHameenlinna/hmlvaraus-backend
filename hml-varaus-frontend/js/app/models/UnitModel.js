@@ -53,6 +53,15 @@ define(["jquery", "backbone"],
                 else {
                     return false;
                 }
+            },
+            getDescription: function() {
+                var description = this.get('description');
+                if(description) {
+                    return description.fi;
+                }
+                else {
+                    return '';
+                }
             }
         });
 

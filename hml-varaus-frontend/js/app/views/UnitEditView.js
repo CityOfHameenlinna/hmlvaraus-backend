@@ -127,6 +127,7 @@ define( ['App',
                 data = this.validateAndReformatData(data);
 
                 this.model.set('name', data.name);
+                this.model.set('description', data.description);
                 this.model.set('street_address', data.street_address);
                 this.model.set('phone', data.phone);
                 this.model.set('email', data.email);
@@ -150,8 +151,9 @@ define( ['App',
             },
 
             validateAndReformatData: function(data) {
-                data.street_address = {fi: data.street_address}
-                data.name = {fi: data.name}
+                data.street_address = {fi: data.street_address};
+                data.name = {fi: data.name};
+                data.description = {fi:data.description};
 
                 return data;
             },
