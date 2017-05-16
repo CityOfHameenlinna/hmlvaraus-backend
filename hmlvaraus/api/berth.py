@@ -13,6 +13,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.fields import BooleanField, IntegerField
 from rest_framework import renderers
 from rest_framework.exceptions import NotAcceptable, ValidationError
+from django_filters.rest_framework import DjangoFilterBackend
 from guardian.shortcuts import get_objects_for_user
 
 from helusers.jwt import JWTAuthentication
@@ -71,10 +72,32 @@ class BerthSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer)
         data = super(BerthSerializer, self).to_representation(instance)
         return data;
 
+class BerthFilter(django_filters.FilterSet):
+    max_width = django_filters.NumberFilter(name="width_cm", lookup_expr='lte')
+    min_width = django_filters.NumberFilter(name="width_cm", lookup_expr='gte')
+
+    max_length = django_filters.NumberFilter(name="length_cm", lookup_expr='lte')
+    min_length = django_filters.NumberFilter(name="length_cm", lookup_expr='gte')
+
+    max_depth = django_filters.NumberFilter(name="depth_cm", lookup_expr='lte')
+    min_depth = django_filters.NumberFilter(name="depth_cm", lookup_expr='gte')
+
+    unit_id = django_filters.CharFilter(name="resource__unit_id")
+    
+    class Meta:
+        model = Berth
+        fields = ['max_width', 'min_width', 'max_length', 'min_length', 'max_depth', 'min_depth', 'unit_id', 'type']
+
 class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     queryset = Berth.objects.all().select_related('resource', 'resource__unit')
     serializer_class = BerthSerializer
     lookup_field = 'id'
+
+    filter_class = BerthFilter
+
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter)
+    filter_fields = ['type']
+    search_fields = ['type', 'resource__name', 'resource__name_fi', 'resource__unit__name', 'resource__unit__name_fi']
 
     def perform_create(self, serializer):
         serializer.save()

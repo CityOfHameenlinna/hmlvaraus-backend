@@ -1,0 +1,88 @@
+<% if(filters.show) {%>
+<div id="filters" class="collapse in">
+<%}else{%>
+<div id="filters" class="collapse">
+<%}%>
+	<div class="form-inline form row filter-row">
+		<div class="col-md-3">
+			<label for="filter-search">Haku</label>
+			<input name="search" type="text" class="form-control filter-input" id="filter-search" placeholder="Etsi" value="{{filters.search}}">
+		</div>
+		<div class="col-md-4">
+			<div class="form-group pull-right"
+				<label for="filter-resource-max-width">Leveys</label>
+				<input name="min_width" min="0" type="number" step=".1" class="form-control filter-input float-filter" id="filter-resource-min-width" value="{{cmToMeters(filters.min_width)}}"> - 
+				<input name="max_width" min="0" type="number" step=".1" class="form-control filter-input float-filter" id="filter-resource-max-width" value="{{cmToMeters(filters.max_width)}}">
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="form-group pull-right">
+				<label for="filter-resource-unit">Kohde</label>
+				<select name="unit_id" class="form-control filter-input" id="filter-resource-unit">
+					<option value="">Kaikki kohteet</option>
+					<% unit_collection.each(function(unit) {%>
+						<%if(filters.unit_id == unit.getId()) {%>
+							<option value="{{unit.getId()}}" selected>{{unit.getName()}}</option>
+						<%} else {%>
+							<option value="{{unit.getId()}}">{{unit.getName()}}</option>
+						<%}%>
+					<%})%>
+				</select>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-inline form row filter-row">
+		<div class="col-md-3">
+		</div>
+		<div class="col-md-4">
+			<div class="form-group pull-right">
+				<label for="filter-resource-max-length">Pituus</label>
+				<input name="min_length" min="0" type="number" step=".1" class="form-control filter-input float-filter" id="filter-resource-min-length" value="{{cmToMeters(filters.min_length)}}"> - 
+				<input name="max_length" min="0" type="number" step=".1" class="form-control filter-input float-filter" id="filter-resource-max-length" value="{{cmToMeters(filters.max_length)}}">
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="form-group pull-right">
+				<label for="filter-resource-unit">Tyyppi</label>
+				<select name="type" class="form-control filter-input" id="filter-resource-unit">
+					<option value="">Kaikki tyypit</option>
+					<%if(filters.type == 'dock') {%>
+						<option selected value="dock">Vain laituripaikat</option>
+					<%}else{%>
+						<option value="dock">Vain laituripaikat</option>
+					<%}%>
+
+					<%if(filters.type == 'ground') {%>
+						<option selected value="ground">Vain polettipaikat</option>
+					<%}else{%>
+						<option value="ground">Vain polettipaikat</option>
+					<%}%>
+
+					<%if(filters.type == 'number') {%>
+						<option selected value="number">Vain numeropaikat</option>
+					<%}else{%>
+						<option value="number">Vain numeropaikat</option>
+					<%}%>
+				</select>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-inline form row filter-row">
+		<div class="col-md-3">
+		</div>
+		<div class="col-md-4">
+			<div class="form-group pull-right">
+				<label for="filter-resource-max-depth">Syväys</label>
+				<input name="min_depth" min="0" type="number" step=".1" class="form-control filter-input float-filter" id="filter-resource-min-depth" value="{{cmToMeters(filters.min_depth)}}"> - 
+				<input name="max_depth" min="0" type="number" step=".1" class="form-control filter-input float-filter" id="filter-resource-max-depth" value="{{cmToMeters(filters.max_depth)}}">
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<a class="btn btn-primary" role="button" id="show-filters" data-toggle="collapse" href="#filters" aria-expanded="false" aria-controls="filters">
+  	Näytä suodattimet
+</a>

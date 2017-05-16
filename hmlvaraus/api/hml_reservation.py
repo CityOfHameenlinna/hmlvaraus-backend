@@ -13,6 +13,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.fields import BooleanField, IntegerField
 from rest_framework import renderers
 from rest_framework.exceptions import NotAcceptable, ValidationError
+from django_filters.rest_framework import DjangoFilterBackend
 from guardian.shortcuts import get_objects_for_user
 
 from helusers.jwt import JWTAuthentication
@@ -48,10 +49,23 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
         data = super(HMLReservationSerializer, self).to_representation(instance)
         return data;
 
+class HMLReservationFilter(django_filters.FilterSet):
+    unit_id = django_filters.CharFilter(name="reservation__resource__unit_id")
+    begin = django_filters.DateTimeFromToRangeFilter(name="reservation__resource__begin")
+    class Meta:
+        model = HMLReservation
+        fields = ['unit_id']
+
 class HMLReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     queryset = HMLReservation.objects.all().select_related('reservation', 'reservation__user', 'reservation__resource', 'reservation__resource__unit')
     serializer_class = HMLReservationSerializer
     lookup_field = 'id'
+
+    filter_class = HMLReservationFilter
+
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter)
+    filter_fields = ('reserver_ssn')
+    search_fields = ['reserver_ssn', 'reservation__billing_address_street', 'reservation__reserver_email_address', 'reservation__reserver_name']
 
     def perform_create(self, serializer):
         serializer.save()
@@ -60,7 +74,6 @@ class HMLReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
         serializer.save()
 
     def destroy(self, request, *args, **kwargs):
-
         try:
             hml_reservation = self.get_object();
             hml_reservation_id = hml_reservation.reservation.id

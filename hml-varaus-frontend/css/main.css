@@ -134,3 +134,7 @@ nav.navbar-default {
 .table-container {
 	overflow-x: auto; 
 }
+
+.filter-row {
+	margin-bottom: 10px;
+}

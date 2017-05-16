@@ -14,6 +14,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.fields import BooleanField, IntegerField
 from rest_framework import renderers
 from rest_framework.exceptions import NotAcceptable, ValidationError
+from django_filters.rest_framework import DjangoFilterBackend
 from guardian.shortcuts import get_objects_for_user
 
 from helusers.jwt import JWTAuthentication
@@ -58,9 +59,19 @@ class UnitSerializer(UnitSerializer):
             'description_fi': data.get('description', {}).get('fi', None),
         }
 
+class UnitFilter(django_filters.FilterSet):
+    class Meta:
+        model = Unit
+        fields = []
+
 class UnitViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     queryset = Unit.objects.all()
     serializer_class = UnitSerializer
+
+    filter_class = UnitFilter
+
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter)
+    search_fields = ['name', 'name_fi', 'street_address', 'email', 'description', 'phone']
 
     def perform_create(self, serializer):
         serializer.save()

@@ -6,6 +6,7 @@ define( ['App', 'backbone', 'marionette', 'jquery', 'text!templates/boat_reserva
 
         	initialize: function() {
                 this.boatResourceCollection = window.App.boatResourceCollection;
+                this.unitCollection = window.App.unitCollection;
                 this.userCollection = window.App.userCollection;
                 this.listenTo(this.model, 'change', this.render);
         	},
@@ -19,9 +20,12 @@ define( ['App', 'backbone', 'marionette', 'jquery', 'text!templates/boat_reserva
             },
 
             render: function() {
+                var resourceModel = this.boatResourceCollection.getByResourceId(this.model.getResourceId());
+                var unitModel = this.unitCollection.get(resourceModel.getUnitId());
             	var variables = {
             		model: this.model,
-                    resource_model: this.boatResourceCollection.getByResourceId(this.model.getResourceId()),
+                    resource_model: resourceModel,
+                    unit_model: unitModel,
                     user_collection: this.userCollection
             	}
             	var tmpl = _.template(template);

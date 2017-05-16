@@ -76,6 +76,10 @@ define(["jquery", "backbone", 'moment', "models/BaseModel"],
                 return this.get('resource').unit;
             },
 
+            getUnitId: function() {
+                return this.get('resource').unit_id;
+            },
+
             getType: function() {
                 return this.get('type');
             },

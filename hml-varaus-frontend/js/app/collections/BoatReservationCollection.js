@@ -1,11 +1,22 @@
-define(["jquery","backbone", "moment", "collections/BaseCollection", "models/BoatReservationModel"],
-  function($, Backbone, moment, BaseCollection, BoatReservationModel) {
+define([
+    "jquery",
+    "backbone",
+    'backbone-radio',
+    "moment",
+    "collections/BaseCollection",
+    "models/BoatReservationModel"],
+  function($, Backbone, Radio, moment, BaseCollection, BoatReservationModel) {
     var Collection = BaseCollection.extend({
         url: '/api/hml_reservation/',
         model: BoatReservationModel,
-        
+        filterKey: 'boat_reservation_filters',
         initialize: function() {
+            var me = this;
             this.deferred = this.fetch();
+            this.mainRadioChannel = Radio.channel('main');
+            this.mainRadioChannel.on('reservation-filter-changed', function() {
+                me.fetchFiltered();
+            });
         },
 
         filterByCurrent: function() {
