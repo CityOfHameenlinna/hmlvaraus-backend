@@ -29,6 +29,8 @@ from resources.api.base import NullableDateTimeField, TranslatedModelSerializer,
 
 class ReservationSerializer(ReservationSerializer):
 
+    reserver_name = serializers.CharField(required=True)
+
     class Meta:
         model = Reservation
         fields = ['url', 'id', 'resource', 'user', 'begin', 'end', 'comments', 'is_own', 'state',
@@ -58,3 +60,8 @@ class ReservationSerializer(ReservationSerializer):
             del data['user']
 
         return data
+
+    def validate_reserver_name(self, value):
+        if not value :
+            raise serializers.ValidationError("Reserver name is required")
+        return value

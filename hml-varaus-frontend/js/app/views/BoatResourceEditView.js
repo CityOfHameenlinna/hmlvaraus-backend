@@ -4,17 +4,34 @@ define( ['App',
     'bootbox',
     'marionette',
     'jquery',
+    'views/BaseView',
     'text!templates/boat_resource_edit_view.tmpl'],
-    function(App, Backbone, Radio, bootbox, Marionette, $, template) {
-        return Marionette.View.extend({
+    function(App, Backbone, Radio, bootbox, Marionette, $, BaseView, template) {
+        return BaseView.extend({
             initialize: function() {
                 this.mainRadioChannel = Radio.channel('main');
                 this.unitCollection = this.options.unitCollection
             },
+
             events: {
                 'click #resource-submit': 'saveResource',
-                'click #resource-delete': 'deleteResource'
+                'click #resource-delete': 'deleteResource',
+                'change .required': 'checkRequired',
+                'change .validated-data': 'validateData'
             },
+
+            checkRequired: function(e) {
+                if(e) {
+                    if($(e.currentTarget).val() == '')
+                        $(e.currentTarget).addClass('validation-error');
+                    else
+                        $(e.currentTarget).removeClass('validation-error');
+                }
+                else {
+                    
+                }
+            },
+
             render: function() {
                 var variables = {
                     resource: this.model,
@@ -23,6 +40,7 @@ define( ['App',
                 var tmpl = _.template(template);
                 this.$el.html(tmpl(variables));
             },
+
             deleteResource: function(e) {
                 var me = this;
                 e.preventDefault();
@@ -45,8 +63,8 @@ define( ['App',
                             .done(function() {
                                 me.mainRadioChannel.trigger('resource-changed');
                             })
-                            .fail(function() {
-
+                            .fail(function(result) {
+                                me.showRequestErrors(result.responseJSON);
                             });
                         }
                     }
@@ -57,6 +75,9 @@ define( ['App',
                 e.preventDefault();
                 var data = this.objectifyForm($('#edit-resource-form').serializeArray());
                 data = this.validateAndReformatData(data);
+
+                if(!data)
+                    return;
 
                 this.model.set('depth_cm', data.depth_cm);
                 this.model.set('width_cm', data.width_cm);
@@ -74,11 +95,59 @@ define( ['App',
                 .done(function() {
                     me.mainRadioChannel.trigger('resource-changed');
                 })
-                .fail(function() {
-
+                .fail(function(result) {
+                    me.showRequestErrors(result.responseJSON);
                 });
             },
+
+            validateData: function(e) {
+                var isValid = true;
+
+                if(e) {
+                    target = $(e.currentTarget);
+                    if(target.hasClass('berth-size')) {
+                        if(target.val() < 0 ||target.val() > 10) {
+                            target.addClass('validation-error');
+                            target.next('span.error').find('p').text('Valitse arvo väliltä 0-10');
+                            isValid = false;
+                        }
+                        else {
+                            target.removeClass('validation-error');
+                            target.next('span.error').find('p').text('');
+                        }
+                    }
+                }
+                else {
+                    var length = $('#resource-berth-length');
+                    var width = $('#resource-berth-width');
+                    var depth = $('#resource-berth-depth');
+
+                    if(length.val() < 0 || length.val() > 10) {
+                        length.addClass('validation-error');
+                        target.next('span.error').find('p').text('Valitse arvo väliltä 0-10');
+                        isValid = false;
+                    }
+
+                    if(width.val() < 0 || width.val() > 10) {
+                        width.addClass('validation-error');
+                        target.next('span.error').find('p').text('Valitse arvo väliltä 0-10');
+                        isValid = false;
+                    }
+
+                    if(depth.val() < 0 ||depth.val() > 10) {
+                        depth.addClass('validation-error');
+                        target.next('span.error').find('p').text('Valitse arvo väliltä 0-10');
+                        isValid = false;
+                    }
+                }
+
+                return isValid;
+            },
+
             validateAndReformatData: function(data) {
+                if(!this.checkRequired() || !this.validateData())
+                    return false;
+
                 data.resource = {
                     name: data.name,
                     name_fi: data.name,
@@ -94,14 +163,6 @@ define( ['App',
                 data.depth_cm = Number(data.depth_cm) * 100;
 
                 return data;
-            },
-            objectifyForm: function(formArray) {
-                var returnArray = {};
-                for (var i = 0; i < formArray.length; i++){
-                    if(formArray[i]['value'] != '')
-                        returnArray[formArray[i]['name']] = formArray[i]['value'];
-                }
-                return returnArray;
-            }        
+            }     
         });
     });

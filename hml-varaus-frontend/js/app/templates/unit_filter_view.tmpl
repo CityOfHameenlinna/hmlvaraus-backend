@@ -1,7 +1,7 @@
 <% if(filters.show) {%>
-<div id="filters" class="collapse in">
+	<div id="filters" class="collapse in">
 <%}else{%>
-<div id="filters" class="collapse">
+	<div id="filters" class="collapse">
 <%}%>
 	<div class="form-inline form row filter-row">
 		<div class="col-md-3">
@@ -33,5 +33,9 @@
 </div>
 
 <a class="btn btn-primary" role="button" id="show-filters" data-toggle="collapse" href="#filters" aria-expanded="false" aria-controls="filters">
+<%if(filters.show) {%>
+  	Piilota suodattimet
+<%}else{%>
   	Näytä suodattimet
+<%}%>
 </a>

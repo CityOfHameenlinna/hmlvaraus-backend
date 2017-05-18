@@ -4,9 +4,10 @@ define( ['App',
     'bootbox',
     'marionette',
     'jquery',
+    'views/BaseView',
     'text!templates/unit_edit_view.tmpl',
     'async!https://maps.googleapis.com/maps/api/js?key=AIzaSyAdf1cqzsZLVigUFbrgbqDLBfx_1pexr0I'],
-    function(App, Backbone, Radio, bootbox, Marionette, $, template) {
+    function(App, Backbone, Radio, bootbox, Marionette, $, BaseView, template) {
         return Marionette.View.extend({
             initialize: function() {
                 this.mainRadioChannel = Radio.channel('main');
@@ -15,7 +16,8 @@ define( ['App',
 
             events: {
                 'click #unit-submit': 'saveUnit',
-                'click #unit-delete': 'deleteUnit'
+                'click #unit-delete': 'deleteUnit',
+                'change .required': 'checkRequired'
             },
 
             ui: {
@@ -111,8 +113,8 @@ define( ['App',
                             .done(function() {
                                 me.mainRadioChannel.trigger('unit-changed');
                             })
-                            .fail(function() {
-
+                            .fail(function(result) {
+                                me.showRequestErrors(result.responseJSON);
                             });
                         }
                     }
@@ -125,6 +127,9 @@ define( ['App',
                 
                 var data = this.objectifyForm($('#edit-unit-form').serializeArray());
                 data = this.validateAndReformatData(data);
+
+                if(!data)
+                    return;
 
                 this.model.set('name', data.name);
                 this.model.set('description', data.description);
@@ -145,12 +150,15 @@ define( ['App',
                 .done(function() {
                     me.mainRadioChannel.trigger('unit-changed');
                 })
-                .fail(function() {
-
+                .fail(function(result) {
+                    me.showRequestErrors(result.responseJSON);
                 });
             },
 
             validateAndReformatData: function(data) {
+                if(!this.checkRequired())
+                    return false;
+
                 data.street_address = {fi: data.street_address};
                 data.name = {fi: data.name};
                 data.description = {fi:data.description};

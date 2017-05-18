@@ -1,5 +1,5 @@
-define(["jquery", "backbone"],
-    function($, Backbone) {
+define(["jquery", "backbone", "models/BaseModel"],
+    function($, Backbone, BaseModel) {
         var Model = Backbone.Model.extend({
 
             initialize: function() {

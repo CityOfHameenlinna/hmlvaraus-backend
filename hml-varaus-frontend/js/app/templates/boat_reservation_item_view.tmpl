@@ -1,5 +1,16 @@
-<td>{{model.getTimeSpanFinnish()}}</td>
+<td>{{model.getBeginTimeFinnish()}}</td>
+<td>{{model.getEndTimeFinnish()}}</td>
 <td>{{unit_model.getName()}}</td>
 <td>{{resource_model.getName()}}</td>
 <td>{{model.getReserverName()}}</td>
 <td>{{model.getStateFinnish()}}</td>
+<td class="reservation-is-paid">
+	<label class="switch reservation-is-paid">
+	<%if(model.getIsPaid()) {%>
+		<input type="checkbox" class="reservation-is-paid" checked>
+	<%}else{%>
+		<input type="checkbox" class="reservation-is-paid">
+	<%}%>
+  	<div class="slider round reservation-is-paid"></div>
+	</label>
+</td>

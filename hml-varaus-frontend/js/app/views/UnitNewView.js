@@ -1,12 +1,14 @@
 define( ['App',
     'backbone',
     'backbone-radio',
+    'bootbox',
     'marionette',
     'jquery',
+    'views/BaseView',
     'text!templates/unit_new_view.tmpl',
     'async!https://maps.googleapis.com/maps/api/js?key=AIzaSyAdf1cqzsZLVigUFbrgbqDLBfx_1pexr0I'],
-    function(App, Backbone, Radio, Marionette, $, template) {
-        return Marionette.View.extend({
+    function(App, Backbone, Radio, bootbox, Marionette, $, BaseView, template) {
+        return BaseView.extend({
             initialize: function() {
                 this.mainRadioChannel = Radio.channel('main');
             },
@@ -77,10 +79,14 @@ define( ['App',
             },
 
             events: {
-                "click #unit-submit": "save"
+                "click #unit-submit": "save",
+                'change .required': 'checkRequired'
             },
 
             validateAndReformatData: function(data) {
+                if(!this.checkRequired())
+                    return false;
+                
                 data.street_address = {fi: data.street_address}
                 data.name = {fi: data.name}
                 data.description = {fi:data.description};
@@ -101,7 +107,8 @@ define( ['App',
                 var bodyJson = this.objectifyForm($('#new-unit-form').serializeArray());
 
                 bodyJson = this.validateAndReformatData(bodyJson);
-                
+                if(!bodyJson)
+                    return;
                 $.ajax({
                     url: '/api/unit/',
                     method: 'post',
@@ -112,18 +119,9 @@ define( ['App',
                 .done(function() {
                     me.mainRadioChannel.trigger('unit-changed');
                 })
-                .fail(function() {
-                    
+                .fail(function(result) {
+                    me.showRequestErrors(result.responseJSON);
                 });
             },
-
-            objectifyForm: function(formArray) {
-                var returnArray = {};
-                for (var i = 0; i < formArray.length; i++){
-                    if(formArray[i]['value'] != '')
-                        returnArray[formArray[i]['name']] = formArray[i]['value'];
-                }
-                return returnArray;
-            }
         });
     });

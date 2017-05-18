@@ -40,6 +40,28 @@
 					<%})%>
 				</select>
 			</div>
+			<div class="form-group pull-right">
+				<label for="filter-reservation-ispaid">Maksettu</label>
+				<select name="is_paid" class="form-control filter-input" id="filter-reservation-ispaid">
+					<%if(!filters.is_paid) {%>
+						<option value="" selected>Näytä kaikki</option>
+					<%} else {%>
+						<option value="">Näytä kaikki</option>
+					<%}%>
+
+					<%if(filters.is_paid === "True") {%>
+						<option value="True" selected>Näytä vain maksetut</option>
+					<%} else {%>
+						<option value="True">Näytä vain maksetut</option>
+					<%}%>
+
+					<%if(filters.is_paid === "False") {%>
+						<option value="False" selected>Näytä vain maksamattomat</option>
+					<%} else {%>
+						<option value="False">Näytä vain maksamattomat</option>
+					<%}%>
+				</select>
+			</div>
 		</div>
 	</div>
 
@@ -49,6 +71,7 @@
 		<div class="col-md-4">
 		</div>
 		<div class="col-md-4">
+
 		</div>
 	</div>
 
@@ -62,5 +85,9 @@
 </div>
 
 <a class="btn btn-primary" role="button" id="show-filters" data-toggle="collapse" href="#filters" aria-expanded="false" aria-controls="filters">
+<%if(filters.show) {%>
+  	Piilota suodattimet
+<%}else{%>
   	Näytä suodattimet
+<%}%>
 </a>

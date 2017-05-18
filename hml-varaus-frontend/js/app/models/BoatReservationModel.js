@@ -74,6 +74,14 @@ define(["jquery", "backbone", "moment", "models/BaseModel"],
                 return userModel.get('first_name') + ' ' + userModel.get('last_name') + ' (' + userModel.get('username') + ')';
             },
 
+            getIsPaid: function() {
+                return this.get('is_paid');
+            },
+
+            getIsPaidFinnish: function() {
+                return this.get('is_paid') ? "Kyllä" : "Ei";
+            },
+
             getReserverName: function() {
                 return this.get('reservation').reserver_name;
             },
@@ -100,6 +108,16 @@ define(["jquery", "backbone", "moment", "models/BaseModel"],
 
             getRespaReservationId: function() {
                 return this.get('reservation').id;
+            },
+
+            saveIsPaid: function(value) {
+                return $.ajax({
+                    url: this.url(),
+                    method: 'patch',
+                    data: JSON.stringify({is_paid: value}),
+                    dataType: 'json',
+                    contentType: 'application/json'
+                });
             }
         });
         return Model;

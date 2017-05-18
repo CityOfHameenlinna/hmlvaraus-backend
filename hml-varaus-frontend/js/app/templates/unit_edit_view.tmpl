@@ -4,7 +4,8 @@
             <form id="edit-unit-form">
                 <div class="form-group">
                     <label for="unit-name">Nimi</label>
-                    <input name="name" type="text" class="form-control" id="unit-name" value="{{unit.getName()}}">
+                    <input name="name" type="text" class="form-control required" id="unit-name" value="{{unit.getName()}}">
+                    <span class="error"><p class="text-danger"></p></span>
                 </div>
                 <div class="form-group">
                     <label for="unit-address">Katuosoite</label>

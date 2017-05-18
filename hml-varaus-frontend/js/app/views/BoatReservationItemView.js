@@ -1,6 +1,6 @@
-define( ['App', 'backbone', 'marionette', 'jquery', 'text!templates/boat_reservation_item_view.tmpl'],
-    function(App, Backbone, Marionette, $, template) {
-        return Marionette.View.extend({
+define( ['App', 'backbone', 'marionette', 'jquery', 'views/BaseView', 'text!templates/boat_reservation_item_view.tmpl'],
+    function(App, Backbone, Marionette, $, BaseView, template) {
+        return BaseView.extend({
             className: "boat-reservation-row",
             tagName: 'tr',
 
@@ -12,10 +12,38 @@ define( ['App', 'backbone', 'marionette', 'jquery', 'text!templates/boat_reserva
         	},
 
             events: {
-                'click td': 'viewReservation'
+                'click td': 'viewReservation',
+                'click input.reservation-is-paid': 'changeIsPaid'
             },
 
-            viewReservation: function() {
+            changeIsPaid: function(e) {
+                e.stopPropagation();
+                var me = this;
+                var target = $(e.currentTarget);
+
+                if(!target.prop('checked')) {
+                    this.model.set('is_paid', true).saveIsPaid(false)
+                    .done(function() {
+                        target.removeProp('checked')
+                    })
+                    .fail(function() {
+                        me.showRequestErrors();
+                    });
+                }
+                else {
+                    this.model.set('is_paid', true).saveIsPaid(true)
+                    .done(function() {
+                        target.prop('checked', true);
+                    })
+                    .fail(function() {
+                        me.showRequestErrors();
+                    });
+                }
+            },
+
+            viewReservation: function(e) {
+                if($(e.target).hasClass('reservation-is-paid'))
+                    return;
                 window.App.router.navigate('boat-reservation-details/' + this.model.getId(), {trigger: true});
             },
 

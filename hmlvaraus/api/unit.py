@@ -30,6 +30,7 @@ from django.contrib.gis.geos import GEOSGeometry
 from resources.api.base import NullableDateTimeField, TranslatedModelSerializer, register_view
 
 class UnitSerializer(UnitSerializer):
+    name = serializers.CharField(required=True)
 
     def validate(self, data):
         request_user = self.context['request'].user

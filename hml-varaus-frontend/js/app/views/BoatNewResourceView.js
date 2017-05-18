@@ -1,11 +1,13 @@
 define( ['App',
     'backbone',
     'backbone-radio',
+    'bootbox',
     'marionette',
     'jquery',
+    'views/BaseView',
     'text!templates/boat_new_resource_view.tmpl'],
-    function(App, Backbone, Radio, Marionette, $, template) {
-        return Marionette.View.extend({
+    function(App, Backbone, Radio, bootbox, Marionette, $, BaseView, template) {
+        return BaseView.extend({
             initialize: function() {
                 this.unitCollection = this.options.unitCollection;
                 this.mainRadioChannel = Radio.channel('main');
@@ -21,17 +23,19 @@ define( ['App',
             },
 
             events: {
-                "click #resource-submit": "save"
+                'click #resource-submit': 'save',
+                'change .required': 'checkRequired',
+                'change .validated-data': 'validateData'
             },
 
             validateAndReformatData: function(data) {
+                if(!this.checkRequired() || !this.validateData())
+                    return false;
+
                 data.resource = {
                     name: data.name,
                     name_fi: data.name,
-                    type_id: 'avggovhcw76q',
-                    slug: data.name,
                     unit_id: data.unit,
-                    authentication: 'none'
                 }
                 delete data.name;
                 delete data.unit;
@@ -42,12 +46,58 @@ define( ['App',
                 return data;
             },
 
+            validateData: function(e) {
+                var isValid = true;
+
+                if(e) {
+                    target = $(e.currentTarget);
+                    if(target.hasClass('berth-size')) {
+                        if(target.val() < 0 ||target.val() > 10) {
+                            target.addClass('validation-error');
+                            target.next('span.error').find('p').text('Valitse arvo väliltä 0-10');
+                            isValid = false;
+                        }
+                        else {
+                            target.removeClass('validation-error');
+                            target.next('span.error').find('p').text('');
+                        }
+                    }
+                }
+                else {
+                    var length = $('#resource-berth-length');
+                    var width = $('#resource-berth-width');
+                    var depth = $('#resource-berth-depth');
+
+                    if(length.val() < 0 || length.val() > 10) {
+                        length.addClass('validation-error');
+                        target.next('span.error').find('p').text('Valitse arvo väliltä 0-10');
+                        isValid = false;
+                    }
+
+                    if(width.val() < 0 || width.val() > 10) {
+                        width.addClass('validation-error');
+                        target.next('span.error').find('p').text('Valitse arvo väliltä 0-10');
+                        isValid = false;
+                    }
+
+                    if(depth.val() < 0 ||depth.val() > 10) {
+                        depth.addClass('validation-error');
+                        target.next('span.error').find('p').text('Valitse arvo väliltä 0-10');
+                        isValid = false;
+                    }
+                }
+
+                return isValid;
+            },
             save: function(e) {
                 var me = this;
                 e.preventDefault();
                 var bodyJson = this.objectifyForm($('#new-resource-form').serializeArray());
 
                 bodyJson = this.validateAndReformatData(bodyJson);
+
+                if(!bodyJson)
+                    return;
                 
                 $.ajax({
                     url: '/api/berth/',
@@ -59,18 +109,9 @@ define( ['App',
                 .done(function() {
                     me.mainRadioChannel.trigger('resource-changed');
                 })
-                .fail(function() {
-                    
+                .fail(function(result) {
+                    me.showRequestErrors(result.responseJSON);
                 });
             },
-
-            objectifyForm: function(formArray) {
-                var returnArray = {};
-                for (var i = 0; i < formArray.length; i++){
-                    if(formArray[i]['value'] != '')
-                        returnArray[formArray[i]['name']] = formArray[i]['value'];
-                }
-                return returnArray;
-            }
         });
     });

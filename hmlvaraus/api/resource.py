@@ -31,6 +31,8 @@ class ResourceSerializer(ResourceSerializer):
     #id = serializers.CharField(read_only=True)
     #name = serializers.CharField(max_length=200)
     #name_fi = serializers.CharField(max_length=200)
+    name = serializers.CharField(required=True)
+    name_fi = serializers.CharField(required=True)
     type_id = serializers.CharField(max_length=100)
     unit_id = serializers.CharField(max_length=50)
     #slug = serializers.CharField(max_length=200)
@@ -45,21 +47,41 @@ class ResourceSerializer(ResourceSerializer):
         if not request_user.is_staff:
             raise PermissionDenied()
 
-        #if not Unit.objects.filter(pk=data['unit']).exists():
-        #    raise ValidationError(dict(access_code=_('Invalid unit id')))
-
-        #if not ResourceType.objects.filter(pk=data['type']).exists():
-        #    raise ValidationError(dict(access_code=_('Invalid type id')))
-
         return data
 
+    def validate_name(self, value):
+        if not value:
+            raise ValidationError('Berth name is required')
+
+    def validate_name_fi(self, value):
+        if not value:
+            raise ValidationError('Berth name is required')
+
     def to_internal_value(self, data):
+        type_instance = None
+        unit_instance = None
+        type_id = data.get('type_id', None)
+
+        if type_id != None:
+            if not ResourceType.objects.filter(pk=type_id).exists():
+                raise ValidationError(dict(access_code=_('Invalid type id')))
+            type_instance = ResourceType.objects.get(pk=type_id)
+        else:
+            types = ResourceType.objects.all();
+            for type in types:
+                if 'vene' in type.name or 'Vene' in type.name or 'boat' in type.name or 'Boat' in type.name:
+                    type_instance = type
+
+        if type_instance == None:
+            raise ValidationError(dict(access_code=_('Invalid type id')))
+
+        if not Unit.objects.filter(pk=data.get('unit_id')).exists():
+            raise ValidationError(dict(access_code=_('Invalid unit id')))
+
         unit_instance = Unit.objects.get(pk=data.get('unit_id'))
-        type_instance = ResourceType.objects.get(pk=data.get('type_id'))
 
         return {
-            #'slug': data.get('slug'),
-            'authentication': data.get('authentication'),
+            'authentication': 'none',
             'name': data.get('name'),
             'name_fi': data.get('name_fi'),
             'unit': unit_instance,

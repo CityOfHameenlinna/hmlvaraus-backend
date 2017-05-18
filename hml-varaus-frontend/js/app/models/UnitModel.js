@@ -1,5 +1,5 @@
-define(["jquery", "backbone"],
-    function($, Backbone) {
+define(["jquery", "backbone", "models/BaseModel"],
+    function($, Backbone, BaseModel) {
         var Model = Backbone.Model.extend({
 
             url: function() {
@@ -28,19 +28,31 @@ define(["jquery", "backbone"],
             },
 
             getStreetAddress: function() {
-                return this.get('street_address').fi;
+                if(this.get('street_address'))
+                    return this.get('street_address').fi;
+                else
+                    return '';
             },
 
             getZip: function() {
-                return this.get('address_zip');
+                if(this.get('address_zip'))
+                    return this.get('address_zip');
+                else
+                    return '';
             },
 
             getPhone: function() {
-                return this.get('phone');
+                if(this.get('phone'))
+                    return this.get('phone');
+                else
+                    return '';
             },
 
             getEmail: function() {
-                return this.get('email');
+                if(this.get('email'))
+                    return this.get('email');
+                else
+                    return '';
             },
 
             getLocation: function() {

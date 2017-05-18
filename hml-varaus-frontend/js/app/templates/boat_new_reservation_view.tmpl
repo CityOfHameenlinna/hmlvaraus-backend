@@ -1,4 +1,5 @@
 <form id="new-reservation-form">
+	<h3>Varauksen tiedot</h3>
   	<div class="form-group">
     	<label for="reservation-resource">Varauskohde</label>
 		<select name="resource" class="form-control" id="reservation-resource">
@@ -7,34 +8,26 @@
 			<%})%>
 		</select>
   	</div>
-  	<div class="form-group">
-    	<label for="reservation-reserver">Varaaja</label>
-		<select name="user" class="form-control" id="reservation-reserver">
-				<option value="">Määritellään käsin</option>
-			<% user_collection.each(function(user) { %>
-				<option value="{{user.getId()}}">{{user.getFullName()}} ({{user.getUserName()}})</option>
-			<%})%>
-		</select>
-  	</div>
-
 	<div class="form-group">
 		<label for="reservation-begin">Aloitusaika</label>
-	    <div class='input-group date' id='reservation-begin-datepicker'>
+	    <div class='input-group date required' id='reservation-begin-datepicker'>
 	        <input name="begin" id="reservation-begin" type='text' class="form-control" />
 	        <span class="input-group-addon">
 	            <span class="glyphicon glyphicon-calendar"></span>
 	        </span>
 	    </div>
+	    <span class="error"><p class="text-danger"></p></span>
 	</div>
 
 	<div class="form-group">
 		<label for="reservation-end">Lopetusaika</label>
-	    <div class='input-group date' id='reservation-end-datepicker'>
+	    <div class='input-group date required' id='reservation-end-datepicker'>
 	        <input name="end" id="reservation-end" type='text' class="form-control" />
 	        <span class="input-group-addon">
 	            <span class="glyphicon glyphicon-calendar"></span>
 	        </span>
 	    </div>
+	    <span class="error"><p class="text-danger"></p></span>
 	</div>
 
   	<div class="form-group">
@@ -46,55 +39,40 @@
 			<option value="denied">Evätty</option>
 		</select>
   	</div>
-
   	<div class="form-group">
-    	<label for="reservation-description">Kuvaus</label>
+    	<label for="reservation-description">Lisätiedot</label>
 		<textarea name="event_description" id="reservation-description" class="form-control" rows="3"></textarea>
   	</div>
-
+  	<h3>Varauksen tekijän tiedot</h3>
 	<div class="form-group">
-		<label for="reservation-reserver-organization">Varaajan yritys</label>
-		<input name="company" type="text" class="form-control" id="reservation-reserver-organization">
+		<label for="reservation-reserver-name">Nimi</label>
+		<input name="reserver_name" type="text" class="form-control required" id="reservation-reserver-name">
+		<span class="error"><p class="text-danger"></p></span>
 	</div>
 
 	<div class="form-group">
-		<label for="reservation-reserver-bid">Varaajan y-tunnus</label>
-		<input name="business_id" type="text" class="form-control" id="reservation-reserver-bid">
+		<label for="reservation-reserver-ssn">Henkilötunnus</label>
+		<input name="reserver_ssn" type="text" class="form-control" id="reservation-reserver-ssn">
 	</div>
 
 	<div class="form-group">
-		<label for="reservation-reserver-name">Varaajan nimi</label>
-		<input name="reserver_name" type="text" class="form-control" id="reservation-reserver-name">
-	</div>
-
-	<div class="form-group">
-		<label for="reservation-reserver-email">Varaajan sähköpostiosoite</label>
+		<label for="reservation-reserver-email">Sähköpostiosoite</label>
 		<input name="reserver_email_address" type="email" class="form-control" id="reservation-reserver-email">
 	</div>
 
 	<div class="form-group">
-		<label for="reservation-reserver-phone">Varaajan puhelinnumero</label>
-		<input name="reserver_phone_number" type="numbe" class="form-control" id="reservation-reserver-phone">
+		<label for="reservation-reserver-phone">Puhelinnumero</label>
+		<input name="reserver_phone_number" type="number" class="form-control" id="reservation-reserver-phone">
 	</div>
 
 	<div class="form-group">
-		<label for="reservation-reserver-address">Varaajan katuosoite</label>
+		<label for="reservation-reserver-address">Katuosoite</label>
 		<input name="reserver_address_street" type="text" class="form-control" id="reservation-reserver-address">
 	</div>
 
 	<div class="form-group">
-		<label for="reservation-reserver-zip">Varaajan postinumero</label>
+		<label for="reservation-reserver-zip">Postinumero</label>
 		<input name="reserver_address_zip" type="number" class="form-control" id="reservation-reserver-zip">
-	</div>
-
-	<div class="form-group">
-		<label for="reservation-billing-address">Laskutusosoite</label>
-		<input name="billing_address_street" type="text" class="form-control" id="reservation-billing-address">
-	</div>
-
-	<div class="form-group">
-		<label for="reservation-billing-zip">Laskutuspostinumero</label>
-		<input name="billing_address_zip" type="number" class="form-control" id="reservation-billing-zip">
 	</div>
 
   <button id="reservation-submit" type="submit" class="btn btn-default submit-button">Lisää varaus</button>

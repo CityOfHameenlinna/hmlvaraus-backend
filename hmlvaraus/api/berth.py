@@ -31,10 +31,11 @@ from resources.api.base import NullableDateTimeField, TranslatedModelSerializer,
 
 class BerthSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer):
     resource = ResourceSerializer(required=True)
-    width_cm = serializers.IntegerField()
-    depth_cm = serializers.IntegerField()
-    length_cm = serializers.IntegerField()
-    type = serializers.CharField()
+    width_cm = serializers.IntegerField(required=True)
+    depth_cm = serializers.IntegerField(required=True)
+    length_cm = serializers.IntegerField(required=True)
+    type = serializers.CharField(required=True)
+    partial=True
 
     class Meta:
         model = Berth
@@ -71,6 +72,34 @@ class BerthSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer)
     def to_representation(self, instance):
         data = super(BerthSerializer, self).to_representation(instance)
         return data;
+
+    def validate(self, data):
+        request_user = self.context['request'].user
+
+        if not request_user.is_staff:
+            raise PermissionDenied()
+
+        return data
+
+    def validate_width_cm(self, value):
+        if value < 0 or value > 1000:
+            raise serializers.ValidationError("Value out of bounds")
+        return value
+
+    def validate_height_cm(self, value):
+        if value < 0 or value > 1000:
+            raise serializers.ValidationError("Value out of bounds")
+        return value
+
+    def validate_depth_cm(self, value):
+        if value < 0 or value > 1000:
+            raise serializers.ValidationError("Value out of bounds")
+        return value
+
+    def validate_type(self, value):
+        if value not in ['number', 'ground', 'dock']:
+            raise serializers.ValidationError("Value out of bounds")
+        return value
 
 class BerthFilter(django_filters.FilterSet):
     max_width = django_filters.NumberFilter(name="width_cm", lookup_expr='lte')
