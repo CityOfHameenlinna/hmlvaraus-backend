@@ -123,7 +123,7 @@ class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     lookup_field = 'id'
 
     filter_class = BerthFilter
-
+    permission_classes = [permissions.IsAuthenticated]
     filter_backends = (DjangoFilterBackend,filters.SearchFilter)
     filter_fields = ['type']
     search_fields = ['type', 'resource__name', 'resource__name_fi', 'resource__unit__name', 'resource__unit__name_fi']

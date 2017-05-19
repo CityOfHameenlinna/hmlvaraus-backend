@@ -68,7 +68,7 @@ class UnitFilter(django_filters.FilterSet):
 class UnitViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     queryset = Unit.objects.all()
     serializer_class = UnitSerializer
-
+    permission_classes = [permissions.IsAuthenticated]
     filter_class = UnitFilter
 
     filter_backends = (DjangoFilterBackend,filters.SearchFilter)

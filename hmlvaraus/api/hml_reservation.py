@@ -122,7 +122,7 @@ class HMLReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     queryset = HMLReservation.objects.all().select_related('reservation', 'reservation__user', 'reservation__resource', 'reservation__resource__unit')
     serializer_class = HMLReservationSerializer
     lookup_field = 'id'
-
+    permission_classes = [permissions.IsAuthenticated]
     filter_class = HMLReservationFilter
 
     filter_backends = (DjangoFilterBackend,filters.SearchFilter, HMLReservationFilterBackend)
