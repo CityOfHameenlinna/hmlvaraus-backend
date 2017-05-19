@@ -21,7 +21,6 @@ define( ['App',
             events: {
                 'click #reservation-submit': 'save',
                 'change input.required,textarea.required': 'checkRequired',
-
             },
 
             render: function() {

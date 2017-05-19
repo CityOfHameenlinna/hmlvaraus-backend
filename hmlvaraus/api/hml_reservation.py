@@ -76,6 +76,46 @@ class HMLReservationFilter(django_filters.FilterSet):
         model = HMLReservation
         fields = ['unit_id', 'is_paid']
 
+class ReservationFilterBackend(filters.BaseFilterBackend):
+    """
+    Filter reservations by time.
+    """
+
+    def filter_queryset(self, request, queryset, view):
+        params = request.query_params
+        times = {}
+        past = False
+        filter_type = 'all';
+        if 'date_filter_type' in params:
+            filter_type = params['date_filter_type'];
+
+        for name in ('begin', 'end'):
+            if name not in params:
+                continue
+            # whenever date filtering is in use, include past reservations
+            past = True
+            try:
+                times[name] = arrow.get(params[name]).to('utc').datetime
+            except ParserError:
+                raise exceptions.ParseError("'%s' must be a timestamp in ISO 8601 format" % name)
+        if filter_type == 'all':
+            if times.get('begin', None):
+                queryset = queryset.filter(reservation__end__gte=times['begin'])
+            if times.get('end', None):
+                queryset = queryset.filter(reservation__begin__lte=times['end'])
+        elif filter_type == 'begin':
+            if times.get('begin', None):
+                queryset = queryset.filter(reservation__begin__gte=times['begin'])
+            if times.get('end', None):
+                queryset = queryset.filter(reservation__begin__lte=times['end'])
+        elif filter_type == 'end':
+            if times.get('begin', None):
+                queryset = queryset.filter(reservation__end__gte=times['begin'])
+            if times.get('end', None):
+                queryset = queryset.filter(reservation__end__lte=times['end'])
+
+        return queryset
+
 class HMLReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     queryset = HMLReservation.objects.all().select_related('reservation', 'reservation__user', 'reservation__resource', 'reservation__resource__unit')
     serializer_class = HMLReservationSerializer
@@ -83,7 +123,7 @@ class HMLReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
 
     filter_class = HMLReservationFilter
 
-    filter_backends = (DjangoFilterBackend,filters.SearchFilter)
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter, ReservationFilterBackend)
     filter_fields = ('reserver_ssn')
     search_fields = ['reserver_ssn', 'reservation__billing_address_street', 'reservation__reserver_email_address', 'reservation__reserver_name']
 
