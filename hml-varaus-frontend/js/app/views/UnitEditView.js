@@ -8,7 +8,7 @@ define( ['App',
     'text!templates/unit_edit_view.tmpl',
     'async!https://maps.googleapis.com/maps/api/js?key=AIzaSyAdf1cqzsZLVigUFbrgbqDLBfx_1pexr0I'],
     function(App, Backbone, Radio, bootbox, Marionette, $, BaseView, template) {
-        return Marionette.View.extend({
+        return BaseView.extend({
             initialize: function() {
                 this.mainRadioChannel = Radio.channel('main');
                 this.unitCollection = this.options.unitCollection
