@@ -88,8 +88,8 @@ define( [
                 if(filterData) {
                     var filters = JSON.parse(filterData);
                 }
-
-
+                else
+                    return;
                 var ordering = filters.ordering;
 
                 if(!ordering)
