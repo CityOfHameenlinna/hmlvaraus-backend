@@ -4,7 +4,7 @@
     	<label for="reservation-resource">Varauskohde</label>
 		<select name="resource" class="form-control" id="reservation-resource">
 			<% boat_resource_collection.each(function(resource) { %>
-				<option value="{{resource.getResourceId()}}">{{resource.getName()}}</option>
+				<option value="{{resource.getResourceId()}}">{{getUnitName(resource.getUnitId())}} ({{resource.getName()}})</option>
 			<%})%>
 		</select>
   	</div>
@@ -48,11 +48,6 @@
 		<label for="reservation-reserver-name">Nimi</label>
 		<input name="reserver_name" type="text" class="form-control required" id="reservation-reserver-name">
 		<span class="error"><p class="text-danger"></p></span>
-	</div>
-
-	<div class="form-group">
-		<label for="reservation-reserver-ssn">Henkilötunnus</label>
-		<input name="reserver_ssn" type="text" class="form-control" id="reservation-reserver-ssn">
 	</div>
 
 	<div class="form-group">

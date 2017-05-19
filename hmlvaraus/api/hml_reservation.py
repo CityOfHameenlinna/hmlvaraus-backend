@@ -76,7 +76,7 @@ class HMLReservationFilter(django_filters.FilterSet):
         model = HMLReservation
         fields = ['unit_id', 'is_paid']
 
-class ReservationFilterBackend(filters.BaseFilterBackend):
+class HMLReservationFilterBackend(filters.BaseFilterBackend):
     """
     Filter reservations by time.
     """
@@ -116,6 +116,8 @@ class ReservationFilterBackend(filters.BaseFilterBackend):
 
         return queryset
 
+
+
 class HMLReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     queryset = HMLReservation.objects.all().select_related('reservation', 'reservation__user', 'reservation__resource', 'reservation__resource__unit')
     serializer_class = HMLReservationSerializer
@@ -123,7 +125,7 @@ class HMLReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
 
     filter_class = HMLReservationFilter
 
-    filter_backends = (DjangoFilterBackend,filters.SearchFilter, ReservationFilterBackend)
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter, HMLReservationFilterBackend)
     filter_fields = ('reserver_ssn')
     search_fields = ['reserver_ssn', 'reservation__billing_address_street', 'reservation__reserver_email_address', 'reservation__reserver_name']
 

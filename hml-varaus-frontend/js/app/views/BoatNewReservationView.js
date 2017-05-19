@@ -14,7 +14,7 @@ define( ['App',
             initialize: function() {
                 this.boatReservationCollection = this.options.boatReservationCollection;
                 this.boatResourceCollection = this.options.boatResourceCollection;
-                this.userCollection = this.options.userCollection;
+                this.unitCollection = this.options.unitCollection;
                 this.mainRadioChannel = Radio.channel('main');
             },
 
@@ -29,8 +29,20 @@ define( ['App',
                 var variables = {
                     boat_reservation_collection: this.boatReservationCollection,
                     boat_resource_collection: this.boatResourceCollection,
-                    user_collection: this.userCollection
+                    unit_collection: this.unitCollection
                 }
+
+                var helpers = {
+                    getUnitName: function(unit_id) {
+                        var unit = this.unit_collection.get(unit_id);
+                        if(unit)
+                            return unit.getName();
+                        else
+                            return '';
+                    }
+                }
+
+                _.extend(variables, helpers);
 
                 var tmpl = _.template(template);
                 this.$el.html(tmpl(variables));

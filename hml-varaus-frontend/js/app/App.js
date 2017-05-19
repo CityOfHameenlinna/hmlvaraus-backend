@@ -135,7 +135,7 @@ define([
                 App.layoutView.showChildView('contentRegion', new BoatNewReservationView({
                     boatResourceCollection: App.boatResourceCollection,
                     boatReservationCollection: App.boatReservationCollection,
-                    userCollection: App.userCollection
+                    unitCollection: App.unitCollection
                 }));
             });
         }

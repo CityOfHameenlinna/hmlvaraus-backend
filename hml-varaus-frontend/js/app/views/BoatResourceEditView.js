@@ -20,18 +20,6 @@ define( ['App',
                 'change .validated-data': 'validateData'
             },
 
-            checkRequired: function(e) {
-                if(e) {
-                    if($(e.currentTarget).val() == '')
-                        $(e.currentTarget).addClass('validation-error');
-                    else
-                        $(e.currentTarget).removeClass('validation-error');
-                }
-                else {
-                    
-                }
-            },
-
             render: function() {
                 var variables = {
                     resource: this.model,
@@ -124,19 +112,19 @@ define( ['App',
 
                     if(length.val() < 0 || length.val() > 10) {
                         length.addClass('validation-error');
-                        target.next('span.error').find('p').text('Valitse arvo väliltä 0-10');
+                        length.next('span.error').find('p').text('Valitse arvo väliltä 0-10');
                         isValid = false;
                     }
 
                     if(width.val() < 0 || width.val() > 10) {
                         width.addClass('validation-error');
-                        target.next('span.error').find('p').text('Valitse arvo väliltä 0-10');
+                        width.next('span.error').find('p').text('Valitse arvo väliltä 0-10');
                         isValid = false;
                     }
 
                     if(depth.val() < 0 ||depth.val() > 10) {
                         depth.addClass('validation-error');
-                        target.next('span.error').find('p').text('Valitse arvo väliltä 0-10');
+                        depth.next('span.error').find('p').text('Valitse arvo väliltä 0-10');
                         isValid = false;
                     }
                 }
