@@ -31,6 +31,7 @@ from resources.models.utils import generate_reservation_xlsx, get_object_or_none
 from django.http import Http404
 from rest_framework.response import Response
 from resources.api.base import NullableDateTimeField, TranslatedModelSerializer, register_view
+from hmlvaraus.utils.utils import RelatedOrderingFilter
 
 class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer):
     reservation = ReservationSerializer(required=True)
@@ -125,9 +126,10 @@ class HMLReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     filter_class = HMLReservationFilter
 
-    filter_backends = (DjangoFilterBackend,filters.SearchFilter, HMLReservationFilterBackend)
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter, HMLReservationFilterBackend,RelatedOrderingFilter)
     filter_fields = ('reserver_ssn')
     search_fields = ['reserver_ssn', 'reservation__billing_address_street', 'reservation__reserver_email_address', 'reservation__reserver_name']
+    ordering_fields = ('__all__')
 
     def perform_create(self, serializer):
         serializer.save()

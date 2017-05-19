@@ -28,6 +28,7 @@ from resources.models.utils import generate_reservation_xlsx, get_object_or_none
 from django.http import Http404
 from rest_framework.response import Response
 from resources.api.base import NullableDateTimeField, TranslatedModelSerializer, register_view
+from hmlvaraus.utils.utils import RelatedOrderingFilter
 
 class BerthSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer):
     resource = ResourceSerializer(required=True)
@@ -124,9 +125,10 @@ class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
 
     filter_class = BerthFilter
     permission_classes = [permissions.IsAuthenticated]
-    filter_backends = (DjangoFilterBackend,filters.SearchFilter)
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter,RelatedOrderingFilter)
     filter_fields = ['type']
     search_fields = ['type', 'resource__name', 'resource__name_fi', 'resource__unit__name', 'resource__unit__name_fi']
+    ordering_fields = ('__all__')
 
     def perform_create(self, serializer):
         serializer.save()
@@ -135,7 +137,6 @@ class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
         serializer.save()
 
     def destroy(self, request, *args, **kwargs):
-
         try:
             berth = self.get_object();
             resource_id = berth.resource.id

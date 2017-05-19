@@ -28,6 +28,7 @@ from resources.models.utils import generate_reservation_xlsx, get_object_or_none
 from hmlvaraus.models.berth import Berth
 from django.contrib.gis.geos import GEOSGeometry
 from resources.api.base import NullableDateTimeField, TranslatedModelSerializer, register_view
+from hmlvaraus.utils.utils import RelatedOrderingFilter
 
 class UnitSerializer(UnitSerializer):
     name = serializers.CharField(required=True)
@@ -71,7 +72,8 @@ class UnitViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     filter_class = UnitFilter
 
-    filter_backends = (DjangoFilterBackend,filters.SearchFilter)
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter,RelatedOrderingFilter)
+    ordering_fields = ('__all__')
     search_fields = ['name', 'name_fi', 'street_address', 'email', 'description', 'phone']
 
     def perform_create(self, serializer):
