@@ -117,8 +117,6 @@ class HMLReservationFilterBackend(filters.BaseFilterBackend):
 
         return queryset
 
-
-
 class HMLReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     queryset = HMLReservation.objects.all().select_related('reservation', 'reservation__user', 'reservation__resource', 'reservation__resource__unit')
     serializer_class = HMLReservationSerializer

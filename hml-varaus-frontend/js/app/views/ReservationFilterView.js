@@ -29,7 +29,15 @@ define( [
 
             events: {
                 'change .filter-input': 'filterInputChanged',
-                'click #show-filters': 'showFilters'
+                'click #show-filters': 'showFilters',
+                'click #filter-clear': 'clearFilters'
+            },
+
+            clearFilters: function(e) {
+                this.$('textarea,input,select').val('');
+                this.filters = {};
+                localStorage.setItem('boat_reservation_filters', JSON.stringify(this.filters));
+                this.mainRadioChannel.trigger('reservation-filter-changed');
             },
 
             showFilters: function(e) {

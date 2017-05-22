@@ -27,8 +27,9 @@ define( [
             },
 
             events: {
-                "change .filter-input": "filterInputChanged",
-                "click #show-filters": "showFilters"
+                'change .filter-input': 'filterInputChanged',
+                'click #show-filters': 'showFilters',
+                'click #filter-clear': 'clearFilters'
             },
 
             showFilters: function(e) {
@@ -42,6 +43,13 @@ define( [
                     this.filters.show = true;
                     localStorage.setItem('boat_resource_filters', JSON.stringify(this.filters));
                 }
+            },
+
+            clearFilters: function(e) {
+                this.$('textarea,input,select').val('');
+                this.filters = {};
+                localStorage.setItem('boat_resource_filters', JSON.stringify(this.filters));
+                this.mainRadioChannel.trigger('resource-filter-changed');
             },
 
             filterInputChanged: function(e) {

@@ -25,8 +25,16 @@ define( [
             },
 
             events: {
-                "change .filter-input": "filterInputChanged",
-                "click #show-filters": "showFilters"
+                'change .filter-input': 'filterInputChanged',
+                'click #show-filters': 'showFilters',
+                'click #filter-clear': 'clearFilters'
+            },
+
+            clearFilters: function(e) {
+                this.$('textarea,input,select').val('');
+                this.filters = {};
+                localStorage.setItem('unit_filters', JSON.stringify(this.filters));
+                this.mainRadioChannel.trigger('unit-filter-changed');
             },
 
             showFilters: function(e) {
