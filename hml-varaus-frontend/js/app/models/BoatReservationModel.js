@@ -110,11 +110,33 @@ define(["jquery", "backbone", "moment", "models/BaseModel"],
                 return this.get('reservation').id;
             },
 
+            getStateUpdated: function() {
+                var time = moment(this.get('state_updated_by'));
+                return time.format("D.M.YYYY HH:mm");
+            },
+
+            isCancelled: function() {
+                return this.getState() == 'cancelled';
+            },
+
             saveIsPaid: function(value) {
                 return $.ajax({
                     url: this.url(),
                     method: 'patch',
                     data: JSON.stringify({is_paid: value}),
+                    dataType: 'json',
+                    contentType: 'application/json'
+                });
+            },
+
+            saveCancel: function() {
+                var reservation = this.get('reservation');
+                reservation.state = 'cancelled';
+                this.set('reservation', reservation);
+                return $.ajax({
+                    url: this.url(),
+                    method: 'patch',
+                    data: JSON.stringify({state: 'cancelled'}),
                     dataType: 'json',
                     contentType: 'application/json'
                 });

@@ -4,7 +4,11 @@
 			<h4><strong>Varaus:</strong></h4>
 			<p>Aikaväli: {{reservation.getTimeSpanFinnish()}}</p>
 			<p>Paikka: {{resource.getName()}}</p>
-			<p>Tila: {{reservation.getStateFinnish()}}</p>
+			<%if(reservation.isCancelled()) {%>
+				<p>Tila: {{reservation.getStateFinnish()}} ({{reservation.getStateUpdated()}})</p>
+			<%}else{%>
+				<p>Tila: {{reservation.getStateFinnish()}}</p>
+			<%}%>
 			<p>Maksettu:</p>
 			<label class="switch reservation-is-paid">
 				<%if(reservation.getIsPaid()) {%>
@@ -20,6 +24,10 @@
 			<p>Osoite: {{reservation.getReserverAddress()}}, {{reservation.getReserverZip()}} {{reservation.getReserverCity()}}</p>
 			<p>Puhelinnumero: {{reservation.getReserverPhone()}}</p>
 			<p>Sähköpostiosoite: {{reservation.getReserverEmail()}}</p>
+
+			<%if(!reservation.isCancelled()) {%>
+				<button type="button" class="btn btn-danger" id="reservation-cancel">Peruuta varaus</button>
+			<%}%>
 		</div>
 		<div class="col-md-6">
 

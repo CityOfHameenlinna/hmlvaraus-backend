@@ -57,7 +57,7 @@ define( ['App',
                         }
                     }
                 });
-                            },
+            },
             saveResource: function(e) {
                 var me = this;
                 e.preventDefault();

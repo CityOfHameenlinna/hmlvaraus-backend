@@ -41,7 +41,7 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
 
     class Meta:
         model = HMLReservation
-        fields = ['id', 'is_paid', 'reserver_ssn', 'reservation']
+        fields = ['id', 'is_paid', 'reserver_ssn', 'reservation', 'state_updated_at']
 
     def create(self, validated_data):
         reservation_data = validated_data.pop('reservation')
@@ -135,7 +135,16 @@ class HMLReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
         serializer.save()
 
     def perform_update(self, serializer):
-        serializer.save()
+        data = self.request._data
+        if 'state' in data:
+            id = int(self.kwargs.get('id'))
+            hml_reservation = HMLReservation.objects.get(pk=id)
+            reservation = hml_reservation.reservation
+            reservation.set_state(Reservation.CANCELLED, self.request.user)
+            hml_reservation.state_updated_at = timezone.now()
+            hml_reservation.save()
+        else:
+            serializer.save()
 
     def destroy(self, request, *args, **kwargs):
         try:
