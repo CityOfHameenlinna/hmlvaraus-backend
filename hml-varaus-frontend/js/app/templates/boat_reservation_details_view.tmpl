@@ -1,11 +1,21 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-md-6">
-			<h3>{{reservation.getTimeSpanFinnish()}}</h4>
+			<h4><strong>Varaus:</strong></h4>
+			<p>Aikaväli: {{reservation.getTimeSpanFinnish()}}</p>
 			<p>Paikka: {{resource.getName()}}</p>
-			<p>Maksettu: {{reservation.getIsPaidFinnish()}}
+			<p>Tila: {{reservation.getStateFinnish()}}</p>
+			<p>Maksettu:</p>
+			<label class="switch reservation-is-paid">
+				<%if(reservation.getIsPaid()) {%>
+					<input type="checkbox" class="reservation-is-paid" checked>
+				<%}else{%>
+					<input type="checkbox" class="reservation-is-paid">
+				<%}%>
+				<div class="slider round reservation-is-paid"></div>
+			</label>
 
-			<h4>Varaaja:</h4>
+			<h4><strong>Varaaja:</strong></h4>
 			<p>Nimi: {{reservation.getReserverName()}}</p>
 			<p>Osoite: {{reservation.getReserverAddress()}}, {{reservation.getReserverZip()}} {{reservation.getReserverCity()}}</p>
 			<p>Puhelinnumero: {{reservation.getReserverPhone()}}</p>

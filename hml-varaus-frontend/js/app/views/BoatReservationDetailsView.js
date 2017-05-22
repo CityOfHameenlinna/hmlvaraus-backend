@@ -6,6 +6,7 @@ define( ['App', 'backbone', 'marionette', 'jquery', 'text!templates/boat_reserva
             },
 
             events: {
+                'click input.reservation-is-paid': 'changeIsPaid'
             },
 
             render: function() {
@@ -16,6 +17,31 @@ define( ['App', 'backbone', 'marionette', 'jquery', 'text!templates/boat_reserva
                 var tmpl = _.template(template);
                 this.$el.html(tmpl(variables));
 
+            },
+
+            changeIsPaid: function(e) {
+                e.stopPropagation();
+                var me = this;
+                var target = $(e.currentTarget);
+
+                if(!target.prop('checked')) {
+                    this.model.set('is_paid', true).saveIsPaid(false)
+                    .done(function() {
+                        target.removeProp('checked')
+                    })
+                    .fail(function() {
+                        me.showRequestErrors();
+                    });
+                }
+                else {
+                    this.model.set('is_paid', true).saveIsPaid(true)
+                    .done(function() {
+                        target.prop('checked', true);
+                    })
+                    .fail(function() {
+                        me.showRequestErrors();
+                    });
+                }
             },
         });
     });
