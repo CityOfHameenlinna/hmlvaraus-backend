@@ -6,7 +6,8 @@ define( ['App',
     'jquery',
     'views/BaseView',
     'text!templates/unit_new_view.tmpl',
-    'async!https://maps.googleapis.com/maps/api/js?key=AIzaSyAdf1cqzsZLVigUFbrgbqDLBfx_1pexr0I'],
+    'async!https://maps.googleapis.com/maps/api/js?key=AIzaSyAdf1cqzsZLVigUFbrgbqDLBfx_1pexr0I'
+    ],
     function(App, Backbone, Radio, bootbox, Marionette, $, BaseView, template) {
         return BaseView.extend({
             initialize: function() {
@@ -116,8 +117,8 @@ define( ['App',
                     dataType: 'json',
                     contentType: 'application/json'
                 })
-                .done(function() {
-                    me.mainRadioChannel.trigger('unit-changed');
+                .done(function(data) {
+                    me.mainRadioChannel.trigger('unit-changed', data.id);
                 })
                 .fail(function(result) {
                     me.showRequestErrors(result.responseJSON);

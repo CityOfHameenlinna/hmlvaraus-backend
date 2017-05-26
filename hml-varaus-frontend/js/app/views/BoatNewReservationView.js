@@ -29,7 +29,8 @@ define( ['App',
                 var variables = {
                     boat_reservation_collection: this.boatReservationCollection,
                     boat_resource_collection: this.boatResourceCollection,
-                    unit_collection: this.unitCollection
+                    unit_collection: this.unitCollection,
+                    resource_id: this.options.resourceId
                 }
 
                 var helpers = {
@@ -125,8 +126,8 @@ define( ['App',
                     dataType: 'json',
                     contentType: 'application/json'
                 })
-                .done(function() {
-                    me.mainRadioChannel.trigger('reservation-added');
+                .done(function(data) {
+                    me.mainRadioChannel.trigger('reservation-changed', data.id);
                 })
                 .fail(function(result) {
                     me.showRequestErrors(result.responseJSON);

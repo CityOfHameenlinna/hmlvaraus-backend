@@ -4,6 +4,9 @@
     	<label for="reservation-resource">Varauskohde</label>
 		<select name="resource" class="form-control" id="reservation-resource">
 			<% boat_resource_collection.each(function(resource) { %>
+				<%if(resource_id && resource_id == resource.getResourceId()) {%>
+					<option selected value="{{resource.getResourceId()}}">{{getUnitName(resource.getUnitId())}} ({{resource.getName()}})</option>
+				<%}%>
 				<option value="{{resource.getResourceId()}}">{{getUnitName(resource.getUnitId())}} ({{resource.getName()}})</option>
 			<%})%>
 		</select>

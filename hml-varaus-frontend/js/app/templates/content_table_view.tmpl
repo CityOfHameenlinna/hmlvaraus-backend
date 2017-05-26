@@ -1,3 +1,21 @@
+<div class="list-header-row">
+		<span class="list-header-text">
+			<%if(content_type == 'boatReservations') {%>
+				Varaukset
+			<%}else if(content_type == 'boatResources'){%>
+				Venepaikat
+			<%}else if(content_type == 'units'){%>
+				Kohteet
+			<%}%>
+		</span>
+		<%if(content_type == 'boatReservations') {%>
+			<a href="#boat-reservation-new" class="btn btn-default pull-right">Uusi varaus</a>
+		<%}else if(content_type == 'boatResources'){%>
+			<a href="#boat-resource-new" class="btn btn-default pull-right">Uusi venepaikka</a>
+		<%}else if(content_type == 'units'){%>
+			<a href="#unit-new" class="btn btn-default pull-right">Uusi kohde</a>
+		<%}%>
+</div>
 <div id="filter-container"></div>
 <div class="table-container">
 	<table class="table table-hover table-responsive">

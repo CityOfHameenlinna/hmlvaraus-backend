@@ -4,6 +4,7 @@
 			<h4><strong>Varaus:</strong></h4>
 			<p>Aikaväli: {{reservation.getTimeSpanFinnish()}}</p>
 			<p>Paikka: {{resource.getName()}}</p>
+			<p>Lisätiedot: {{reservation.getDescription()}}</p>
 			<%if(reservation.isCancelled()) {%>
 				<p>Tila: {{reservation.getStateFinnish()}} ({{reservation.getStateUpdated()}})</p>
 			<%}else{%>
@@ -18,6 +19,8 @@
 				<%}%>
 				<div class="slider round reservation-is-paid"></div>
 			</label>
+
+			<div>{{reservation.getIsPaidTimeFinnish()}}</div>
 
 			<h4><strong>Varaaja:</strong></h4>
 			<p>Nimi: {{reservation.getReserverName()}}</p>

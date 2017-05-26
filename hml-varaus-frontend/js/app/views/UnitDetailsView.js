@@ -3,7 +3,8 @@ define( ['App',
     'marionette',
     'jquery',
     'text!templates/unit_details_view.tmpl',
-    'async!https://maps.googleapis.com/maps/api/js?key=AIzaSyAdf1cqzsZLVigUFbrgbqDLBfx_1pexr0I'],
+    'async!https://maps.googleapis.com/maps/api/js?key=AIzaSyAdf1cqzsZLVigUFbrgbqDLBfx_1pexr0I'
+    ],
     function(App, Backbone, Marionette, $, template) {
         return Marionette.View.extend({
             initialize: function() {

@@ -21,6 +21,7 @@ from munigeo import api as munigeo_api
 from resources.models import Reservation, Resource, Unit, ResourceType
 from hmlvaraus.api.resource import ResourceSerializer
 from hmlvaraus.models.berth import Berth
+from hmlvaraus.models.hml_reservation import HMLReservation
 from resources.models.reservation import RESERVATION_EXTRA_FIELDS
 from resources.pagination import ReservationPagination
 from users.models import User
@@ -118,6 +119,50 @@ class BerthFilter(django_filters.FilterSet):
         model = Berth
         fields = ['max_width', 'min_width', 'max_length', 'min_length', 'max_depth', 'min_depth', 'unit_id', 'type']
 
+class BerthTimeFilterBackend(filters.BaseFilterBackend):
+    """
+    Filter reservations by time.
+    """
+
+    def filter_queryset(self, request, queryset, view):
+        params = request.query_params
+        times = {}
+        past = False
+        filter_type = '';
+        if 'date_filter_type' in params:
+            filter_type = params['date_filter_type'];
+
+        for name in ('berth_begin', 'berth_end'):
+            if name not in params:
+                continue
+            try:
+                times[name] = arrow.get(params[name]).to('utc').datetime
+            except ParserError:
+                raise exceptions.ParseError("'%s' must be a timestamp in ISO 8601 format" % name)
+
+        reservations = HMLReservation.objects.all();
+
+        excluded_resources = []
+        for reservation in reservations:
+            if filter_type == 'not_reserved':
+                if times.get('berth_begin', None) and times.get('berth_end', None):
+                     queryset.exclude(id__in = HMLReservation.objects.filter(reservation__end__gte=times['berth_begin'], reservation__begin__lte=times['berth_end']).values_list('reservation__resource_id', flat=True))
+                elif times.get('berth_begin', None):
+                    queryset.exclude(id__in = HMLReservation.objects.filter(reservation__end__gte=times['berth_begin']).values_list('reservation__resource_id', flat=True))
+                elif times.get('berth_end', None):
+                    queryset.exclude(id__in = HMLReservation.objects.filter(reservation__begin__lte=times['berth_end']).values_list('reservation__resource_id', flat=True))
+
+            elif filter_type == 'reserved':
+                if times.get('berth_begin', None):
+                    print('foo')
+                if times.get('berth_end', None):
+                    print('foo')
+
+        queryset = queryset.exclude(resource__id__in = excluded_resources)
+
+        return queryset
+        
+
 class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     queryset = Berth.objects.all().select_related('resource', 'resource__unit')
     serializer_class = BerthSerializer
@@ -125,7 +170,7 @@ class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
 
     filter_class = BerthFilter
     permission_classes = [permissions.IsAuthenticated]
-    filter_backends = (DjangoFilterBackend,filters.SearchFilter,RelatedOrderingFilter)
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter,RelatedOrderingFilter, BerthTimeFilterBackend)
     filter_fields = ['type']
     search_fields = ['type', 'resource__name', 'resource__name_fi', 'resource__unit__name', 'resource__unit__name_fi']
     ordering_fields = ('__all__')

@@ -140,18 +140,22 @@ body {
     clear: left;
 }
 
+.manage-view-container>div>div {
+	border: 1px solid rgba(0, 0, 0, .1);
+	cursor: pointer;
+}
+
 .manage-view-count {
 	text-align: center;
 	font-family: shareBold;
 	font-size: 32pt;
-	border: 1px solid rgba(0, 0, 0, .1);
 	color: #f77952;
 }
 
 .manage-view-header {
+	text-align: center;
 	font-family: shareBold;
 	font-size: 16pt;
-	border: 1px solid rgba(0, 0, 0, .1);
 	padding: 2px;
 	color: #1e3250;
 }
@@ -204,4 +208,16 @@ nav.navbar-default {
 
 .required-error {
 	box-shadow: 0 0 3px #ff0000;
+}
+
+.list-header-text {
+	font-size: 22pt;
+}
+
+.list-header-row {
+	margin-bottom: 10px;
+}
+
+#top-container {
+	min-height: 30px;
 }

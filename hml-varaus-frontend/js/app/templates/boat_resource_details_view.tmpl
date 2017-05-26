@@ -7,9 +7,31 @@
 			<p>Pituus: {{resource.getLength()}}</p>
 			<p>Syveys: {{resource.getDepth()}}</p>
 			<button id="resource-edit" class="btn btn-default">Muokkaa</button>
+			<button id="resource-new-reservation" class="btn btn-primary">Uusi varaus</button>
 		</div>
 		<div class="col-md-6">
-
-		</div>
+			<%if(reservation) {%>
+				<h3>Nykyinen/edellinen varaus:</h4>
+				<h4><strong>Varaus:</strong></h4>
+				<p>Aikaväli: {{reservation.getTimeSpanFinnish()}}</p>
+				<%if(reservation.isCancelled()) {%>
+					<p>Tila: {{reservation.getStateFinnish()}} ({{reservation.getStateUpdated()}})</p>
+				<%}else{%>
+					<p>Tila: {{reservation.getStateFinnish()}}</p>
+				<%}%>
+				<p>Maksettu: 
+					<%if(reservation.getIsPaid()) {%>
+						Kyllä
+					<%}else{%>
+						Ei
+					<%}%>
+				</p>
+				<h4><strong>Varaaja:</strong></h4>
+				<p>Nimi: {{reservation.getReserverName()}}</p>
+				<p>Osoite: {{reservation.getReserverAddress()}}, {{reservation.getReserverZip()}} {{reservation.getReserverCity()}}</p>
+				<p>Puhelinnumero: {{reservation.getReserverPhone()}}</p>
+				<p>Sähköpostiosoite: {{reservation.getReserverEmail()}}</p>
+			<%}%>
+		</div>	
 	</div>
 </div>

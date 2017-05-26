@@ -6,7 +6,8 @@ define( ['App',
     'jquery',
     'views/BaseView',
     'text!templates/unit_edit_view.tmpl',
-    'async!https://maps.googleapis.com/maps/api/js?key=AIzaSyAdf1cqzsZLVigUFbrgbqDLBfx_1pexr0I'],
+    'async!https://maps.googleapis.com/maps/api/js?key=AIzaSyAdf1cqzsZLVigUFbrgbqDLBfx_1pexr0I'
+    ],
     function(App, Backbone, Radio, bootbox, Marionette, $, BaseView, template) {
         return BaseView.extend({
             initialize: function() {

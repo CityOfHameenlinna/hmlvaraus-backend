@@ -80,8 +80,8 @@ define( ['App',
                 this.model.set('resource', resource);
 
                 this.model.save()
-                .done(function() {
-                    me.mainRadioChannel.trigger('resource-changed');
+                .done(function(data) {
+                    me.mainRadioChannel.trigger('resource-changed', data.id);
                 })
                 .fail(function(result) {
                     me.showRequestErrors(result.responseJSON);

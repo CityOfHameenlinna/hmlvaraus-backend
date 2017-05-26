@@ -62,6 +62,13 @@ define(["jquery", "backbone", "moment", "models/BaseModel"],
                 return this.getBeginTimeFinnish() + " - " + this.getEndTimeFinnish();
             },
 
+            getIsPaidTimeFinnish: function() {
+                if(!this.get('is_paid_at'))
+                    return '';
+                var time = moment(this.get('is_paid_at'));
+                return time.format("D.M.YYYY HH:mm");
+            },
+
             getReserver: function(userCollection) {
                 if(!this.get('reservation').user || !this.get('reservation').user.id)
                     return "Ei tietoja";
@@ -140,6 +147,10 @@ define(["jquery", "backbone", "moment", "models/BaseModel"],
                     dataType: 'json',
                     contentType: 'application/json'
                 });
+            },
+
+            getDescription: function() {
+                return this.get('reservation').event_description;
             }
         });
         return Model;

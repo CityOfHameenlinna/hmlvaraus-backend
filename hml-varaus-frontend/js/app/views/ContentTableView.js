@@ -135,7 +135,9 @@ define( [
             
             render: function() {
                 var me = this;
-                var variables = {}
+                var variables = {
+                    content_type: this.contentType
+                }
 
                 var tmpl = _.template(template);
                 me.$el.html(tmpl(variables));
