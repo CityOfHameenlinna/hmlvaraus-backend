@@ -3,124 +3,133 @@
 <%}else{%>
 <div id="filters" class="collapse">
 <%}%>
-	<div class="form-inline form row filter-row">
-		<div class="col-md-3">
-			<label for="filter-search">Haku</label>
-			<input name="search" type="text" class="form-control filter-input" id="filter-search" placeholder="Etsi" value="{{filters.search}}">
-		</div>
-		<div class="col-md-4">
-			<div class="form-group pull-right"
-				<label for="filter-resource-max-width">Leveys</label>
-				<input name="min_width" min="0" type="number" step=".1" class="form-control filter-input float-filter" id="filter-resource-min-width" value="{{cmToMeters(filters.min_width)}}"> - 
-				<input name="max_width" min="0" type="number" step=".1" class="form-control filter-input float-filter" id="filter-resource-max-width" value="{{cmToMeters(filters.max_width)}}">
-			</div>
-		</div>
-		<div class="col-md-4">
-			<div class="form-group pull-right">
-				<label for="filter-resource-unit">Kohde</label>
-				<select name="unit_id" class="form-control filter-input" id="filter-resource-unit">
-					<option value="">Kaikki kohteet</option>
-					<% unit_collection.each(function(unit) {%>
-						<%if(filters.unit_id == unit.getId()) {%>
-							<option value="{{unit.getId()}}" selected>{{unit.getName()}}</option>
-						<%} else {%>
-							<option value="{{unit.getId()}}">{{unit.getName()}}</option>
-						<%}%>
-					<%})%>
-				</select>
-			</div>
-		</div>
-	</div>
+    <div class="form-inline form row filter-row">
+        <div class="col-md-3">
+            <label for="filter-search">Haku</label>
+            <input name="search" type="text" class="form-control filter-input" id="filter-search" placeholder="Etsi" value="{{filters.search}}">
+            <div class="checkbox">
+                <label>
+                    <%if(filters.hide_disabled) {%>
+                        <input checked name="hide_disabled" type="checkbox" class="filter-input checkbox"> Piilota käytöstä poistetut venepaikat
+                    <%}else{%>
+                        <input name="hide_disabled" type="checkbox" class="filter-input checkbox"> Piilota käytöstä poistetut venepaikat
+                    <%}%>
+                </label>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group pull-right"
+                <label for="filter-resource-max-width">Leveys</label>
+                <input name="min_width" min="0" type="number" step=".1" class="form-control filter-input float-filter" id="filter-resource-min-width" value="{{cmToMeters(filters.min_width)}}"> - 
+                <input name="max_width" min="0" type="number" step=".1" class="form-control filter-input float-filter" id="filter-resource-max-width" value="{{cmToMeters(filters.max_width)}}">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group pull-right">
+                <label for="filter-resource-unit">Kohde</label>
+                <select name="unit_id" class="form-control filter-input" id="filter-resource-unit">
+                    <option value="">Kaikki kohteet</option>
+                    <% unit_collection.each(function(unit) {%>
+                        <%if(filters.unit_id == unit.getId()) {%>
+                            <option value="{{unit.getId()}}" selected>{{unit.getName()}}</option>
+                        <%} else {%>
+                            <option value="{{unit.getId()}}">{{unit.getName()}}</option>
+                        <%}%>
+                    <%})%>
+                </select>
+            </div>
+        </div>
+    </div>
 
-	<div class="form-inline form row filter-row">
-		<div class="col-md-3">
-		</div>
-		<div class="col-md-4">
-			<div class="form-group pull-right">
-				<label for="filter-resource-max-length">Pituus</label>
-				<input name="min_length" min="0" type="number" step=".1" class="form-control filter-input float-filter" id="filter-resource-min-length" value="{{cmToMeters(filters.min_length)}}"> - 
-				<input name="max_length" min="0" type="number" step=".1" class="form-control filter-input float-filter" id="filter-resource-max-length" value="{{cmToMeters(filters.max_length)}}">
-			</div>
-		</div>
-		<div class="col-md-4">
-			<div class="form-group pull-right">
-				<label for="filter-resource-unit">Tyyppi</label>
-				<select name="type" class="form-control filter-input" id="filter-resource-unit">
-					<option value="">Kaikki tyypit</option>
-					<%if(filters.type == 'dock') {%>
-						<option selected value="dock">Vain laituripaikat</option>
-					<%}else{%>
-						<option value="dock">Vain laituripaikat</option>
-					<%}%>
+    <div class="form-inline form row filter-row">
+        <div class="col-md-3">
+        </div>
+        <div class="col-md-4">
+            <div class="form-group pull-right">
+                <label for="filter-resource-max-length">Pituus</label>
+                <input name="min_length" min="0" type="number" step=".1" class="form-control filter-input float-filter" id="filter-resource-min-length" value="{{cmToMeters(filters.min_length)}}"> - 
+                <input name="max_length" min="0" type="number" step=".1" class="form-control filter-input float-filter" id="filter-resource-max-length" value="{{cmToMeters(filters.max_length)}}">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group pull-right">
+                <label for="filter-resource-unit">Tyyppi</label>
+                <select name="type" class="form-control filter-input" id="filter-resource-unit">
+                    <option value="">Kaikki tyypit</option>
+                    <%if(filters.type == 'dock') {%>
+                        <option selected value="dock">Vain laituripaikat</option>
+                    <%}else{%>
+                        <option value="dock">Vain laituripaikat</option>
+                    <%}%>
 
-					<%if(filters.type == 'ground') {%>
-						<option selected value="ground">Vain polettipaikat</option>
-					<%}else{%>
-						<option value="ground">Vain polettipaikat</option>
-					<%}%>
+                    <%if(filters.type == 'ground') {%>
+                        <option selected value="ground">Vain polettipaikat</option>
+                    <%}else{%>
+                        <option value="ground">Vain polettipaikat</option>
+                    <%}%>
 
-					<%if(filters.type == 'number') {%>
-						<option selected value="number">Vain numeropaikat</option>
-					<%}else{%>
-						<option value="number">Vain numeropaikat</option>
-					<%}%>
-				</select>
-			</div>
-		</div>
-	</div>
+                    <%if(filters.type == 'number') {%>
+                        <option selected value="number">Vain numeropaikat</option>
+                    <%}else{%>
+                        <option value="number">Vain numeropaikat</option>
+                    <%}%>
+                </select>
+            </div>
+        </div>
+    </div>
 
-	<div class="form-inline form row filter-row">
-		<div class="col-md-3">
-		</div>
-		<div class="col-md-4">
-			<div class="form-group pull-right">
-				<label for="filter-resource-max-depth">Syväys</label>
-				<input name="min_depth" min="0" type="number" step=".1" class="form-control filter-input float-filter" id="filter-resource-min-depth" value="{{cmToMeters(filters.min_depth)}}"> - 
-				<input name="max_depth" min="0" type="number" step=".1" class="form-control filter-input float-filter" id="filter-resource-max-depth" value="{{cmToMeters(filters.max_depth)}}">
-			</div>
+    <div class="form-inline form row filter-row">
+        <div class="col-md-3">
+        </div>
+        <div class="col-md-4">
+            <div class="form-group pull-right">
+                <label for="filter-resource-max-depth">Syväys</label>
+                <input name="min_depth" min="0" type="number" step=".1" class="form-control filter-input float-filter" id="filter-resource-min-depth" value="{{cmToMeters(filters.min_depth)}}"> - 
+                <input name="max_depth" min="0" type="number" step=".1" class="form-control filter-input float-filter" id="filter-resource-max-depth" value="{{cmToMeters(filters.max_depth)}}">
+            </div>
 
-			<div class="form-group pull-right">
-				<label for="filter-date-type">Päivämääräsuodatuksen tyyppi</label>
-				<select id="filter-date-type" name="date_filter_type" class="form-control filter-input">
-					<%if(filters.date_filter_type == 'not_reserved') {%>
-						<option selected value="not_reserved">Vapaa aikavälillä</option>
-					<%} else {%>
-						<option value="not_reserved">Vapaa aikavälillä</option>
-					<%}%>
-					<%if(filters.date_filter_type == 'reserved') {%>
-						<option selected value="reserved">Varattu aikavälillä</option>
-					<%} else {%>
-						<option value="reserved">Varattu aikavälillä</option>
-					<%}%>
-				</select>
-				<label for="resource-begin">Alkaen</label>
-			    <div class='input-group date' id='resource-begin-datepicker'>
-			        <input name="berth_begin" id="resource-begin" type='text' class="form-control" value="{{isoToFinnishDate(filters.berth_begin)}}"/>
-			        <span class="input-group-addon">
-			            <span class="glyphicon glyphicon-calendar"></span>
-			        </span>
-			    </div>
-				<label for="resource-end">Päättyen</label>
-			    <div class='input-group date' id='resource-end-datepicker'>
-			        <input name="berth_end" id="resource-end" type='text' class="form-control" value="{{isoToFinnishDate(filters.berth_end)}}"/>
-			        <span class="input-group-addon">
-			            <span class="glyphicon glyphicon-calendar"></span>
-			        </span>
-			    </div>
-			</div>
-		</div>
-		<div class="col-md-3">
-		</div>
-		<div class="col-md-2">
-			<button class="btn btn-link" id="filter-clear">Tyhjennä suodattimet</button>
-		</div>
-	</div>
+            <div class="form-group pull-right">
+                <label for="filter-date-type">Päivämääräsuodatuksen tyyppi</label>
+                <select id="filter-date-type" name="date_filter_type" class="form-control filter-input">
+                    <%if(filters.date_filter_type == 'not_reserved') {%>
+                        <option selected value="not_reserved">Vapaa aikavälillä</option>
+                    <%} else {%>
+                        <option value="not_reserved">Vapaa aikavälillä</option>
+                    <%}%>
+                    <%if(filters.date_filter_type == 'reserved') {%>
+                        <option selected value="reserved">Varattu aikavälillä</option>
+                    <%} else {%>
+                        <option value="reserved">Varattu aikavälillä</option>
+                    <%}%>
+                </select>
+                <label for="resource-begin">Alkaen</label>
+                <div class='input-group date' id='resource-begin-datepicker'>
+                    <input name="berth_begin" id="resource-begin" type='text' class="form-control" value="{{isoToFinnishDate(filters.berth_begin)}}"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+                <label for="resource-end">Päättyen</label>
+                <div class='input-group date' id='resource-end-datepicker'>
+                    <input name="berth_end" id="resource-end" type='text' class="form-control" value="{{isoToFinnishDate(filters.berth_end)}}"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-link" id="filter-clear">Tyhjennä suodattimet</button>
+        </div>
+    </div>
 </div>
 
 <a class="btn btn-primary" role="button" id="show-filters" data-toggle="collapse" href="#filters" aria-expanded="false" aria-controls="filters">
 <%if(filters.show) {%>
-  	Piilota suodattimet
+    Piilota suodattimet
 <%}else{%>
-  	Näytä suodattimet
+    Näytä suodattimet
 <%}%>
 </a>

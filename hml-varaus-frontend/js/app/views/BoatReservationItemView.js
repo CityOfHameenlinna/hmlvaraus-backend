@@ -1,7 +1,7 @@
 define( ['App', 'backbone', 'marionette', 'jquery', 'bootbox', 'views/BaseView', 'text!templates/boat_reservation_item_view.tmpl'],
     function(App, Backbone, Marionette, $, bootbox, BaseView, template) {
         return BaseView.extend({
-            className: "boat-reservation-row",
+            className: 'boat-reservation-row',
             tagName: 'tr',
 
         	initialize: function() {

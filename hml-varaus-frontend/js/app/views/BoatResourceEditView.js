@@ -71,6 +71,7 @@ define( ['App',
                 this.model.set('width_cm', data.width_cm);
                 this.model.set('length_cm', data.length_cm);
                 this.model.set('type', data.type);
+                this.model.set('is_disabled', data.is_disabled);
 
                 var resource = this.model.get('resource');
 
@@ -139,7 +140,6 @@ define( ['App',
                 data.resource = {
                     name: data.name,
                     name_fi: data.name,
-                    type_id: 'avggovhcw76q',
                     slug: data.name,
                     unit_id: data.unit,
                     authentication: 'none'
@@ -149,6 +149,7 @@ define( ['App',
                 data.length_cm = Number(data.length_cm) * 100;
                 data.width_cm = Number(data.width_cm) * 100;
                 data.depth_cm = Number(data.depth_cm) * 100;
+                data.is_disabled = data.is_disabled ? true : false;
 
                 return data;
             }     

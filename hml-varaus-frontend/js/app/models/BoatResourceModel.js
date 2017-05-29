@@ -94,6 +94,10 @@ define(["jquery", "backbone", 'moment', "models/BaseModel"],
                 }
 
                 return type;
+            },
+
+            isDisabled: function() {
+                return this.get('is_disabled');
             }
 
         });

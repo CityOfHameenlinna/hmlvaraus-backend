@@ -6,6 +6,11 @@
 			<p>Leveys: {{resource.getWidth()}}</p>
 			<p>Pituus: {{resource.getLength()}}</p>
 			<p>Syveys: {{resource.getDepth()}}</p>
+			<%if(resource.isDisabled()) {%>
+				<p>Käytössä: Ei</p>
+			<%}else{%>
+				<p>Käytössä: Kyllä</p>
+			<%}%>
 			<button id="resource-edit" class="btn btn-default">Muokkaa</button>
 			<button id="resource-new-reservation" class="btn btn-primary">Uusi varaus</button>
 		</div>

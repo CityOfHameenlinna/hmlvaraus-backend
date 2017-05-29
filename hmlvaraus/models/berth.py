@@ -26,23 +26,19 @@ from resources.errors import InvalidImage
 from resources.models import Reservation, Resource, Unit, ResourceType
 
 class Berth(models.Model):
-	DOCK = 'dock'
-	GROUND = 'ground'
-	NUMBER = 'number'
+    DOCK = 'dock'
+    GROUND = 'ground'
+    NUMBER = 'number'
 
-	TYPE_CHOICES = (
-		(DOCK, _('dock')),
-		(GROUND, _('ground')),
-		(NUMBER, _('number')),
-	)
+    TYPE_CHOICES = (
+        (DOCK, _('dock')),
+        (GROUND, _('ground')),
+        (NUMBER, _('number')),
+    )
 
-	resource = models.OneToOneField(Resource, verbose_name=_('Resource'), db_index=True, on_delete=models.CASCADE)
-	width_cm = models.PositiveSmallIntegerField(verbose_name=_('Berth width'),
-																	null=True, blank=True)
-	depth_cm = models.PositiveSmallIntegerField(verbose_name=_('Berth depth'),
-																	null=True, blank=True)
-	length_cm = models.PositiveSmallIntegerField(verbose_name=_('Berth length'),
-																	null=True, blank=True)
-
-	type = models.CharField(choices=TYPE_CHOICES, verbose_name=_('Berth type'), default=DOCK, max_length=20)
-
+    resource = models.OneToOneField(Resource, verbose_name=_('Resource'), db_index=True, on_delete=models.CASCADE)
+    width_cm = models.PositiveSmallIntegerField(verbose_name=_('Berth width'), null=True, blank=True)
+    depth_cm = models.PositiveSmallIntegerField(verbose_name=_('Berth depth'), null=True, blank=True)
+    length_cm = models.PositiveSmallIntegerField(verbose_name=_('Berth length'), null=True, blank=True)
+    type = models.CharField(choices=TYPE_CHOICES, verbose_name=_('Berth type'), default=DOCK, max_length=20)
+    is_disabled = models.BooleanField(default=False)

@@ -41,7 +41,7 @@ class BerthSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer)
 
     class Meta:
         model = Berth
-        fields = ['id', 'width_cm', 'length_cm', 'depth_cm', 'resource', 'type']
+        fields = ['id', 'width_cm', 'length_cm', 'depth_cm', 'resource', 'type', 'is_disabled']
 
     def create(self, validated_data):
         resource_data = validated_data.pop('resource')
@@ -57,6 +57,7 @@ class BerthSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer)
         instance.width_cm = validated_data.get('width_cm', instance.width_cm)
         instance.depth_cm = validated_data.get('depth_cm', instance.depth_cm)
         instance.length_cm = validated_data.get('length_cm', instance.length_cm)
+        instance.is_disabled = validated_data.get('is_disabled', instance.is_disabled)
         instance.type = validated_data.get('type', instance.type)
         instance.save()
 
@@ -119,7 +120,7 @@ class BerthFilter(django_filters.FilterSet):
         model = Berth
         fields = ['max_width', 'min_width', 'max_length', 'min_length', 'max_depth', 'min_depth', 'unit_id', 'type']
 
-class BerthTimeFilterBackend(filters.BaseFilterBackend):
+class BerthFilterBackend(filters.BaseFilterBackend):
     """
     Filter reservations by time.
     """
@@ -127,10 +128,12 @@ class BerthTimeFilterBackend(filters.BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         params = request.query_params
         times = {}
-        past = False
         filter_type = '';
         if 'date_filter_type' in params:
             filter_type = params['date_filter_type'];
+
+        if 'hide_disabled' in params:
+            queryset = queryset.exclude(is_disabled=True)
 
         for name in ('berth_begin', 'berth_end'):
             if name not in params:
@@ -155,7 +158,6 @@ class BerthTimeFilterBackend(filters.BaseFilterBackend):
             queryset = queryset.filter(resource__id__in = resources)
 
         return queryset
-        
 
 class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     queryset = Berth.objects.all().select_related('resource', 'resource__unit')
@@ -164,16 +166,10 @@ class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
 
     filter_class = BerthFilter
     permission_classes = [permissions.IsAuthenticated]
-    filter_backends = (DjangoFilterBackend,filters.SearchFilter,RelatedOrderingFilter, BerthTimeFilterBackend)
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter,RelatedOrderingFilter, BerthFilterBackend)
     filter_fields = ['type']
     search_fields = ['type', 'resource__name', 'resource__name_fi', 'resource__unit__name', 'resource__unit__name_fi']
     ordering_fields = ('__all__')
-
-    #def perform_create(self, serializer):
-    #    serializer.save()
-
-    #def perform_update(self, serializer):
-    #    serializer.save()
 
     def destroy(self, request, *args, **kwargs):
         try:

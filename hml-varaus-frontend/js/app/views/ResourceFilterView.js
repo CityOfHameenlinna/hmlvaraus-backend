@@ -64,6 +64,13 @@ define( [
 
                     value = moment(value, 'D.M.YYYY HH:mm').toISOString();
                 }
+                else if($(e.currentTarget).hasClass('checkbox')) {
+                    var target = $(e.currentTarget);
+
+                    var filterName = target.attr('name');
+
+                    var value = target.prop('checked') ? target.prop('checked') : '';
+                }
                 else {
                     var target = $(e.currentTarget);
 
