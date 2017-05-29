@@ -140,25 +140,19 @@ class BerthTimeFilterBackend(filters.BaseFilterBackend):
             except ParserError:
                 raise exceptions.ParseError("'%s' must be a timestamp in ISO 8601 format" % name)
 
-        reservations = HMLReservation.objects.all();
+        resources = []
 
-        excluded_resources = []
-        for reservation in reservations:
-            if filter_type == 'not_reserved':
-                if times.get('berth_begin', None) and times.get('berth_end', None):
-                     queryset.exclude(id__in = HMLReservation.objects.filter(reservation__end__gte=times['berth_begin'], reservation__begin__lte=times['berth_end']).values_list('reservation__resource_id', flat=True))
-                elif times.get('berth_begin', None):
-                    queryset.exclude(id__in = HMLReservation.objects.filter(reservation__end__gte=times['berth_begin']).values_list('reservation__resource_id', flat=True))
-                elif times.get('berth_end', None):
-                    queryset.exclude(id__in = HMLReservation.objects.filter(reservation__begin__lte=times['berth_end']).values_list('reservation__resource_id', flat=True))
+        if times.get('berth_begin', None) and times.get('berth_end', None):
+            resources = HMLReservation.objects.filter(reservation__end__gte=times['berth_begin'], reservation__begin__lte=times['berth_end']).values_list('reservation__resource_id', flat=True)
+        elif times.get('berth_begin', None):
+            resources = HMLReservation.objects.filter(reservation__end__gte=times['berth_begin']).values_list('reservation__resource_id', flat=True)
+        elif times.get('berth_end', None):
+            resources = HMLReservation.objects.filter(reservation__begin__lte=times['berth_end']).values_list('reservation__resource_id', flat=True)
 
-            elif filter_type == 'reserved':
-                if times.get('berth_begin', None):
-                    print('foo')
-                if times.get('berth_end', None):
-                    print('foo')
-
-        queryset = queryset.exclude(resource__id__in = excluded_resources)
+        if not filter_type or filter_type == 'not_reserved':
+            queryset = queryset.exclude(resource__id__in = resources)
+        elif filter_type == 'reserved':
+            queryset = queryset.filter(resource__id__in = resources)
 
         return queryset
         

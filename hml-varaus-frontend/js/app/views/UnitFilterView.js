@@ -35,6 +35,7 @@ define( [
                 this.filters = {};
                 localStorage.setItem('unit_filters', JSON.stringify(this.filters));
                 this.mainRadioChannel.trigger('unit-filter-changed');
+                $('.ordering-icon').removeClass('glyphicon-triangle-bottom glyphicon-triangle-top');
             },
 
             showFilters: function(e) {

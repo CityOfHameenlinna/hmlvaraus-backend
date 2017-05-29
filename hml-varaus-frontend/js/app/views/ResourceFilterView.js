@@ -1,12 +1,13 @@
 define( [
-    'App', 
+    'App',
     'backbone',
     'backbone-radio',
-    'marionette', 
-    'jquery', 
+    'marionette',
+    'jquery',
+    'moment',
     'text!templates/resource_filter_view.tmpl'
     ],
-    function(App, Backbone, Radio, Marionette, $, template) {
+    function(App, Backbone, Radio, Marionette, $, moment, template) {
         return Marionette.View.extend({
             tagName: 'div',
             className: 'filter-container',
@@ -50,20 +51,32 @@ define( [
                 this.filters = {};
                 localStorage.setItem('boat_resource_filters', JSON.stringify(this.filters));
                 this.mainRadioChannel.trigger('resource-filter-changed');
+                $('.ordering-icon').removeClass('glyphicon-triangle-bottom glyphicon-triangle-top');
             },
 
             filterInputChanged: function(e) {
-                var target = $(e.currentTarget);
+                if($(e.currentTarget).hasClass('date')) {
+                    var target = $(e.currentTarget).find('input');
 
-                var filterName = target.attr('name');
+                    var filterName = target.attr('name');
 
-                var value = target.val();
+                    var value = target.val();
+
+                    value = moment(value, 'D.M.YYYY HH:mm').toISOString();
+                }
+                else {
+                    var target = $(e.currentTarget);
+
+                    var filterName = target.attr('name');
+
+                    var value = target.val();
+                }
 
                 if(target.hasClass('float-filter')) {
                      value = Math.round(Number(target.val()) * 100);
                 }
 
-                if(value === '' || value === 0)
+                if(value === '' || value === 0  || !value)
                     delete this.filters[filterName];
                 else
                     this.filters[filterName] = value;
@@ -74,6 +87,7 @@ define( [
             },
 
             render: function() {
+                var me = this;
                 var variables = {
                     filters: this.filters,
                     unit_collection: this.unitCollection
@@ -86,7 +100,13 @@ define( [
                         var meters = Number(cm) / 100;
                         meters = meters.toFixed(2);
                         return meters;
-                    }
+                    },
+                    isoToFinnishDate: function(isoDate) {
+                        if(isoDate)
+                            return moment(isoDate).format('D.M.YYYY HH:mm');
+                        else
+                            return '';
+                    }                    
                 }
 
                 _.extend(variables, helpers);
@@ -94,6 +114,19 @@ define( [
                 var tmpl = _.template(template);
 
                 this.$el.html(tmpl(variables));
+
+                this.$('#resource-begin-datepicker').datetimepicker({
+                    locale: 'fi'
+                }).on('dp.change', function(e) {
+                    me.filterInputChanged(e);
+                });
+
+                this.$('#resource-end-datepicker').datetimepicker({
+                    locale: 'fi'
+                }).on('dp.change', function(e) {
+                    me.filterInputChanged(e);
+
+                });
             }
         }
     );

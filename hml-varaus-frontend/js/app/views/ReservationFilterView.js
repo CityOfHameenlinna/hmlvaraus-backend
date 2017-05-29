@@ -38,6 +38,7 @@ define( [
                 this.filters = {};
                 localStorage.setItem('boat_reservation_filters', JSON.stringify(this.filters));
                 this.mainRadioChannel.trigger('reservation-filter-changed');
+                $('.ordering-icon').removeClass('glyphicon-triangle-bottom glyphicon-triangle-top');
             },
 
             showFilters: function(e) {
