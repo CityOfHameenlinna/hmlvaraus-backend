@@ -24,6 +24,14 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
             },
 
             showBoatResourcesFree: function(e) {
+                var filters = {
+                    show: true,
+                    berth_begin: moment().toISOString(),
+                    berth_end: moment().toISOString(),
+                    date_filter_type: 'not_reserved'
+                };
+                localStorage.setItem('boat_resource_filters', JSON.stringify(filters));
+                this.mainRadioChannel.trigger('show-resources');
             },
 
             showBoatReservationCurrentFuture: function(e) {

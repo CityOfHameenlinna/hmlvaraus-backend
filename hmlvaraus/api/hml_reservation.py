@@ -98,6 +98,10 @@ class HMLReservationFilterBackend(filters.BaseFilterBackend):
         times = {}
         past = False
         filter_type = 'all';
+
+        if not 'show_cancelled' in params:
+            queryset = queryset.exclude(reservation__state='cancelled')
+
         if 'date_filter_type' in params:
             filter_type = params['date_filter_type'];
 

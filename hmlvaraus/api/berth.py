@@ -143,11 +143,11 @@ class BerthTimeFilterBackend(filters.BaseFilterBackend):
         resources = []
 
         if times.get('berth_begin', None) and times.get('berth_end', None):
-            resources = HMLReservation.objects.filter(reservation__end__gte=times['berth_begin'], reservation__begin__lte=times['berth_end']).values_list('reservation__resource_id', flat=True)
+            resources = HMLReservation.objects.filter(reservation__end__gte=times['berth_begin'], reservation__begin__lte=times['berth_end'], reservation__state='confirmed').values_list('reservation__resource_id', flat=True)
         elif times.get('berth_begin', None):
-            resources = HMLReservation.objects.filter(reservation__end__gte=times['berth_begin']).values_list('reservation__resource_id', flat=True)
+            resources = HMLReservation.objects.filter(reservation__end__gte=times['berth_begin'], reservation__state='confirmed').values_list('reservation__resource_id', flat=True)
         elif times.get('berth_end', None):
-            resources = HMLReservation.objects.filter(reservation__begin__lte=times['berth_end']).values_list('reservation__resource_id', flat=True)
+            resources = HMLReservation.objects.filter(reservation__begin__lte=times['berth_end'], reservation__state='confirmed').values_list('reservation__resource_id', flat=True)
 
         if not filter_type or filter_type == 'not_reserved':
             queryset = queryset.exclude(resource__id__in = resources)
@@ -169,11 +169,11 @@ class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     search_fields = ['type', 'resource__name', 'resource__name_fi', 'resource__unit__name', 'resource__unit__name_fi']
     ordering_fields = ('__all__')
 
-    def perform_create(self, serializer):
-        serializer.save()
+    #def perform_create(self, serializer):
+    #    serializer.save()
 
-    def perform_update(self, serializer):
-        serializer.save()
+    #def perform_update(self, serializer):
+    #    serializer.save()
 
     def destroy(self, request, *args, **kwargs):
         try:

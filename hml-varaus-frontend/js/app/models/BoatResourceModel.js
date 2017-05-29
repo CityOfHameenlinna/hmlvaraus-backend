@@ -39,7 +39,7 @@ define(["jquery", "backbone", 'moment', "models/BaseModel"],
                 var me = this;
                 var isReserved = false;
                 collection.each(function(reservation) {
-                    if(me.getResourceId() == reservation.getResourceId() && moment().isBetween(moment(reservation.getBeginTime()), moment(reservation.getEndTime())))
+                    if(reservation.getState() != 'cancelled' && me.getResourceId() == reservation.getResourceId() && moment().isBetween(moment(reservation.getBeginTime()), moment(reservation.getEndTime())))
                         isReserved = true;
                 });
 

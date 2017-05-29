@@ -7,6 +7,16 @@
 		<div class="col-md-3">
 			<label for="filter-search">Haku</label>
 			<input name="search" type="text" class="form-control filter-input" id="filter-search" placeholder="Etsi" value="{{filters.search}}">
+
+			<div class="checkbox">
+				<label>
+					<%if(filters.show_cancelled) {%>
+						<input checked name="show_cancelled" type="checkbox" class="filter-input checkbox"> Näytä myös peruutetut varautukset
+					<%}else{%>
+						<input name="show_cancelled" type="checkbox" class="filter-input checkbox"> Näytä myös peruutetut varautukset
+					<%}%>
+				</label>
+			</div>
 		</div>
 		<div class="col-md-4">
 			<div class="form-group pull-right">
@@ -45,7 +55,7 @@
 			</div>
 		</div>
 		<div class="col-md-4">
-			<div class="form-group pull-right">
+			<div class="form-group">
 				<label for="filter-resource-unit">Kohde</label>
 				<select name="unit_id" class="form-control filter-input" id="filter-resource-unit">
 					<option value="">Kaikki kohteet</option>
@@ -58,7 +68,7 @@
 					<%})%>
 				</select>
 			</div>
-			<div class="form-group pull-right">
+			<div class="form-group">
 				<label for="filter-reservation-ispaid">Maksettu</label>
 				<select name="is_paid" class="form-control filter-input" id="filter-reservation-ispaid">
 					<%if(!filters.is_paid) {%>

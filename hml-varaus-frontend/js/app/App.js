@@ -90,7 +90,7 @@ define([
                 this.mainRadioChannel.on('show-reservations', function() {
                     me.router.navigate('boat-reservations', {trigger: true});
                     $('.main-nav-item.active').removeClass('active');
-                    $('#nav-reservations').closest('.main-nav-item').addClass('active'); 
+                    $('#nav-reservations').addClass('active'); 
                 });
 
                 this.mainRadioChannel.on('show-resources', function() {
@@ -106,7 +106,7 @@ define([
                     } 
                     me.router.navigate(url, {trigger: true});
                     $('.main-nav-item.active').removeClass('active');
-                    $('#nav-reservations').closest('.main-nav-item').addClass('active'); 
+                    $('#nav-reservations').addClass('active'); 
                 });
 
                 this.layoutView = new LayoutView()
