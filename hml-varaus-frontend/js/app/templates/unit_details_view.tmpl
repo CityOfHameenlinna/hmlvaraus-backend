@@ -1,17 +1,34 @@
 <div class="container-fluid">
-	<div class="row">
-		<div class="col-md-6">
-			<h3>{{unit.getName()}}</h4>
-			<p>Osoite: {{unit.getStreetAddress()}}</p>
-			<p>Postinumero: {{unit.getZip()}}</p>
-			<p>Sähköpostiosoite: {{unit.getEmail()}}</p>
-			<p>Puhelinnumero: {{unit.getPhone()}}</p>
-			<p>Kuvaus: {{unit.getDescription()}}</p>
-			<button id="unit-edit" class="btn btn-default edit-button">Muokkaa</button>
-		</div>
-		<div class="col-md-6">
-			<div id="google-map">
-			</div>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-md-6">
+            <h3><strong>Kohde</strong></h3>
+            <dl class="dl-horizontal align-left">
+                <dt>Nimi</dt>
+                <dd>{{unit.getName()}}</dd>
+
+                <dt>Osoite</dt>
+                <dd>{{unit.getStreetAddress()}}</dd>
+
+                <dt>Postinumero</dt>
+                <dd>{{unit.getZip()}}</dd>
+
+                <dt>Sähköpostiosoite</dt>
+                <dd>{{unit.getEmail()}}</dd>
+
+                <dt>Puhelinnumero</dt>
+                <dd>{{unit.getPhone()}}</dd>
+
+                <dt>Kuvaus</dt>
+                <dd>{{unit.getDescription()}}</dd>
+            </dl>
+        </div>
+        <div class="col-md-6">
+			<div id="google-map"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <button id="unit-edit" class="btn btn-default edit-button">Muokkaa</button>
+        </div>
+    </div>
 </div>

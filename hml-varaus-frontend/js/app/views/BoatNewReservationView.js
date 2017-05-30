@@ -26,9 +26,14 @@ define( ['App',
             render: function() {
                 var me = this;
 
+                var filteredCollection = this.boatResourceCollection.filter(function(resource) {
+                    if(!resource.isDisabled())
+                        return true;
+                });
+
                 var variables = {
                     boat_reservation_collection: this.boatReservationCollection,
-                    boat_resource_collection: this.boatResourceCollection,
+                    boat_resource_collection: filteredCollection,
                     unit_collection: this.unitCollection,
                     resource_id: this.options.resourceId
                 }

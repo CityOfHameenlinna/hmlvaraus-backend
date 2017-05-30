@@ -162,7 +162,7 @@ body {
 
 #logo-container {
 	width: 100%;
-	height: 100px;
+	height: 79px;
 }
 
 .navbar-default .navbar-nav > li.main-nav-item > a {
@@ -178,7 +178,7 @@ body {
 }
 
 nav.navbar-default {
-	border-bottom: solid 3px #1e3250;
+	border-bottom: solid 5px #1e3250;
 }
 
 .submit-button,.edit-button {
@@ -220,4 +220,76 @@ nav.navbar-default {
 
 #top-container {
 	min-height: 30px;
+}
+
+.float-filter {
+	max-width: 100px;
+	display: inline-block;
+}
+
+.dimension-label {
+	width: 60px;
+}
+
+.boat-reservation-row,.boat-resource-row,.unit-row {
+	cursor: pointer;
+}
+
+.main-nav-item:hover {
+	border-bottom: 5px solid #ee724b;
+    margin-bottom: -5px;
+}
+
+.manage-view-container > div {
+	margin-bottom: 10px;
+}
+
+.manage-view-header {
+	border-bottom: 1px solid rgba(0, 0, 0, .1);
+	padding: 10px;
+	text-transform: uppercase;
+}
+
+.new-object-button {
+	font-family: Share,sans-serif;
+    font-size: 16px;
+    display: inline-block;
+    height: 35px;
+    line-height: 35px;
+    padding: 0 1em;
+    text-transform: uppercase;
+    background: #ee724b;
+    color: #fff;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+#filter-clear {
+	padding-right: 0px;
+}
+
+.list-header-text {
+	font-weight: bold;
+}
+
+dl.dl-horizontal > dt {
+	font-weight: normal;
+	text-align: left;
+}
+
+dl.dl-horizontal > dd {
+	padding-bottom: 10px;
+}
+
+.no-padding-right {
+	padding-right: 0px;
+}
+
+.no-padding-left {
+	padding-left: 0px;
+}
+
+.no-margin-row {
+	margin-left: 0px;
+	margin-right: 0px;
 }

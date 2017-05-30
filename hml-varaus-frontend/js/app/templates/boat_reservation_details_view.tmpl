@@ -1,39 +1,56 @@
 <div class="container-fluid">
-	<div class="row">
-		<div class="col-md-6">
-			<h4><strong>Varaus:</strong></h4>
-			<p>Aikaväli: {{reservation.getTimeSpanFinnish()}}</p>
-			<p>Paikka: {{resource.getName()}}</p>
-			<p>Lisätiedot: {{reservation.getDescription()}}</p>
-			<%if(reservation.isCancelled()) {%>
-				<p>Tila: {{reservation.getStateFinnish()}} ({{reservation.getStateUpdated()}})</p>
-			<%}else{%>
-				<p>Tila: {{reservation.getStateFinnish()}}</p>
-			<%}%>
-			<p>Maksettu:</p>
-			<label class="switch reservation-is-paid">
-				<%if(reservation.getIsPaid()) {%>
-					<input type="checkbox" class="reservation-is-paid" checked>
-				<%}else{%>
-					<input type="checkbox" class="reservation-is-paid">
-				<%}%>
-				<div class="slider round reservation-is-paid"></div>
-			</label>
+    <div class="row">
+        <div class="col-md-4">
+            <h4><strong>Varaus:</strong></h4>
+            <dl class="dl-horizontal align-left">
+                <dt>Alkaa</dt>
+                <dd>{{reservation.getBeginTimeFinnish()}}</dd>
 
-			<div>{{reservation.getIsPaidTimeFinnish()}}</div>
+                <dt>Päättyy</dt>
+                <dd>{{reservation.getEndTimeFinnish()}}</dd>
 
-			<h4><strong>Varaaja:</strong></h4>
-			<p>Nimi: {{reservation.getReserverName()}}</p>
-			<p>Osoite: {{reservation.getReserverAddress()}}, {{reservation.getReserverZip()}} {{reservation.getReserverCity()}}</p>
-			<p>Puhelinnumero: {{reservation.getReserverPhone()}}</p>
-			<p>Sähköpostiosoite: {{reservation.getReserverEmail()}}</p>
+                <dt>Paikka</dt>
+                <dd>{{resource.getName()}}</dd>
 
-			<%if(!reservation.isCancelled()) {%>
-				<button type="button" class="btn btn-danger" id="reservation-cancel">Peruuta varaus</button>
-			<%}%>
-		</div>
-		<div class="col-md-6">
+                <dt>Lisätiedot</dt>
+                <dd>{{reservation.getDescription()}}</dd>
 
-		</div>
-	</div>
+                <dt>Tila</dt>
+                <%if(reservation.isCancelled()) {%>
+                    <dd>{{reservation.getStateFinnish()}} ({{reservation.getStateUpdated()}})</dd>
+                <%}else{%>
+                    <dd>{{reservation.getStateFinnish()}}</dd>
+                <%}%>
+
+                <dt>Maksettu</dt>
+                <dd>
+                    <label class="switch reservation-is-paid">
+                        <%if(reservation.getIsPaid()) {%>
+                            <input type="checkbox" class="reservation-is-paid" checked>
+                        <%}else{%>
+                            <input type="checkbox" class="reservation-is-paid">
+                        <%}%>
+                        <div class="slider round reservation-is-paid"></div>
+                    </label>
+                    <div>{{reservation.getIsPaidTimeFinnish()}}</div>
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-4">
+            <h4><strong>Varaaja:</strong></h4>
+            <dl class="dl-horizontal">
+                <dt>Nimi</dt>
+                <dd>{{reservation.getReserverName()}}</dd>
+
+                <dt>Osoite</dt>
+                <dd>{{reservation.getReserverAddress()}}, {{reservation.getReserverZip()}} {{reservation.getReserverCity()}}</dd>
+
+                <dt>Puhelinnumero</dt>
+                <dd>{{reservation.getReserverPhone()}}</dd>
+
+                <dt>Sähköpostiosoite</dt>
+                <dd>{{reservation.getReserverEmail()}}</dd>
+            </dl>
+        </div>
+    </div>
 </div>

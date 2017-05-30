@@ -1,42 +1,86 @@
 <div class="container-fluid">
-	<div class="row">
-		<div class="col-md-6">
-			<h3>{{resource.getName()}}</h4>
-			<p>{{resource.getTypeFinnish()}}</p>
-			<p>Leveys: {{resource.getWidth()}}</p>
-			<p>Pituus: {{resource.getLength()}}</p>
-			<p>Syveys: {{resource.getDepth()}}</p>
-			<%if(resource.isDisabled()) {%>
-				<p>Käytössä: Ei</p>
-			<%}else{%>
-				<p>Käytössä: Kyllä</p>
-			<%}%>
-			<button id="resource-edit" class="btn btn-default">Muokkaa</button>
-			<button id="resource-new-reservation" class="btn btn-primary">Uusi varaus</button>
-		</div>
-		<div class="col-md-6">
-			<%if(reservation) {%>
-				<h3>Nykyinen/edellinen varaus:</h4>
-				<h4><strong>Varaus:</strong></h4>
-				<p>Aikaväli: {{reservation.getTimeSpanFinnish()}}</p>
-				<%if(reservation.isCancelled()) {%>
-					<p>Tila: {{reservation.getStateFinnish()}} ({{reservation.getStateUpdated()}})</p>
-				<%}else{%>
-					<p>Tila: {{reservation.getStateFinnish()}}</p>
-				<%}%>
-				<p>Maksettu: 
-					<%if(reservation.getIsPaid()) {%>
-						Kyllä
-					<%}else{%>
-						Ei
-					<%}%>
-				</p>
-				<h4><strong>Varaaja:</strong></h4>
-				<p>Nimi: {{reservation.getReserverName()}}</p>
-				<p>Osoite: {{reservation.getReserverAddress()}}, {{reservation.getReserverZip()}} {{reservation.getReserverCity()}}</p>
-				<p>Puhelinnumero: {{reservation.getReserverPhone()}}</p>
-				<p>Sähköpostiosoite: {{reservation.getReserverEmail()}}</p>
-			<%}%>
-		</div>	
-	</div>
+    <div class="row">
+        <div class="col-md-4">
+            <h3><strong>Venepaikka</strong></h3>
+            <dl class="dl-horizontal align-left">
+                <dt>Nimi</dt>
+                <dd>{{resource.getName()}}</dd>
+
+                <dt>Tyyppi</dt>
+                <dd>{{resource.getTypeFinnish()}}</dd>
+
+                <dt>Leveys</dt>
+                <dd>{{resource.getWidth()}}</dd>
+
+                <dt>Pituus</dt>
+                <dd>{{resource.getLength()}}</dd>
+
+                <dt>Syveys</dt>
+                <dd>{{resource.getDepth()}}</dd>
+
+                <dt>Käytössä</dt>
+                <dd>
+                    <%if(resource.isDisabled()) {%>
+                        Ei
+                    <%}else{%>
+                        Kyllä
+                    <%}%>
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-4">
+            <%if(reservation) {%>
+                <h3><strong>Edellinen / nykyinen varaus</strong></h3>
+                <h4><strong>Varaus:</strong></h4>
+                <dl class="dl-horizontal">
+                    <dt>Alkaa</dt>
+                    <dd>{{reservation.getBeginTimeFinnish()}}</dd>
+
+                    <dt>Päättyy</dt>
+                    <dd>{{reservation.getEndTimeFinnish()}}</dd>
+
+                    <dt>Paikka</dt>
+                    <dd>{{resource.getName()}}</dd>
+
+                    <dt>Lisätiedot</dt>
+                    <dd>{{reservation.getDescription()}}</dd>
+
+                    <dt>Tila</dt>
+                    <%if(reservation.isCancelled()) {%>
+                        <dd>{{reservation.getStateFinnish()}} ({{reservation.getStateUpdated()}})</dd>
+                    <%}else{%>
+                        <dd>{{reservation.getStateFinnish()}}</dd>
+                    <%}%>
+
+                    <dt>Maksettu</dt>
+                    <dd>
+
+                    </dd>
+                </dl>
+
+                <h4><strong>Varaaja:</strong></h4>
+                <dl class="dl-horizontal">
+                    <dt>Nimi</dt>
+                    <dd>{{reservation.getReserverName()}}</dd>
+
+                    <dt>Osoite</dt>
+                    <dd>{{reservation.getReserverAddress()}}, {{reservation.getReserverZip()}} {{reservation.getReserverCity()}}</dd>
+
+                    <dt>Puhelinnumero</dt>
+                    <dd>{{reservation.getReserverPhone()}}</dd>
+
+                    <dt>Sähköpostiosoite</dt>
+                    <dd>{{reservation.getReserverEmail()}}</dd>
+                </dl>
+            <%}%>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <button id="resource-edit" class="btn btn-default">Muokkaa</button>
+            <%if(!resource.isDisabled()) {%>
+                <button id="resource-new-reservation" class="btn btn-primary">Uusi varaus</button>
+            <%}%>
+        </div>
+    </div>
 </div>

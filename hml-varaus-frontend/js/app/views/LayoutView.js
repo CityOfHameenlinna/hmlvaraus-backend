@@ -2,6 +2,7 @@ define( ['App', 'backbone', 'marionette', 'jquery', 'models/Model', 'text!templa
     function(App, Backbone, Marionette, $, Model, template) {
         return Marionette.View.extend({
         	template: template,
+            className: '',
             regions: {
             	headerRegion: '#header',
             	contentRegion: '#content',
