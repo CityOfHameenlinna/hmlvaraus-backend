@@ -22,7 +22,9 @@ define([
     'collections/BoatResourceCollection',
     'collections/BoatReservationCollection',
     'collections/UserCollection',
-    'collections/UnitCollection'
+    'collections/UnitCollection',
+    '../libs/require',
+    'launcher'
     ],
     function ($, Backbone, Radio, Marionette, _, Router, LayoutView, WelcomeView, BoatManageView, 
     BoatReservationListView, BoatResourceListView, BoatNewReservationView, BoatNewResourceView,

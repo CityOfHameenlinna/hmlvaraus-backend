@@ -13,7 +13,7 @@ require.config({
         "async":"../libs/async",
         "moment":"../libs/moment",
         "bootstrap-datepicker":"../libs/plugins/bootstrap-datetimepicker",
-        "bootbox":"../libs/plugins/bootbox.min"
+        "bootbox":"../libs/plugins/bootbox.min",
     },
 
     shim:{
@@ -45,5 +45,4 @@ require.config({
 });
 
 require(['App',], function(App) {
-        App.initialize();
 });
