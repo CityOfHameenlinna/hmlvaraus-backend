@@ -84,9 +84,9 @@
                 <label for="filter-date-type">Päivämääräsuodatuksen tyyppi</label>
                 <select id="filter-date-type" name="date_filter_type" class="form-control filter-input">
                     <%if(filters.date_filter_type == 'not_reserved') {%>
-                        <option selected value="not_reserved">Vapaa aikavälillä</option>
+                        <option selected value="">Vapaa aikavälillä</option>
                     <%} else {%>
-                        <option value="not_reserved">Vapaa aikavälillä</option>
+                        <option value="">Vapaa aikavälillä</option>
                     <%}%>
                     <%if(filters.date_filter_type == 'reserved') {%>
                         <option selected value="reserved">Varattu aikavälillä</option>

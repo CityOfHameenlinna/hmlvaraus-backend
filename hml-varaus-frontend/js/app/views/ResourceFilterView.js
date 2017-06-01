@@ -48,10 +48,12 @@ define( [
 
             clearFilters: function(e) {
                 this.$('textarea,input,select').val('');
+                this.$('input.checkbox').prop('checked', false);
                 this.filters = {};
                 localStorage.setItem('boat_resource_filters', JSON.stringify(this.filters));
                 this.mainRadioChannel.trigger('resource-filter-changed');
                 $('.ordering-icon').removeClass('glyphicon-triangle-bottom glyphicon-triangle-top');
+
             },
 
             filterInputChanged: function(e) {

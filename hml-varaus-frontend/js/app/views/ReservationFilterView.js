@@ -35,6 +35,7 @@ define( [
 
             clearFilters: function(e) {
                 this.$('textarea,input,select').val('');
+                this.$('input.checkbox').prop('checked', false)
                 this.filters = {};
                 localStorage.setItem('boat_reservation_filters', JSON.stringify(this.filters));
                 this.mainRadioChannel.trigger('reservation-filter-changed');
