@@ -66,6 +66,7 @@ index_file = open(INDEX_PROD, 'rb')
 index_data = index_file.read()
 index_file.close()
 index_data = '{% load static %}\n' + index_data
+index_data = index_data.replace(' data-main="/js/app/config/config.js"', '')
 index_data = index_data.replace('/css/main.css', '{% static \'css/' + css_md5_filename + '\' %}')
 index_data = index_data.replace('/js/libs/require.js', '{% static \'js/' + js_md5_filename + '\' %}')
 index_file = open(INDEX_PROD, 'wb')
