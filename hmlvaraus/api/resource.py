@@ -33,6 +33,8 @@ class ResourceSerializer(ResourceSerializer):
     #name_fi = serializers.CharField(max_length=200)
     name = serializers.CharField(required=True)
     name_fi = serializers.CharField(required=True)
+    description = serializers.CharField(required=False)
+    description_fi = serializers.CharField(required=False)
     type_id = serializers.CharField(max_length=100)
     unit_id = serializers.CharField(max_length=50)
     #slug = serializers.CharField(max_length=200)
@@ -84,6 +86,8 @@ class ResourceSerializer(ResourceSerializer):
             'authentication': 'none',
             'name': data.get('name'),
             'name_fi': data.get('name_fi'),
+            'description': data.get('description'),
+            'description_fi': data.get('description_fi'),
             'unit': unit_instance,
             'type': type_instance
         }

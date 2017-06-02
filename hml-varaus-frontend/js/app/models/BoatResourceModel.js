@@ -98,6 +98,14 @@ define(["jquery", "backbone", 'moment', "models/BaseModel"],
 
             isDisabled: function() {
                 return this.get('is_disabled');
+            },
+
+            getDescription: function() {
+                var desc = this.get('resource').description;
+                if(desc && desc.fi)
+                    return desc.fi;
+                else
+                    '';
             }
 
         });

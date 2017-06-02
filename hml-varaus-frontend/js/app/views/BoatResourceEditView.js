@@ -76,6 +76,7 @@ define( ['App',
                 var resource = this.model.get('resource');
 
                 resource.name.fi = data.resource.name;
+                resource.description = data.resource.description ? {fi: data.resource.description} : {fi:''};
                 resource.unit_id = data.resource.unit_id;
 
                 this.model.set('resource', resource);
@@ -140,6 +141,8 @@ define( ['App',
                 data.resource = {
                     name: data.name,
                     name_fi: data.name,
+                    description: data.description,
+                    description_fi: data.description,
                     slug: data.name,
                     unit_id: data.unit,
                     authentication: 'none'

@@ -50,6 +50,7 @@ class BerthSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer)
         return berth
 
     def update(self, instance, validated_data):
+        print(validated_data)
         resource_data = validated_data.pop('resource')
         
         resource = instance.resource
@@ -64,9 +65,13 @@ class BerthSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer)
         new_resource_name = resource_data.get('name')
 
         resource.name_fi = new_resource_name.get('fi', resource.name_fi)
-        resource.name_sv = new_resource_name.get('fi', resource.name_fi)
-        resource.name_en = new_resource_name.get('fi', resource.name_fi)
         resource.name = new_resource_name.get('fi', resource.name_fi)
+
+        new_resource_description = resource_data.get('description')
+
+        resource.description_fi = new_resource_description.get('fi', resource.description_fi)
+        resource.description = new_resource_description.get('fi', resource.description_fi)
+
         resource.unit_id = resource_data.get('unit_id', resource.unit_id)
         resource.save()
 

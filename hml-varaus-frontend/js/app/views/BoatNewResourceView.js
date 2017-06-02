@@ -35,6 +35,8 @@ define( ['App',
                 data.resource = {
                     name: data.name,
                     name_fi: data.name,
+                    description: data.description,
+                    description_fi: data.description,
                     unit_id: data.unit,
                 }
                 delete data.name;
