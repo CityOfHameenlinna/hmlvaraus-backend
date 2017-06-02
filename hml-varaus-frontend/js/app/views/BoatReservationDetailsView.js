@@ -9,7 +9,10 @@ define( [
     function(App, Backbone, bootbox, Marionette, $, BaseView, template) {
         return BaseView.extend({
             initialize: function() {
-                this.resourceCollection = this.options.resourceCollection
+                this.resourceCollection = this.options.resourceCollection;
+                this.unitCollection = this.options.unitCollection;
+                this.resourceModel = this.resourceCollection.getByResourceId(this.model.getResourceId());
+                this.unitModel = this.unitCollection.get(this.resourceModel.getUnitId());
             },
 
             events: {
@@ -20,7 +23,8 @@ define( [
             render: function() {
                 var variables = {
                     reservation: this.model,
-                    resource: this.resourceCollection.getByResourceId(this.model.getResourceId())
+                    resource: this.resourceModel,
+                    unit: this.unitModel
                 }
                 var tmpl = _.template(template);
                 this.$el.html(tmpl(variables));

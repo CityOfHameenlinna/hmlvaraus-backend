@@ -9,8 +9,11 @@
                 <dt>Päättyy</dt>
                 <dd>{{reservation.getEndTimeFinnish()}}</dd>
 
+                <dt>Kohde</dt>
+                <dd><a href="#unit-details/{{unit.getId()}}">{{unit.getName()}}</a></dd>
+
                 <dt>Paikka</dt>
-                <dd>{{resource.getName()}}</dd>
+                <dd><a href="#boat-resource-details/{{resource.getId()}}">{{resource.getName()}}</a></dd>
 
                 <dt>Lisätiedot</dt>
                 <dd>{{reservation.getDescription()}}</dd>
@@ -53,4 +56,5 @@
             </dl>
         </div>
     </div>
+    <button class="btn btn-danger" id="reservation-cancel">Peruuta varaus</button>
 </div>

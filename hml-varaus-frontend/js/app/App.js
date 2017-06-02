@@ -178,10 +178,11 @@ define([
 
         App.showBoatReservationDetails = function(id) {
             App.refetchFilteredCollections();
-            $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred).done(function() {
+            $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred, App.unitCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new BoatReservationDetailsView({
                     model: App.boatReservationCollection.get(id),
-                    resourceCollection: App.boatResourceCollection
+                    resourceCollection: App.boatResourceCollection,
+                    unitCollection: App.unitCollection
                 }));
             });
         }
