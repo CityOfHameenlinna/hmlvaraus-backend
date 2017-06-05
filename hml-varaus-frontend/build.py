@@ -6,6 +6,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + '/'
 
 SPA_DIR = BASE_DIR + 'hml-varaus-frontend/'
 
+os.chdir(SPA_DIR)
+
 IMG_DIR_DEV = SPA_DIR + 'img/'
 FONT_DIR_DEV = SPA_DIR + 'fonts/'
 

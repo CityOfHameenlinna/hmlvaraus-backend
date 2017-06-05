@@ -56,5 +56,7 @@
             </dl>
         </div>
     </div>
-    <button class="btn btn-danger" id="reservation-cancel">Peruuta varaus</button>
+    <%if(!reservation.isCancelled()) {%>
+        <button class="btn btn-danger" id="reservation-cancel">Peruuta varaus</button>
+    <%}%>
 </div>

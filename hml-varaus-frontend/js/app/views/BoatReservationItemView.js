@@ -42,6 +42,7 @@ define( ['App', 'backbone', 'marionette', 'jquery', 'bootbox', 'views/BaseView',
                                     target.prop('checked', false);
                                 })
                                 .fail(function() {
+                                    target.prop('checked', true);
                                     me.showRequestErrors();
                                 });
                             }
@@ -57,6 +58,7 @@ define( ['App', 'backbone', 'marionette', 'jquery', 'bootbox', 'views/BaseView',
                         target.prop('checked', true);
                     })
                     .fail(function() {
+                        target.prop('checked', false);
                         me.showRequestErrors();
                     });
                 }

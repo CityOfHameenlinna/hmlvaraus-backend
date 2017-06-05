@@ -12,7 +12,7 @@ define([
         filterKey: 'boat_reservation_filters',
         initialize: function() {
             var me = this;
-            this.deferred = this.fetch();
+            this.deferred = this.fetch({data: {show_cancelled: true}});
             this.mainRadioChannel = Radio.channel('main');
             this.mainRadioChannel.on('reservation-filter-changed', function() {
                 me.fetchFiltered();

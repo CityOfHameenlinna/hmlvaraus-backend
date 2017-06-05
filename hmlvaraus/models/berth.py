@@ -1,29 +1,6 @@
-import datetime
-import os
-import re
-from decimal import Decimal
-
-import arrow
-import django.db.models as dbm
-from django.apps import apps
-from django.conf import settings
 from django.contrib.gis.db import models
-from django.core.exceptions import ValidationError
-from django.core.files.base import ContentFile
-from django.core.validators import MinValueValidator
-from django.utils import timezone
-from django.utils.crypto import get_random_string
-from django.utils.six import BytesIO
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import pgettext_lazy
-from django.contrib.postgres.fields import HStoreField
-from image_cropping import ImageRatioField
-from PIL import Image
-from autoslug import AutoSlugField
-
-from resources.errors import InvalidImage
-
-from resources.models import Reservation, Resource, Unit, ResourceType
+from resources.models import Resource
 
 class Berth(models.Model):
     DOCK = 'dock'

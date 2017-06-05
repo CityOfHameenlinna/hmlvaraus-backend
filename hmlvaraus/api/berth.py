@@ -1,35 +1,18 @@
-import uuid
 import arrow
 import django_filters
-from datetime import datetime
 from arrow.parser import ParserError
-from django.contrib.auth import get_user_model
-from django.utils.translation import ugettext_lazy as _
-from django.core.exceptions import PermissionDenied, ValidationError as DjangoValidationError
-from django.db.models import Q
-from django.utils import timezone
+from django.core.exceptions import PermissionDenied
 from rest_framework import viewsets, serializers, filters, exceptions, permissions, status
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.fields import BooleanField, IntegerField
-from rest_framework import renderers
-from rest_framework.exceptions import NotAcceptable, ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
-from guardian.shortcuts import get_objects_for_user
-
-from helusers.jwt import JWTAuthentication
 from munigeo import api as munigeo_api
-from resources.models import Reservation, Resource, Unit, ResourceType
+from resources.models import Reservation, Resource
 from hmlvaraus.api.resource import ResourceSerializer
 from hmlvaraus.models.berth import Berth
 from hmlvaraus.models.hml_reservation import HMLReservation
-from resources.models.reservation import RESERVATION_EXTRA_FIELDS
-from resources.pagination import ReservationPagination
-from users.models import User
-from resources.models.utils import generate_reservation_xlsx, get_object_or_none
-from django.http import Http404
 from rest_framework.response import Response
-from resources.api.base import NullableDateTimeField, TranslatedModelSerializer, register_view
+from resources.api.base import TranslatedModelSerializer, register_view
 from hmlvaraus.utils.utils import RelatedOrderingFilter
+from django.utils.translation import ugettext_lazy as _
 
 class BerthSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer):
     resource = ResourceSerializer(required=True)
@@ -182,14 +165,14 @@ class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
             resource_id = berth.resource.id
             resource = Resource.objects.get(pk=resource_id).delete()
             try:
-                reservations = Reservation.objects.get(resource=resource).delete()
+                Reservation.objects.get(resource=resource).delete()
             except:
                 pass
             berth.delete()
-        except Http404:
-            pass
+        except:
+            return Response(status=status.HTTP_404_NOT_FOUND, data=_('Boat resource cannot be found'))
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT, data=_('Boat resource successfully created'))
 
 
 register_view(BerthViewSet, 'berth')

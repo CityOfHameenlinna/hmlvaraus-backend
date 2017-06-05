@@ -1,36 +1,16 @@
-import uuid
 import arrow
 import django_filters
 import re
-import string
-from datetime import datetime
 from arrow.parser import ParserError
-from django.contrib.auth import get_user_model
-from django.utils.translation import ugettext_lazy as _
-from django.core.exceptions import PermissionDenied, ValidationError as DjangoValidationError
-from django.db.models import Q
+from django.core.exceptions import PermissionDenied
 from django.utils import timezone
-from rest_framework import viewsets, serializers, filters, exceptions, permissions, status
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.fields import BooleanField, IntegerField
-from rest_framework import renderers
-from rest_framework.exceptions import NotAcceptable, ValidationError
+from rest_framework import viewsets, serializers, filters, exceptions, permissions
 from django_filters.rest_framework import DjangoFilterBackend
-from guardian.shortcuts import get_objects_for_user
-
-from helusers.jwt import JWTAuthentication
 from munigeo import api as munigeo_api
-from resources.models import Reservation, Resource, Unit, ResourceType
+from resources.models import Reservation
 from hmlvaraus.api.reservation import ReservationSerializer
-from hmlvaraus.api.resource import ResourceSerializer
 from hmlvaraus.models.hml_reservation import HMLReservation
-from resources.models.reservation import RESERVATION_EXTRA_FIELDS
-from resources.pagination import ReservationPagination
-from users.models import User
-from resources.models.utils import generate_reservation_xlsx, get_object_or_none
-from django.http import Http404
-from rest_framework.response import Response
-from resources.api.base import NullableDateTimeField, TranslatedModelSerializer, register_view
+from resources.api.base import TranslatedModelSerializer, register_view
 from hmlvaraus.utils.utils import RelatedOrderingFilter
 
 class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer):
@@ -43,10 +23,20 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
         model = HMLReservation
         fields = ['id', 'is_paid', 'reserver_ssn', 'reservation', 'state_updated_at', 'is_paid_at']
 
+    def validate(self, data):
+        request_user = self.context['request'].user
+
+        if not request_user.is_staff:
+            raise PermissionDenied()
+
+        return data
     def create(self, validated_data):
         reservation_data = validated_data.pop('reservation')
-        reservation = Reservation.objects.create(**reservation_data)
-        hmlReservation = HMLReservation.objects.create(reservation=reservation, **validated_data)
+        try:
+            reservation = Reservation.objects.create(**reservation_data)
+            hmlReservation = HMLReservation.objects.create(reservation=reservation, **validated_data)
+        except:
+            raise serializers.ValidationError("Invalid reservation data")
         return hmlReservation
 
     def update(self, instance, validated_data):
@@ -155,17 +145,5 @@ class HMLReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
             hml_reservation.save()
         else:
             serializer.save()
-
-    def destroy(self, request, *args, **kwargs):
-        try:
-            hml_reservation = self.get_object();
-            hml_reservation_id = hml_reservation.reservation.id
-            Resource.objects.get(pk=hml_resource_id).delete()
-            hml_reservation.delete()
-        except Http404:
-            pass
-
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 register_view(HMLReservationViewSet, 'hml_reservation')

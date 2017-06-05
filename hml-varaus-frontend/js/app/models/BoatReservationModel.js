@@ -128,7 +128,7 @@ define(["jquery", "backbone", "moment", "models/BaseModel"],
 
             saveIsPaid: function(value) {
                 return $.ajax({
-                    url: this.url(),
+                    url: this.url() + '?show_cancelled=true',
                     method: 'patch',
                     data: JSON.stringify({is_paid: value}),
                     dataType: 'json',

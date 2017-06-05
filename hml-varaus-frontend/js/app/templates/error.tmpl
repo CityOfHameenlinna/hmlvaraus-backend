@@ -1,19 +1,23 @@
-<p>Tietojen tallentaminen epäonnistui seuraavista syistä:</p>
-<table class="table table-responsive">
-	<thead>
-		<tr>
-			<th>Kohde</th>
-			<th>Kenttä</th>
-			<th>Syy</th>
-		</tr>
-	</thead>
-	<tbody>
-		<%errorArray.forEach(function(error) {%>
+<%if(errorArray.length) {%>
+	<p>Tietojen tallentaminen epäonnistui seuraavista syistä:</p>
+	<table class="table table-responsive">
+		<thead>
 			<tr>
-				<td>{{error.obj}}</td>
-				<td>{{error.field}}</td>
-				<td>{{error.err}}</td>
+				<th>Kohde</th>
+				<th>Kenttä</th>
+				<th>Syy</th>
 			</tr>
-		<%})%>
-	</tbody>
-</table>
+		</thead>
+		<tbody>
+			<%errorArray.forEach(function(error) {%>
+				<tr>
+					<td>{{error.obj}}</td>
+					<td>{{error.field}}</td>
+					<td>{{error.err}}</td>
+				</tr>
+			<%})%>
+		</tbody>
+	</table>
+<%}else{%>
+	<p>Muutoksen tallentaminen epäonnistui tuntemattomasta syystä. Yritä myöhemmin uudelleen.</p>
+<%}%>

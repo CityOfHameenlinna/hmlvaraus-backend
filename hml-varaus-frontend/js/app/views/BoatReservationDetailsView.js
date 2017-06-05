@@ -61,16 +61,38 @@ define( [
 
             changeIsPaid: function(e) {
                 e.stopPropagation();
+                e.preventDefault();
                 var me = this;
                 var target = $(e.currentTarget);
 
                 if(!target.prop('checked')) {
-                    this.model.set('is_paid', true).saveIsPaid(false)
-                    .done(function() {
-                        target.removeProp('checked')
-                    })
-                    .fail(function() {
-                        me.showRequestErrors();
+                    bootbox.confirm({
+                        message: 'Olet merkkaamassa varauksen maksamattomaksi. Oletko varma?',
+                        buttons: {
+                            confirm: {
+                                label: 'Merkkaa',
+                                className: 'btn-danger'
+                            },
+                            cancel: {
+                                label: 'Älä merkkaa',
+                                className: 'btn-default'
+                            }
+                        },
+                        callback: function (result) {
+                            if(result) {
+                                me.model.set('is_paid', true).saveIsPaid(false)
+                                .done(function() {
+                                    target.prop('checked', false);
+                                })
+                                .fail(function() {
+                                    me.showRequestErrors();
+                                    target.prop('checked', true);
+                                });
+                            }
+                            else {
+                                target.prop('checked', true);
+                            }
+                        }
                     });
                 }
                 else {
@@ -80,6 +102,7 @@ define( [
                     })
                     .fail(function() {
                         me.showRequestErrors();
+                        target.prop('checked', false);
                     });
                 }
             },

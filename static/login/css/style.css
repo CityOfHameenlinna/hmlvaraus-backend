@@ -36,13 +36,7 @@
 }
 
 #header-logo {
-    background-position: 0 -88px!important;
-    height: 49px;
-    width: 283px;
-}
-
-#header-logo {
-    background: url(/img/hml-logot.png) 0 0 no-repeat transparent!important;
+    background: url(/static/img/hml-logot.png) 0 0 no-repeat transparent!important;
     overflow: hidden;
     background-position: 0 -88px!important;
     height: 49px;
