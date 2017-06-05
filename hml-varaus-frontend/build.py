@@ -33,12 +33,19 @@ os.system('node js/libs/r.js -o cssIn=css/main.css out=' + css_output_filename +
 
 print('Optimization done. Renaming css and js files to bust the cache.')
 
-css = open(css_output_filename, 'r')
+css = open(css_output_filename, 'rb')
 css_data = css.read()
+css.close()
+css_data = css_data.replace('/img/hml-logot.png', '/static/img/hml-logot.png')
+css_data = css_data.replace('/fonts/Share-Bold.ttf', '/static/fonts/Share-Bold.ttf')
+css_data = css_data.replace('/fonts/Verdana.ttf', '/static/fonts/Verdana.ttf')
 css_md5 = md5.new()
 css_md5.update(css_data)
 css_md5_filename = css_md5.hexdigest() + '.css'
+css = open(css_output_filename, 'wb')
+css.write(css_data)
 css.close()
+
 
 
 js = open(js_output_filename, 'r')

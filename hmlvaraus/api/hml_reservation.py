@@ -96,7 +96,6 @@ class HMLReservationFilterBackend(filters.BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         params = request.query_params
         times = {}
-        past = False
         filter_type = 'all';
 
         if not 'show_cancelled' in params:
@@ -108,8 +107,6 @@ class HMLReservationFilterBackend(filters.BaseFilterBackend):
         for name in ('begin', 'end'):
             if name not in params:
                 continue
-            # whenever date filtering is in use, include past reservations
-            past = True
             try:
                 times[name] = arrow.get(params[name]).to('utc').datetime
             except ParserError:
