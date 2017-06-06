@@ -12,6 +12,9 @@ from hmlvaraus.api.reservation import ReservationSerializer
 from hmlvaraus.models.hml_reservation import HMLReservation
 from resources.api.base import TranslatedModelSerializer, register_view
 from hmlvaraus.utils.utils import RelatedOrderingFilter
+from hmlvaraus import tasks
+from datetime import datetime, timedelta
+from django.utils.translation import ugettext_lazy as _
 
 class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer):
     reservation = ReservationSerializer(required=True)
@@ -29,6 +32,9 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
         if not request_user.is_staff:
             raise PermissionDenied()
 
+        if Reservation.objects.filter(resource__id=data['reservation']['resource'].id, state=Reservation.CONFIRMED).exists():
+            raise serializers.ValidationError(_('Resource is already reserved and scheduled for renewal'))
+
         return data
     def create(self, validated_data):
         reservation_data = validated_data.pop('reservation')
@@ -36,7 +42,7 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
             reservation = Reservation.objects.create(**reservation_data)
             hmlReservation = HMLReservation.objects.create(reservation=reservation, **validated_data)
         except:
-            raise serializers.ValidationError("Invalid reservation data")
+            raise serializers.ValidationError(_('Invalid reservation data'))
         return hmlReservation
 
     def update(self, instance, validated_data):
@@ -55,10 +61,9 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
         return data;
 
     def validate_reserver_ssn(self, value):
-
         number_array = re.findall(r'\d+', value[:-1])
         if not number_array or len(value) != 11:
-            raise serializers.ValidationError("Social security number not valid")
+            raise serializers.ValidationError(_('Social security number not valid'))
         ssn_numbers = int(''.join(str(x) for x in number_array))
         test_array = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D',
          'E', 'F', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y']
@@ -66,8 +71,7 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
         check_char = test_array[ssn_numbers % 31]
 
         if not value.endswith(check_char):
-            raise serializers.ValidationError("Social security number not valid")
-        
+            raise serializers.ValidationError(_('Social security number not valid'))
         return value
 
 class HMLReservationFilter(django_filters.FilterSet):

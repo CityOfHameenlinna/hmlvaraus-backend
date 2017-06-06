@@ -1,8 +1,17 @@
 from django.core.exceptions import FieldDoesNotExist
 from django.db.models.fields.reverse_related import ForeignObjectRel, OneToOneRel
-
+from hmlvaraus.models.hml_reservation import HMLReservation
+from hmlvaraus import tasks
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from datetime import datetime, timedelta
 from rest_framework.filters import OrderingFilter
 
+@receiver(post_save, sender=HMLReservation)
+def set_reservation_renew(sender, instance, **kwargs):
+    if kwargs.get('created'):
+        tasks.set_reservation_cancel.apply_async((instance.id,), eta=instance.reservation.begin + timedelta(days=30))
+        tasks.set_reservation_renewal.apply_async((instance.id,), eta=instance.reservation.end)
 
 class RelatedOrderingFilter(OrderingFilter):
     """
