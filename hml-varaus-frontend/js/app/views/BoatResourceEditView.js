@@ -71,6 +71,7 @@ define( ['App',
                 this.model.set('width_cm', data.width_cm);
                 this.model.set('length_cm', data.length_cm);
                 this.model.set('type', data.type);
+                this.model.set('price', data.price);
                 this.model.set('is_disabled', data.is_disabled);
 
                 var resource = this.model.get('resource');
@@ -153,6 +154,7 @@ define( ['App',
                 data.width_cm = Number(data.width_cm) * 100;
                 data.depth_cm = Number(data.depth_cm) * 100;
                 data.is_disabled = data.is_disabled ? true : false;
+                data.price = Number(data.price);
 
                 return data;
             }     

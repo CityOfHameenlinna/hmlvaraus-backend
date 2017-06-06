@@ -81,7 +81,7 @@ define( [
                     var value = target.val();
                 }
 
-                if(target.hasClass('float-filter')) {
+                if(target.hasClass('dimension-filter')) {
                      value = Math.round(Number(target.val()) * 100);
                 }
 

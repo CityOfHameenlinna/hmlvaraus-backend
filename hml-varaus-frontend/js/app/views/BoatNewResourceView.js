@@ -44,6 +44,7 @@ define( ['App',
                 data.length_cm = Number(data.length_cm) * 100;
                 data.width_cm = Number(data.width_cm) * 100;
                 data.depth_cm = Number(data.depth_cm) * 100;
+                data.price = Number(data.price);
 
                 return data;
             },

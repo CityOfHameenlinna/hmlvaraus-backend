@@ -106,6 +106,21 @@ define(["jquery", "backbone", 'moment', "models/BaseModel"],
                     return desc.fi;
                 else
                     '';
+            },
+
+            getPrice: function() {
+                return this.get('price');
+            },
+
+            getPriceFinnish: function() {
+                var price = this.get('price');
+                price = String(price).replace('.', ',')
+                if(price) {
+                    return price;
+                }
+                else {
+                    return '0,00';
+                }
             }
 
         });

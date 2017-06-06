@@ -24,7 +24,7 @@ class BerthSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer)
 
     class Meta:
         model = Berth
-        fields = ['id', 'width_cm', 'length_cm', 'depth_cm', 'resource', 'type', 'is_disabled']
+        fields = ['id', 'width_cm', 'length_cm', 'depth_cm', 'resource', 'type', 'is_disabled', 'price']
 
     def create(self, validated_data):
         resource_data = validated_data.pop('resource')
@@ -33,7 +33,6 @@ class BerthSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer)
         return berth
 
     def update(self, instance, validated_data):
-        print(validated_data)
         resource_data = validated_data.pop('resource')
         
         resource = instance.resource
@@ -41,6 +40,7 @@ class BerthSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer)
         instance.width_cm = validated_data.get('width_cm', instance.width_cm)
         instance.depth_cm = validated_data.get('depth_cm', instance.depth_cm)
         instance.length_cm = validated_data.get('length_cm', instance.length_cm)
+        instance.price = validated_data.get('price', instance.price)
         instance.is_disabled = validated_data.get('is_disabled', instance.is_disabled)
         instance.type = validated_data.get('type', instance.type)
         instance.save()
@@ -72,25 +72,37 @@ class BerthSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer)
 
         return data
 
+    def validate_price(self, value):
+        if not self.is_number(value) and value < 0:
+            raise serializers.ValidationError(_('Value out of bounds'))
+        return value
+
     def validate_width_cm(self, value):
         if value < 0 or value > 1000:
-            raise serializers.ValidationError("Value out of bounds")
+            raise serializers.ValidationError(_('Value out of bounds'))
         return value
 
     def validate_height_cm(self, value):
         if value < 0 or value > 1000:
-            raise serializers.ValidationError("Value out of bounds")
+            raise serializers.ValidationError(_('Value out of bounds'))
         return value
 
     def validate_depth_cm(self, value):
         if value < 0 or value > 1000:
-            raise serializers.ValidationError("Value out of bounds")
+            raise serializers.ValidationError(_('Value out of bounds'))
         return value
 
     def validate_type(self, value):
         if value not in ['number', 'ground', 'dock']:
-            raise serializers.ValidationError("Value out of bounds")
+            raise serializers.ValidationError(_('Value out of bounds'))
         return value
+
+    def is_number(self, value):
+        try:
+            float(value)
+            return True
+        except ValueError:
+            return False
 
 class BerthFilter(django_filters.FilterSet):
     max_width = django_filters.NumberFilter(name="width_cm", lookup_expr='lte')
@@ -102,11 +114,14 @@ class BerthFilter(django_filters.FilterSet):
     max_depth = django_filters.NumberFilter(name="depth_cm", lookup_expr='lte')
     min_depth = django_filters.NumberFilter(name="depth_cm", lookup_expr='gte')
 
+    max_price = django_filters.NumberFilter(name="price", lookup_expr='lte')
+    min_price = django_filters.NumberFilter(name="price", lookup_expr='gte')
+
     unit_id = django_filters.CharFilter(name="resource__unit_id")
     
     class Meta:
         model = Berth
-        fields = ['max_width', 'min_width', 'max_length', 'min_length', 'max_depth', 'min_depth', 'unit_id', 'type']
+        fields = ['max_width', 'min_width', 'max_length', 'min_length', 'max_depth', 'min_depth', 'max_price', 'min_price', 'unit_id', 'type']
 
 class BerthFilterBackend(filters.BaseFilterBackend):
     """

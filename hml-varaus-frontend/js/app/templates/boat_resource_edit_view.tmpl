@@ -27,6 +27,12 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="resource-berth-price">Hinta (euroa)</label>
+                    <input min="0" name="price" type="number" step=".01" class="form-control required berth-price" id="resource-berth-price" value="{{resource.getPrice()}}">
+                    <span class="error"><p class="text-danger"></p></span>
+                </div>
+
+                <div class="form-group">
                     <label for="resource-berth-length">Pituus (metriä)</label>
                     <input min="0" max="10" name="length_cm" type="number" step=".01" class="form-control required berth-size validated-data" id="resource-berth-length" value="{{resource.getLength('.')}}">
                     <span class="error"><p class="text-danger"></p></span>

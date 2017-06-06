@@ -17,5 +17,6 @@ class Berth(models.Model):
     width_cm = models.PositiveSmallIntegerField(verbose_name=_('Berth width'), null=True, blank=True)
     depth_cm = models.PositiveSmallIntegerField(verbose_name=_('Berth depth'), null=True, blank=True)
     length_cm = models.PositiveSmallIntegerField(verbose_name=_('Berth length'), null=True, blank=True)
+    price = models.DecimalField(max_digits=6, decimal_places=2, default=0.00)
     type = models.CharField(choices=TYPE_CHOICES, verbose_name=_('Berth type'), default=DOCK, max_length=20)
     is_disabled = models.BooleanField(default=False)

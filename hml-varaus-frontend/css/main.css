@@ -226,7 +226,7 @@ nav.navbar-default {
 	min-height: 30px;
 }
 
-.float-filter {
+.float-filter,.money-filter {
 	max-width: 100px;
 	display: inline-block;
 }
