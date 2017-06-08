@@ -58,14 +58,6 @@ define( ['App',
                 }).addTo(map);
 
                 var marker = L.marker(modelLocation ? modelLocation : hml, {icon: cMarker}).addTo(map);
-
-                var toolTip = L.tooltip({
-                    permament: true,
-                    sticky: true,
-                    direction: 'left'
-                }, marker);
-                var toolTipContent = '<div><h4>Vepaikan nimi</h4><p>Venepaikkoja: 31</p></div>';
-                marker.bindTooltip(toolTipContent, toolTip).openTooltip();
             },
 
             editUnit: function() {
