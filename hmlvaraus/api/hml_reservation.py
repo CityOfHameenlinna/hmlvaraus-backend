@@ -38,11 +38,8 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
         return data
     def create(self, validated_data):
         reservation_data = validated_data.pop('reservation')
-        try:
-            reservation = Reservation.objects.create(**reservation_data)
-            hmlReservation = HMLReservation.objects.create(reservation=reservation, **validated_data)
-        except:
-            raise serializers.ValidationError(_('Invalid reservation data'))
+        reservation = Reservation.objects.create(**reservation_data)
+        hmlReservation = HMLReservation.objects.create(reservation=reservation, **validated_data)
         return hmlReservation
 
     def update(self, instance, validated_data):
