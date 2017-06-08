@@ -14,6 +14,7 @@ require.config({
         "moment":"../libs/moment",
         "bootstrap-datepicker":"../libs/plugins/bootstrap-datetimepicker",
         "bootbox":"../libs/plugins/bootbox.min",
+        "leaflet":"../libs/leaflet-src"
     },
 
     shim:{

@@ -1,6 +1,6 @@
-
 @import 'bootstrap.css';
 @import 'bootstrap-datetimepicker.css';
+@import 'leaflet.css';
 
 /* The switch - the box around the slider */
 .switch {
@@ -296,4 +296,9 @@ dl.dl-horizontal > dd {
 .no-margin-row {
 	margin-left: 0px;
 	margin-right: 0px;
+}
+
+#map {
+	height: 600px;
+	border: 1px solid rgba(0, 0, 0, .1);
 }

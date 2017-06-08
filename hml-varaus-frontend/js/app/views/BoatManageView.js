@@ -4,6 +4,7 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
             initialize: function() {
                 this.boatReservationCollection = this.options.boatReservationCollection;
                 this.boatResourceCollection = this.options.boatResourceCollection;
+                this.unitCollection = this.options.unitCollection;
                 this.listenTo(this.boatReservationCollection, 'sync', this.render);
                 this.listenTo(this.boatResourceCollection, 'sync', this.render);
                 this.mainRadioChannel = Radio.channel('main');
@@ -68,13 +69,70 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
             },
 
             render: function() {
+                var me = this;
                 var variables = {
                     data: this.createManageData()
                 }
 
                 var tmpl = _.template(template);
                 this.$el.html(tmpl(variables));
-            }
+
+                setTimeout(function() {
+                    me.setupMap();
+                }, 10);
+            },
+
+            setupMap: function() {
+                var me = this;
+                var hml = {
+                    lng: 24.4590,
+                    lat: 60.9929
+                }
+
+                var cMarker = L.icon({
+                    iconUrl:       '/img/marker-icon.png',
+                    iconRetinaUrl: '/img/marker-icon-2x.png',
+                    shadowUrl:     '/img/marker-shadow.png',
+                    iconSize:    [25, 41],
+                    iconAnchor:  [12, 41],
+                    popupAnchor: [1, -34],
+                    tooltipAnchor: [16, -28],
+                    shadowSize:  [41, 41]
+                });
+
+                var map = L.map(this.$('#map')[0], {
+                }).setView(hml, 10);
+
+                L.tileLayer.wms('https://kartta.hameenlinna.fi/teklaogcweb/WMS.ashx?', {
+                    layers: 'Opaskartta'
+                }).addTo(map);
+
+
+                this.unitCollection.each(function(unit) {
+                    var toolTip = L.tooltip({
+                        permament: true
+                    }, marker);
+
+                    var boatResourceCount = 0;
+                    me.boatResourceCollection.each(function(resource) {
+                        if(resource.getUnit() == unit.getId())
+                            boatResourceCount++;
+                    });
+
+                    var toolTipContent = '<div><h4>' + unit.getName() + '</h4><p>Venepaikkoja: ' + boatResourceCount + '</p></div>';
+                    var modelLocation = unit.getLocation();
+                    var marker = L.marker(modelLocation ? modelLocation : hml, {icon: cMarker}).bindTooltip(toolTipContent, toolTip).openTooltip().addTo(map);
+
+                    marker.on('click', function(e) {
+                        var filters = {
+                            show: true,
+                            unit_id: unit.getId()
+                        };
+                        localStorage.setItem('boat_resource_filters', JSON.stringify(filters));
+                        me.mainRadioChannel.trigger('show-resources');
+                    });
+                });
+            },
 
         });
     });

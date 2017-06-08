@@ -6,9 +6,9 @@ define( ['App',
     'jquery',
     'views/BaseView',
     'text!templates/unit_new_view.tmpl',
-    'async!https://maps.googleapis.com/maps/api/js?key=AIzaSyAdf1cqzsZLVigUFbrgbqDLBfx_1pexr0I'
+    'leaflet'
     ],
-    function(App, Backbone, Radio, bootbox, Marionette, $, BaseView, template) {
+    function(App, Backbone, Radio, bootbox, Marionette, $, BaseView, template, L) {
         return BaseView.extend({
             initialize: function() {
                 this.mainRadioChannel = Radio.channel('main');
@@ -25,58 +25,42 @@ define( ['App',
                 var tmpl = _.template(template);
                 this.$el.html(tmpl(variables));
 
-                this.addGoogleMap();
+                setTimeout(this.setupMap, 10);
             },
 
-            addGoogleMap: function() {
-                var me = this;
+            setupMap: function() {
                 var hml = {
                     lng: 24.4590,
                     lat: 60.9929
                 }
 
-                this.map = new google.maps.Map(this.$(this.ui.mapContainer).get(0), {
-                  zoom: 12,
-                  center: hml
+                var cMarker = L.icon({
+                    iconUrl:       '/img/marker-icon.png',
+                    iconRetinaUrl: '/img/marker-icon-2x.png',
+                    shadowUrl:     '/img/marker-shadow.png',
+                    iconSize:    [25, 41],
+                    iconAnchor:  [12, 41],
+                    popupAnchor: [1, -34],
+                    tooltipAnchor: [16, -28],
+                    shadowSize:  [41, 41]
                 });
 
-                google.maps.event.addListener(this.map, 'click', function(event) {
-                    me.changeUnitLocation(event.latLng);
-                });
+                var me = this;
+                var map = L.map(this.$('#map')[0], {
+                    
+                }).setView(hml, 13);
 
-            },
+                L.tileLayer.wms('https://kartta.hameenlinna.fi/teklaogcweb/WMS.ashx?', {
+                    layers: 'Opaskartta'
+                }).addTo(map);
 
-            changeUnitLocation: function(location) {
-                location = location.toJSON();
-                if(this.unitMarker) {
-                    this.unitMarker.setPosition(location);
-                }
-                else {
-                    this.unitMarker = new google.maps.Marker({
-                      position: location,
-                      map: this.map
-                    });
-                }
-
-                geocoder = new google.maps.Geocoder();
-
-                geocoder.geocode(
-                {
-                    latLng: new google.maps.LatLng(location.lat, location.lng)
-                }, 
-                function(responses) {
-                    if (responses && responses.length > 0) {
-                        var streetAddress = responses[0].formatted_address.substr(0, responses[0].formatted_address.indexOf(',')); 
-                        var zip = responses[0].formatted_address.match(/\d\d\d\d\d/)[0];
-
-                        if(streetAddress && zip) {
-                            this.$('#unit-address').val(streetAddress);
-                            this.$('#unit-zip').val(zip);
-                        }
+                map.on('click', function(e) {
+                    if(me.unitMarker) {
+                        map.removeLayer(me.unitMarker);
                     }
+                    me.unitMarker = L.marker(e.latlng, {icon: cMarker}).addTo(map);
+                    me.$('#unit-location').val(e.latlng.lng + ' ' + e.latlng.lat);
                 });
-
-                this.$('#unit-location').val(location.lng + ' ' + location.lat);
             },
 
             events: {
@@ -94,7 +78,7 @@ define( ['App',
 
                 if(this.unitMarker) {
                     data.location = {
-                        coordinates: [this.unitMarker.getPosition().toJSON().lng, this.unitMarker.getPosition().toJSON().lat],
+                        coordinates: [this.unitMarker.getLatLng().lng, this.unitMarker.getLatLng().lat],
                         type: 'Point'
                     }
                 }
