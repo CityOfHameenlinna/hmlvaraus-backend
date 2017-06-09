@@ -105,6 +105,8 @@ define( ['App',
                 data.begin = moment(data.begin, 'D.M.YYYY HH:mm').toISOString();
                 data.end = moment(data.end, 'D.M.YYYY HH:mm').toISOString();
 
+                data.state = 'confirmed';
+
                 data.user = {
                     id: data.user
                 }
