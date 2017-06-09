@@ -5,7 +5,7 @@ from django.core.exceptions import PermissionDenied
 from rest_framework import viewsets, serializers, filters, exceptions, permissions, status
 from django_filters.rest_framework import DjangoFilterBackend
 from munigeo import api as munigeo_api
-from resources.models import Reservation, Resource
+from resources.models import Reservation, Resource, Unit
 from hmlvaraus.api.resource import ResourceSerializer
 from hmlvaraus.models.berth import Berth
 from hmlvaraus.models.hml_reservation import HMLReservation
@@ -55,7 +55,7 @@ class BerthSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer)
         resource.description_fi = new_resource_description.get('fi', resource.description_fi)
         resource.description = new_resource_description.get('fi', resource.description_fi)
 
-        resource.unit_id = resource_data.get('unit_id', resource.unit_id)
+        resource.unit = resource_data.get('unit', resource.unit)
         resource.save()
 
         return instance
