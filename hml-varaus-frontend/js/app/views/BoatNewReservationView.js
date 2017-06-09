@@ -58,6 +58,7 @@ define( ['App',
                 }).on('dp.change', function(e) {
                     me.checkDateRequired(e);
                     me.checkBeginBeforeEnd();
+                    me.setEndDate(e);
                 });
 
                 this.$('#reservation-end-datepicker').datetimepicker({
@@ -66,6 +67,11 @@ define( ['App',
                     me.checkDateRequired(e);
                     me.checkBeginBeforeEnd();
                 });
+            },
+
+            setEndDate: function(e) {
+                var newDate = e.date.add(1, 'y').format('D.M.YYYY HH:mm');
+                $('#reservation-end-datepicker').find('input').val(newDate);
             },
 
             checkBeginBeforeEnd: function(e) {
