@@ -37,6 +37,21 @@
                     </label>
                     <div>{{reservation.getIsPaidTimeFinnish()}}</div>
                 </dd>
+
+                <%if(resource.getType() == 'dock') {%>
+                    <dt>Avain palautettu</dt>
+                    <dd>
+                        <label class="switch reservation-key-returned">
+                            <%if(reservation.getKeyReturned()) {%>
+                                <input type="checkbox" class="reservation-key-returned" checked>
+                            <%}else{%>
+                                <input type="checkbox" class="reservation-key-returned">
+                            <%}%>
+                            <div class="slider round reservation-key-returned"></div>
+                        </label>
+                        <div>{{reservation.getKeyReturnedTimeFinnish()}}</div>
+                    </dd>
+                <%}%>
             </dl>
         </div>
         <div class="col-md-4">

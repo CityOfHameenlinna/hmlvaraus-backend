@@ -24,7 +24,7 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
 
     class Meta:
         model = HMLReservation
-        fields = ['id', 'is_paid', 'reserver_ssn', 'reservation', 'state_updated_at', 'is_paid_at']
+        fields = ['id', 'is_paid', 'reserver_ssn', 'reservation', 'state_updated_at', 'is_paid_at', 'key_returned', 'key_returned_at']
 
     def validate(self, data):
         request_user = self.context['request'].user
@@ -49,6 +49,14 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
                 validated_data['is_paid_at'] = timezone.now()
             else:
                 validated_data['is_paid_at'] = None
+
+        key_returned = validated_data.get('key_returned')
+        if key_returned != None:
+            if key_returned:
+                validated_data['key_returned_at'] = timezone.now()
+            else:
+                validated_data['key_returned_at'] = None
+                
         data = super(HMLReservationSerializer, self).update(instance, validated_data);
 
         return data

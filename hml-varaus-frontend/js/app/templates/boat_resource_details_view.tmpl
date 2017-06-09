@@ -60,8 +60,31 @@
 
                     <dt>Maksettu</dt>
                     <dd>
-
+                        <label class="switch reservation-is-paid">
+                            <%if(reservation.getIsPaid()) {%>
+                                <input type="checkbox" class="reservation-is-paid" checked>
+                            <%}else{%>
+                                <input type="checkbox" class="reservation-is-paid">
+                            <%}%>
+                            <div class="slider round reservation-is-paid"></div>
+                        </label>
+                        <div>{{reservation.getIsPaidTimeFinnish()}}</div>
                     </dd>
+
+                    <%if(resource.getType() == 'dock') {%>
+                        <dt>Avain palautettu</dt>
+                        <dd>
+                            <label class="switch reservation-key-returned">
+                                <%if(reservation.getKeyReturned()) {%>
+                                    <input type="checkbox" class="reservation-key-returned" checked>
+                                <%}else{%>
+                                    <input type="checkbox" class="reservation-key-returned">
+                                <%}%>
+                                <div class="slider round reservation-key-returned"></div>
+                            </label>
+                            <div>{{reservation.getKeyReturnedTimeFinnish()}}</div>
+                        </dd>
+                    <%}%>
                 </dl>
 
                 <h4><strong>Varaaja:</strong></h4>

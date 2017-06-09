@@ -1,5 +1,13 @@
-define( ['App', 'backbone', 'backbone-radio', 'moment', 'marionette', 'jquery', 'text!templates/boat_resource_details_view.tmpl'],
-    function(App, Backbone, Radio, moment, Marionette, $, template) {
+define( [
+    'App',
+    'backbone',
+    'bootbox',
+    'backbone-radio',
+    'moment',
+    'marionette',
+    'jquery',
+    'text!templates/boat_resource_details_view.tmpl'],
+    function(App, Backbone, bootbox, Radio, moment, Marionette, $, template) {
         return Marionette.View.extend({
             reservationModel: false,
             initialize: function() {
@@ -17,7 +25,9 @@ define( ['App', 'backbone', 'backbone-radio', 'moment', 'marionette', 'jquery', 
             },
             events: {
                 'click #resource-edit': 'editResource',
-                'click #resource-new-reservation': 'newReservation'
+                'click #resource-new-reservation': 'newReservation',
+                'click input.reservation-is-paid': 'changeIsPaid',
+                'click input.reservation-key-returned': 'changeKeyReturned'
             },
 
             render: function() {
@@ -35,6 +45,102 @@ define( ['App', 'backbone', 'backbone-radio', 'moment', 'marionette', 'jquery', 
 
             editResource: function() {
                 window.App.router.navigate('boat-resource-edit/' + this.model.getId(), {trigger: true});
+            },
+
+            changeIsPaid: function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                var me = this;
+                var target = $(e.currentTarget);
+
+                if(!target.prop('checked')) {
+                    bootbox.confirm({
+                        message: 'Olet merkkaamassa varauksen maksamattomaksi. Oletko varma?',
+                        buttons: {
+                            confirm: {
+                                label: 'Merkkaa',
+                                className: 'btn-danger'
+                            },
+                            cancel: {
+                                label: 'Älä merkkaa',
+                                className: 'btn-default'
+                            }
+                        },
+                        callback: function (result) {
+                            if(result) {
+                                me.reservationModel.set('is_paid', true).saveIsPaid(false)
+                                .done(function() {
+                                    target.prop('checked', false);
+                                })
+                                .fail(function() {
+                                    me.showRequestErrors();
+                                    target.prop('checked', true);
+                                });
+                            }
+                            else {
+                                target.prop('checked', true);
+                            }
+                        }
+                    });
+                }
+                else {
+                    this.reservationModel.set('is_paid', true).saveIsPaid(true)
+                    .done(function() {
+                        target.prop('checked', true);
+                    })
+                    .fail(function() {
+                        me.showRequestErrors();
+                        target.prop('checked', false);
+                    });
+                }
+            },
+
+            changeKeyReturned: function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                var me = this;
+                var target = $(e.currentTarget);
+
+                if(!target.prop('checked')) {
+                    bootbox.confirm({
+                        message: 'Olet merkkaamassa avaimen palauttamattomaksi. Oletko varma?',
+                        buttons: {
+                            confirm: {
+                                label: 'Merkkaa',
+                                className: 'btn-danger'
+                            },
+                            cancel: {
+                                label: 'Älä merkkaa',
+                                className: 'btn-default'
+                            }
+                        },
+                        callback: function (result) {
+                            if(result) {
+                                me.reservationModel.set('key_returned', true).saveKeyReturned(false)
+                                .done(function() {
+                                    target.prop('checked', false);
+                                })
+                                .fail(function() {
+                                    me.showRequestErrors();
+                                    target.prop('checked', true);
+                                });
+                            }
+                            else {
+                                target.prop('checked', true);
+                            }
+                        }
+                    });
+                }
+                else {
+                    this.reservationModel.set('key_returned', true).saveKeyReturned(true)
+                    .done(function() {
+                        target.prop('checked', true);
+                    })
+                    .fail(function() {
+                        me.showRequestErrors();
+                        target.prop('checked', false);
+                    });
+                }
             }
         });
     });

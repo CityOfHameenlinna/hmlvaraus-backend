@@ -69,6 +69,13 @@ define(["jquery", "backbone", "moment", "models/BaseModel"],
                 return time.format("D.M.YYYY HH:mm");
             },
 
+            getKeyReturnedTimeFinnish: function() {
+                if(!this.get('key_returned_at'))
+                    return '';
+                var time = moment(this.get('key_returned_at'));
+                return time.format("D.M.YYYY HH:mm");
+            },
+
             getReserver: function(userCollection) {
                 if(!this.get('reservation').user || !this.get('reservation').user.id)
                     return "Ei tietoja";
@@ -122,6 +129,10 @@ define(["jquery", "backbone", "moment", "models/BaseModel"],
                 return time.format("D.M.YYYY HH:mm");
             },
 
+            getKeyReturned: function() {
+                return this.get('key_returned');
+            },
+
             isCancelled: function() {
                 return this.getState() == 'cancelled';
             },
@@ -131,6 +142,16 @@ define(["jquery", "backbone", "moment", "models/BaseModel"],
                     url: this.url() + '?show_cancelled=true',
                     method: 'patch',
                     data: JSON.stringify({is_paid: value}),
+                    dataType: 'json',
+                    contentType: 'application/json'
+                });
+            },
+
+            saveKeyReturned: function(value) {
+                return $.ajax({
+                    url: this.url() + '?show_cancelled=true',
+                    method: 'patch',
+                    data: JSON.stringify({key_returned: value}),
                     dataType: 'json',
                     contentType: 'application/json'
                 });

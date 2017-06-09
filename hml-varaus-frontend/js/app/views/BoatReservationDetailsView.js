@@ -17,7 +17,8 @@ define( [
 
             events: {
                 'click input.reservation-is-paid': 'changeIsPaid',
-                'click #reservation-cancel': 'cancelReservation'
+                'click #reservation-cancel': 'cancelReservation',
+                'click input.reservation-key-returned': 'changeKeyReturned'
             },
 
             render: function() {
@@ -106,5 +107,53 @@ define( [
                     });
                 }
             },
+
+            changeKeyReturned: function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                var me = this;
+                var target = $(e.currentTarget);
+
+                if(!target.prop('checked')) {
+                    bootbox.confirm({
+                        message: 'Olet merkkaamassa avaimen palauttamattomaksi. Oletko varma?',
+                        buttons: {
+                            confirm: {
+                                label: 'Merkkaa',
+                                className: 'btn-danger'
+                            },
+                            cancel: {
+                                label: 'Älä merkkaa',
+                                className: 'btn-default'
+                            }
+                        },
+                        callback: function (result) {
+                            if(result) {
+                                me.model.set('key_returned', true).saveKeyReturned(false)
+                                .done(function() {
+                                    target.prop('checked', false);
+                                })
+                                .fail(function() {
+                                    me.showRequestErrors();
+                                    target.prop('checked', true);
+                                });
+                            }
+                            else {
+                                target.prop('checked', true);
+                            }
+                        }
+                    });
+                }
+                else {
+                    this.model.set('key_returned', true).saveKeyReturned(true)
+                    .done(function() {
+                        target.prop('checked', true);
+                    })
+                    .fail(function() {
+                        me.showRequestErrors();
+                        target.prop('checked', false);
+                    });
+                }
+            }
         });
     });
