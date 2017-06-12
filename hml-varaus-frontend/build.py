@@ -48,8 +48,6 @@ css = open(css_output_filename, 'wb')
 css.write(css_data)
 css.close()
 
-
-
 js = open(js_output_filename, 'r')
 js_data = js.read()
 js_md5 = md5.new()
