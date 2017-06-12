@@ -1,5 +1,6 @@
 define([
-    'jquery', 
+    'jquery',
+    'cookie',
     'backbone',
     'backbone-radio',
     'marionette', 
@@ -26,7 +27,7 @@ define([
     '../libs/require',
     'launcher'
     ],
-    function ($, Backbone, Radio, Marionette, _, Router, LayoutView, WelcomeView, BoatManageView, 
+    function ($, cookie, Backbone, Radio, Marionette, _, Router, LayoutView, WelcomeView, BoatManageView, 
     BoatReservationListView, BoatResourceListView, BoatNewReservationView, BoatNewResourceView,
     BoatReservationDetailsView, BoatResourceDetailsView, BoatResourceEditView, 
     UnitEditView, UnitDetailsView, UnitNewView, ContentTableView,
@@ -43,6 +44,12 @@ define([
                 var me = this;
                 this.router = new Router({
                     controller: this
+                });
+
+                var tokenValue = cookie.get('respa-csrftoken');
+
+                $.ajaxSetup({
+                    headers: {'X-CSRFToken': tokenValue}
                 });
 
                 this.boatResourceCollection = new BoatResourceCollection();
