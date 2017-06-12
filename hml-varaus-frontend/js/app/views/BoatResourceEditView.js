@@ -150,9 +150,9 @@ define( ['App',
                 }
                 delete data.name;
                 delete data.unit;
-                data.length_cm = Number(data.length_cm) * 100;
-                data.width_cm = Number(data.width_cm) * 100;
-                data.depth_cm = Number(data.depth_cm) * 100;
+                data.length_cm = data.length_cm ? Number(data.length_cm) * 100 : 0;
+                data.width_cm = data.width_cm ? Number(data.width_cm) * 100 : 0;
+                data.depth_cm = data.depth_cm ? Number(data.depth_cm) * 100 : 0;
                 data.is_disabled = data.is_disabled ? true : false;
                 data.price = Number(data.price);
 
