@@ -1,3 +1,5 @@
+#!/usr/bin/python2
+
 import os
 import md5
 import shutil
@@ -30,8 +32,8 @@ js_output_filename = JS_DIR_PROD + 'optimized-js.js'
 
 print('Running require.js optimization')
 
-os.system('node js/libs/r.js -o js/build-options.js')
-os.system('node js/libs/r.js -o cssIn=css/main.css out=' + css_output_filename + ' optimizeCss=standard')
+os.system('nodejs js/libs/r.js -o js/build-options.js')
+os.system('nodejs js/libs/r.js -o cssIn=css/main.css out=' + css_output_filename + ' optimizeCss=standard')
 
 print('Optimization done. Renaming css and js files to bust the cache.')
 

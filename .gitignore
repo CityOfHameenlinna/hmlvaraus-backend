@@ -20,4 +20,5 @@ perf*csv
 newrelic.ini
 celerybeat-schedule
 celerybeat.pid
-staticroot/
+static/
+templates/
