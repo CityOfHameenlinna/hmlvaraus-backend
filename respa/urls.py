@@ -20,6 +20,7 @@ from helusers import admin
 from django.views.generic.base import RedirectView
 
 from resources.api import RespaAPIRouter
+from hmlvaraus.api.importer import ImporterView
 from resources.views.images import ResourceImageView
 from resources.views.ical import ICalFeedView
 from resources.views import testing as testing_views
@@ -41,6 +42,7 @@ urlpatterns = [
     #url(r'^$', RedirectView.as_view(url='v1/'))
     url(r'^$', login_required(IndexView.as_view())),
     url(r'^api/', include(router.urls)),
+    url(r'^importer/', ImporterView.as_view())
 ]
 
 if 'reports' in settings.INSTALLED_APPS:
