@@ -55,7 +55,7 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
 
                 var currentFutureReservations = 0;
                 this.boatReservationCollection.each(function(res) {
-                    if(moment().isBefore(moment(res.getEndTime())))
+                    if(moment().isBefore(moment(res.getEndTime())) && res.getState() == 'confirmed')
                         currentFutureReservations++;
                 });
 
