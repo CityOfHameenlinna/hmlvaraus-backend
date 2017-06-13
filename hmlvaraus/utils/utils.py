@@ -6,11 +6,14 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from datetime import datetime, timedelta
 from rest_framework.filters import OrderingFilter
+from django.utils import timezone
 
 @receiver(post_save, sender=HMLReservation)
 def set_reservation_renew(sender, instance, **kwargs):
     if kwargs.get('created'):
-        tasks.set_reservation_cancel.apply_async((instance.id,), eta=instance.reservation.begin + timedelta(days=30))
+        cancel_eta = instance.reservation.begin + timedelta(days=30)
+        if cancel_eta > timezone.now():
+            tasks.set_reservation_cancel.apply_async((instance.id,), eta=cancel_eta)
         tasks.set_reservation_renewal.apply_async((instance.id,), eta=instance.reservation.end)
 
 class RelatedOrderingFilter(OrderingFilter):
