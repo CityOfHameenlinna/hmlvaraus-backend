@@ -12,8 +12,6 @@ from hmlvaraus.api.reservation import ReservationSerializer
 from hmlvaraus.models.hml_reservation import HMLReservation
 from resources.api.base import TranslatedModelSerializer, register_view
 from hmlvaraus.utils.utils import RelatedOrderingFilter
-from hmlvaraus import tasks
-from datetime import datetime, timedelta
 from django.utils.translation import ugettext_lazy as _
 
 class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer):
