@@ -1,12 +1,19 @@
+
+# -*- coding: utf-8 -*-
+
+from datetime import timedelta
+
+from rest_framework.filters import OrderingFilter
+
 from django.core.exceptions import FieldDoesNotExist
 from django.db.models.fields.reverse_related import ForeignObjectRel, OneToOneRel
-from hmlvaraus.models.hml_reservation import HMLReservation
-from hmlvaraus import tasks
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from datetime import datetime, timedelta
-from rest_framework.filters import OrderingFilter
 from django.utils import timezone
+
+from hmlvaraus import tasks
+from hmlvaraus.models.hml_reservation import HMLReservation
+
 
 @receiver(post_save, sender=HMLReservation)
 def set_reservation_renew(sender, instance, **kwargs):
@@ -16,10 +23,11 @@ def set_reservation_renew(sender, instance, **kwargs):
             tasks.set_reservation_cancel.apply_async((instance.id,), eta=cancel_eta)
         tasks.set_reservation_renewal.apply_async((instance.id,), eta=instance.reservation.end)
 
+
 class RelatedOrderingFilter(OrderingFilter):
     """
     Extends OrderingFilter to support ordering by fields in related models.
-    """    
+    """
 
     def is_valid_field(self, model, field):
         """
@@ -47,4 +55,5 @@ class RelatedOrderingFilter(OrderingFilter):
 
     def remove_invalid_fields(self, queryset, fields, view, foo):
         return [term for term in fields
-                if self.is_valid_field(queryset.model, term.lstrip('-'))]   
+                if self.is_valid_field(queryset.model, term.lstrip('-'))]
+
