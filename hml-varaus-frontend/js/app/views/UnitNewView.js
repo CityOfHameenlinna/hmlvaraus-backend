@@ -19,13 +19,16 @@ define( ['App',
             },
 
             render: function() {
+                var me = this;
                 var variables = {
                 }
 
                 var tmpl = _.template(template);
                 this.$el.html(tmpl(variables));
 
-                setTimeout(this.setupMap, 10);
+                setTimeout(function() {
+                    me.setupMap();
+                }, 10);
             },
 
             setupMap: function() {
@@ -75,7 +78,6 @@ define( ['App',
                 data.street_address = {fi: data.street_address}
                 data.name = {fi: data.name}
                 data.description = {fi:data.description};
-
                 if(this.unitMarker) {
                     data.location = {
                         coordinates: [this.unitMarker.getLatLng().lng, this.unitMarker.getLatLng().lat],
