@@ -17,3 +17,8 @@ perf*csv
 /build
 /dist
 /src
+newrelic.ini
+celerybeat-schedule
+celerybeat.pid
+static/
+templates/
