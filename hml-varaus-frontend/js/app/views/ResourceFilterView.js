@@ -38,8 +38,8 @@ define( [
                 var target = $(e.currentTarget);
                 var val = target.val();
                 if(val == 'not_reserved' || val == 'reserved') {
-                    if(!this.$('#resource-begin-datepicker').date())
-                        this.$('#resource-begin-datepicker').date(moment());
+                    if(!this.$('#resource-begin-datepicker').data("DateTimePicker").date())
+                        this.$('#resource-begin-datepicker').data("DateTimePicker").date(moment());
                 }
             },
 
