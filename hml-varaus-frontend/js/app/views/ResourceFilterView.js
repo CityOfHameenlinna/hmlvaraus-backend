@@ -30,7 +30,17 @@ define( [
             events: {
                 'change .filter-input': 'filterInputChanged',
                 'click #show-filters': 'showFilters',
-                'click #filter-clear': 'clearFilters'
+                'click #filter-clear': 'clearFilters',
+                'change #filter-date-type': 'dateFilterChanged'
+            },
+
+            dateFilterChanged: function(e) {
+                var target = $(e.currentTarget);
+                var val = target.val();
+                if(val == '' || val == 'reserved') {
+                    if(!this.$('#resource-begin-datepicker').date())
+                        this.$('#resource-begin-datepicker').date(moment());
+                }
             },
 
             showFilters: function(e) {
@@ -134,7 +144,6 @@ define( [
                     locale: 'fi'
                 }).on('dp.change', function(e) {
                     me.filterInputChanged(e);
-
                 });
             }
         }

@@ -147,6 +147,8 @@ class BerthFilterBackend(filters.BaseFilterBackend):
                 raise exceptions.ParseError("'%s' must be a timestamp in ISO 8601 format" % name)
 
         resources = []
+        if not filter_type or filter_type == '':
+            return queryset
 
         if times.get('berth_begin', None) and times.get('berth_end', None):
             resources = HMLReservation.objects.filter(reservation__end__gte=times['berth_begin'], reservation__begin__lte=times['berth_end'], reservation__state='confirmed').values_list('reservation__resource_id', flat=True)

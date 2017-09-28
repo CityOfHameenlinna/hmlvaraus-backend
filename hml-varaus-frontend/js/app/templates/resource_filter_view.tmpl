@@ -92,10 +92,15 @@
             <div class="form-group">
                 <label for="filter-date-type">Päivämääräsuodatuksen tyyppi</label>
                 <select id="filter-date-type" name="date_filter_type" class="form-control filter-input">
-                    <%if(filters.date_filter_type == 'not_reserved') {%>
-                        <option selected value="">Vapaa aikavälillä</option>
+                    <%if(filters.date_filter_type == '') {%>
+                        <option selected value="">Ei päivämääräsuodatusta</option>
                     <%} else {%>
-                        <option value="">Vapaa aikavälillä</option>
+                        <option value="">Ei päivämääräsuodatusta</option>
+                    <%}%>
+                    <%if(filters.date_filter_type == 'not_reserved') {%>
+                        <option selected value="not_reserved">Vapaa aikavälillä</option>
+                    <%} else {%>
+                        <option value="not_reserved">Vapaa aikavälillä</option>
                     <%}%>
                     <%if(filters.date_filter_type == 'reserved') {%>
                         <option selected value="reserved">Varattu aikavälillä</option>
@@ -122,7 +127,6 @@
                     </span>
                 </div>
             </div>
-            <button class="btn btn-link pull-right" id="filter-clear">Tyhjennä suodattimet</button>
         </div>
     </div>
 </div>
@@ -134,3 +138,4 @@
     Näytä suodattimet
 <%}%>
 </a>
+<button class="btn btn-primary pull-right" id="filter-clear">Tyhjennä suodattimet</button>
