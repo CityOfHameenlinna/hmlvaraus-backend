@@ -37,7 +37,7 @@ define( [
             dateFilterChanged: function(e) {
                 var target = $(e.currentTarget);
                 var val = target.val();
-                if(val == '' || val == 'reserved') {
+                if(val == 'not_reserved' || val == 'reserved') {
                     if(!this.$('#resource-begin-datepicker').date())
                         this.$('#resource-begin-datepicker').date(moment());
                 }
