@@ -29,15 +29,17 @@ class ImporterView(generics.CreateAPIView):
             fields = row.split(';')
             if len(fields) == 7: 
                 print('Kohdedataa')
-                location = fields[5].split(',')
-                coordinates = []
-                for coord in location:
-                    coord = coord.strip()
-                    coord = float(coord)
-                    coordinates = [coord] + coordinates
+                location = None
+                if fields[5] and fields[5] != '':
+                    location = fields[5].split(',')
+                    coordinates = []
+                    for coord in location:
+                        coord = coord.strip()
+                        coord = float(coord)
+                        coordinates = [coord] + coordinates
 
-                location = json.dumps({'type': 'Point', 'coordinates': coordinates})
-                Unit.objects.get_or_create(name=fields[0], street_address=fields[1], address_zip=fields[2], email=fields[3], phone=fields[4], location=GEOSGeometry(location), description=fields[6])
+                    location = GEOSGeometry(json.dumps({'type': 'Point', 'coordinates': coordinates}))
+                Unit.objects.get_or_create(name=fields[0], street_address=fields[1], address_zip=fields[2], email=fields[3], phone=fields[4], location=location, description=fields[6])
             elif len(fields) == 9:
                 print('Venepaikkadataa')
                 unit = Unit.objects.get(name=fields[0]);
@@ -61,13 +63,22 @@ class ImporterView(generics.CreateAPIView):
                     'laituri': 'dock',
                     'poletti': 'ground'
                 }
+                length = 0
+                width = 0
+                depth = 0
+                if fields[5] and fields[5] != '':
+                    length = int(fields[5])
+                if fields[6] and fields[6] != '':
+                    width = int(fields[6])
+                if fields[7] and fields[7] != '':
+                    depth = int(fields[7])
 
                 berth_type = type_mapping.get(fields[8], None)
-                Berth.objects.get_or_create(resource=resource, is_disabled=is_disabled, price=price, length_cm=int(fields[5]), width_cm=int(fields[6]), depth_cm=int(fields[7]), type=berth_type)
+                Berth.objects.get_or_create(resource=resource, is_disabled=is_disabled, price=price, length_cm=length, width_cm=width, depth_cm=depth, type=berth_type)
             elif len(fields) == 12:
                 print('Varausdataa')
                 unit = Unit.objects.get(name=fields[1])
-                resource = Resource.objects.get(unit=unit, name=fields[0])
+                resource = Resource.objects.get(unit=unit, name=str(fields[0]))
                 begin = datetime.datetime.strptime(fields[2], "%d.%m.%Y %H:%M")
                 end = datetime.datetime.strptime(fields[3], "%d.%m.%Y %H:%M")
                 state = 'confirmed'
