@@ -22,12 +22,12 @@ define(["jquery","backbone"],
                 }
                 options.traditional = true;
             }
-            
+
             this.isFiltered = true;
 
             return this.fetch(options);
         },
-        
+
         parse: function(response) {
             var obj = response.results;
 

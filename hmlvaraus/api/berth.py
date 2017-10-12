@@ -2,7 +2,7 @@ import arrow
 import django_filters
 from arrow.parser import ParserError
 from django.core.exceptions import PermissionDenied
-from rest_framework import viewsets, serializers, filters, exceptions, permissions, status
+from rest_framework import viewsets, serializers, filters, exceptions, permissions, status, pagination
 from django_filters.rest_framework import DjangoFilterBackend
 from munigeo import api as munigeo_api
 from resources.models import Reservation, Resource, Unit
@@ -34,7 +34,7 @@ class BerthSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer)
 
     def update(self, instance, validated_data):
         resource_data = validated_data.pop('resource')
-        
+
         resource = instance.resource
 
         instance.width_cm = validated_data.get('width_cm', instance.width_cm)
@@ -118,7 +118,7 @@ class BerthFilter(django_filters.FilterSet):
     min_price = django_filters.NumberFilter(name="price", lookup_expr='gte')
 
     unit_id = django_filters.CharFilter(name="resource__unit_id")
-    
+
     class Meta:
         model = Berth
         fields = ['max_width', 'min_width', 'max_length', 'min_length', 'max_depth', 'min_depth', 'max_price', 'min_price', 'unit_id', 'type']
@@ -164,6 +164,26 @@ class BerthFilterBackend(filters.BaseFilterBackend):
 
         return queryset
 
+class BerthPagination(pagination.PageNumberPagination):
+    page_size = 2
+    page_size_query_param = 'page_size'
+    max_page_size = 5000
+    def get_paginated_response(self, data):
+        try:
+            next_page = self.page.next_page_number()
+        except:
+            next_page = ''
+        try:
+            previous_page = self.page.previous_page_number()
+        except:
+            previous_page = ''
+        return Response({
+            'next': next_page,
+            'previous': previous_page,
+            'count': self.page.paginator.count,
+            'results': data
+        })
+
 class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     queryset = Berth.objects.all().select_related('resource', 'resource__unit')
     serializer_class = BerthSerializer
@@ -175,6 +195,7 @@ class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     filter_fields = ['type']
     search_fields = ['type', 'resource__name', 'resource__name_fi', 'resource__unit__name', 'resource__unit__name_fi']
     ordering_fields = ('__all__')
+    pagination_class = BerthPagination
 
     def destroy(self, request, *args, **kwargs):
         try:

@@ -53,11 +53,22 @@ define( [
                 }
 
                 this.collection = this.options.collection;
-                this.collection.fetchFiltered()
+                // this.collection.fetchFiltered()
+                var me = this;
+                this.collection.fetch({
+                    data: {page: 1},
+                    remove: false,
+                    success: function(collection, response) {
+                        if (!me.collection.next_page) {
+                            me.collection.next_page = response.next;
+                        }
+                    }
+                });
             },
 
             events: {
-                'click th': 'sortChanged'
+                'click th': 'sortChanged',
+                'click #pagination-next': 'paginationNext'
             },
 
             showChildViews: function() {
@@ -130,9 +141,19 @@ define( [
                 localStorage.setItem(filterTag, JSON.stringify(filters));
 
                 this.mainRadioChannel.trigger(eventTag);
-
             },
-            
+
+            paginationNext: function(e) {
+                var me = this;
+                this.collection.fetch({
+                    data: {page: this.collection.next_page},
+                    remove: false,
+                    success: function(collection, response) {
+                        me.collection.next_page = response.next;
+                    }
+                });
+            },
+
             render: function() {
                 var me = this;
                 var variables = {
