@@ -3,7 +3,7 @@ define([
     'cookie',
     'backbone',
     'backbone-radio',
-    'marionette', 
+    'marionette',
     'underscore',
     'routers/AppRouter',
     'views/LayoutView',
@@ -27,9 +27,9 @@ define([
     '../libs/require',
     'launcher'
     ],
-    function ($, cookie, Backbone, Radio, Marionette, _, Router, LayoutView, WelcomeView, BoatManageView, 
+    function ($, cookie, Backbone, Radio, Marionette, _, Router, LayoutView, WelcomeView, BoatManageView,
     BoatReservationListView, BoatResourceListView, BoatNewReservationView, BoatNewResourceView,
-    BoatReservationDetailsView, BoatResourceDetailsView, BoatResourceEditView, 
+    BoatReservationDetailsView, BoatResourceDetailsView, BoatResourceEditView,
     UnitEditView, UnitDetailsView, UnitNewView, ContentTableView,
     BoatResourceCollection, BoatReservationCollection, UserCollection, UnitCollection) {
 
@@ -39,7 +39,7 @@ define([
             navigate: function(fragment) {
                 this.router.navigate(fragment, {trigger: true});
             },
-            
+
             onStart: function() {
                 var me = this;
                 this.router = new Router({
@@ -62,12 +62,12 @@ define([
                     var url = 'boat-reservations';
                     if(id) {
                         url = 'boat-reservation-details/' + id;
-                    } 
+                    }
                     me.boatResourceCollection.fetch();
                     me.boatReservationCollection.fetch().done(function(){
                         me.router.navigate(url, {trigger: true});
                         $('.main-nav-item.active').removeClass('active');
-                        $('#nav-reservations').addClass('active'); 
+                        $('#nav-reservations').addClass('active');
                     });
                 });
 
@@ -75,12 +75,12 @@ define([
                     var url = 'boat-resources';
                     if(id) {
                         url = 'boat-resource-details/' + id;
-                    } 
+                    }
                     me.boatReservationCollection.fetch();
                     me.boatResourceCollection.fetch().done(function() {
                         me.router.navigate(url, {trigger: true});
                         $('.main-nav-item.active').removeClass('active');
-                        $('#nav-resources').addClass('active'); 
+                        $('#nav-resources').addClass('active');
                     });
                 });
 
@@ -88,34 +88,34 @@ define([
                     var url = 'units';
                     if(id) {
                         url = 'unit-details/' + id;
-                    } 
+                    }
                     me.unitCollection.fetch().done(function() {
                         me.router.navigate(url, {trigger: true});
                         $('.main-nav-item.active').removeClass('active');
-                        $('#nav-units').addClass('active'); 
+                        $('#nav-units').addClass('active');
                     });
                 });
 
                 this.mainRadioChannel.on('show-reservations', function() {
                     me.router.navigate('boat-reservations', {trigger: true});
                     $('.main-nav-item.active').removeClass('active');
-                    $('#nav-reservations').addClass('active'); 
+                    $('#nav-reservations').addClass('active');
                 });
 
                 this.mainRadioChannel.on('show-resources', function() {
                     me.router.navigate('boat-resources', {trigger: true});
                     $('.main-nav-item.active').removeClass('active');
-                    $('#nav-resources').addClass('active'); 
+                    $('#nav-resources').addClass('active');
                 });
 
                 this.mainRadioChannel.on('show-new-reservation', function(id) {
                     var url = 'boat-reservation-new';
                     if(id) {
                         url += '/' + id;
-                    } 
+                    }
                     me.router.navigate(url, {trigger: true});
                     $('.main-nav-item.active').removeClass('active');
-                    $('#nav-reservations').addClass('active'); 
+                    $('#nav-reservations').addClass('active');
                 });
 
                 this.layoutView = new LayoutView()

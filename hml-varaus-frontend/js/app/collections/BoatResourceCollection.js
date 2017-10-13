@@ -21,7 +21,7 @@ define([
         },
 
         getByResourceId: function(id) {
-            var needle = undefined; 
+            var needle = undefined;
             this.each(function(item) {
                 if(id == item.get('resource').id)
                     needle = item

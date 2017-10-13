@@ -169,14 +169,12 @@ class BerthPagination(pagination.PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 5000
     def get_paginated_response(self, data):
-        try:
+        next_page = ''
+        previous_page = ''
+        if self.page.has_next():
             next_page = self.page.next_page_number()
-        except:
-            next_page = ''
-        try:
+        if self.page.has_previous():
             previous_page = self.page.previous_page_number()
-        except:
-            previous_page = ''
         return Response({
             'next': next_page,
             'previous': previous_page,

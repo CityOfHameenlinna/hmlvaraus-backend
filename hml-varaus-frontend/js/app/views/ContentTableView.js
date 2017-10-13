@@ -1,9 +1,9 @@
 define( [
-    'App', 
+    'App',
     'backbone',
     'backbone-radio',
-    'marionette', 
-    'jquery', 
+    'marionette',
+    'jquery',
     'views/BoatReservationListView',
     'views/BoatResourceListView',
     'views/UnitListView',
@@ -54,16 +54,9 @@ define( [
 
                 this.collection = this.options.collection;
                 // this.collection.fetchFiltered()
-                var me = this;
-                this.collection.fetch({
-                    data: {page: 1},
-                    remove: false,
-                    success: function(collection, response) {
-                        if (!me.collection.next_page) {
-                            me.collection.next_page = response.next;
-                        }
-                    }
-                });
+                if (!this.collection.page){
+                    this.collection.fetchPaginated(1, false);
+                }
             },
 
             events: {
@@ -144,14 +137,7 @@ define( [
             },
 
             paginationNext: function(e) {
-                var me = this;
-                this.collection.fetch({
-                    data: {page: this.collection.next_page},
-                    remove: false,
-                    success: function(collection, response) {
-                        me.collection.next_page = response.next;
-                    }
-                });
+                this.collection.fetchPaginated(this.collection.nextPage, false);
             },
 
             render: function() {

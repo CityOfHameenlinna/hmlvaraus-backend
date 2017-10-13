@@ -7,7 +7,7 @@ define(["jquery","backbone"],
             this.isFiltered = false;
         },
 
-        fetchFiltered: function(options) {
+        fetchFiltered: function(options, page, remove) {
             if(!options)
                 options = {};
 
@@ -23,9 +23,27 @@ define(["jquery","backbone"],
                 options.traditional = true;
             }
 
-            this.isFiltered = true;
+            // this.isFiltered = true;
 
             return this.fetch(options);
+        },
+
+        fetchPaginated: function(page, remove) {
+            var me = this;
+            this.fetch({
+                data: {page: page},
+                remove: remove,
+                success: function(collection, response) {
+                    if (response.next) {
+                        me.page = response.next - 1;
+                        me.nextPage = response.next;
+                    }
+                    else if (response.previous) {
+                        me.page = response.previous + 1;
+                        me.previousPage = response.previous;
+                    }
+                }
+            });
         },
 
         parse: function(response) {
