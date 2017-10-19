@@ -37,6 +37,10 @@ define(["jquery", "backbone", "moment", "models/BaseModel"],
             },
 
             getResourceId: function() {
+                return this.get('reservation').resource.id;
+            },
+
+            getResource: function() {
                 return this.get('reservation').resource;
             },
 

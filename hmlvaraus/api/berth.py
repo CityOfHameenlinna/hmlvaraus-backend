@@ -3,13 +3,13 @@ import django_filters
 from arrow.parser import ParserError
 from django.core.exceptions import PermissionDenied
 from rest_framework import viewsets, serializers, filters, exceptions, permissions, status, pagination
+from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from munigeo import api as munigeo_api
 from resources.models import Reservation, Resource, Unit
 from hmlvaraus.api.resource import ResourceSerializer
 from hmlvaraus.models.berth import Berth
 from hmlvaraus.models.hml_reservation import HMLReservation
-from rest_framework.response import Response
 from resources.api.base import TranslatedModelSerializer, register_view
 from hmlvaraus.utils.utils import RelatedOrderingFilter
 from django.utils.translation import ugettext_lazy as _
@@ -188,7 +188,7 @@ class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     lookup_field = 'id'
 
     filter_class = BerthFilter
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     filter_backends = (DjangoFilterBackend,filters.SearchFilter,RelatedOrderingFilter, BerthFilterBackend)
     filter_fields = ['type']
     search_fields = ['type', 'resource__name', 'resource__name_fi', 'resource__unit__name', 'resource__unit__name_fi']

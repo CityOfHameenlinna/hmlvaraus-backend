@@ -5,6 +5,7 @@ from rest_framework.exceptions import ValidationError
 from munigeo import api as munigeo_api
 from resources.models import Resource, Unit, ResourceType
 from resources.api.resource import ResourceSerializer
+from hmlvaraus.api.unit import UnitSerializer
 
 class ResourceSerializer(ResourceSerializer):
     name = serializers.CharField(required=True)
@@ -13,6 +14,7 @@ class ResourceSerializer(ResourceSerializer):
     description_fi = serializers.CharField(required=False)
     type_id = serializers.CharField(max_length=100)
     unit_id = serializers.CharField(max_length=50)
+    unit = UnitSerializer(required=True)
 
     def validate(self, data):
         request_user = self.context['request'].user

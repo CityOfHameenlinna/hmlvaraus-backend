@@ -4,11 +4,13 @@ import re
 from arrow.parser import ParserError
 from django.core.exceptions import PermissionDenied
 from django.utils import timezone
-from rest_framework import viewsets, serializers, filters, exceptions, permissions
+from rest_framework import viewsets, serializers, filters, exceptions, permissions, pagination
+from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from munigeo import api as munigeo_api
 from resources.models import Reservation
 from hmlvaraus.api.reservation import ReservationSerializer
+from hmlvaraus.api.berth import BerthSerializer
 from hmlvaraus.models.hml_reservation import HMLReservation
 from resources.api.base import TranslatedModelSerializer, register_view
 from hmlvaraus.utils.utils import RelatedOrderingFilter
@@ -19,10 +21,11 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
     is_paid = serializers.BooleanField(required=False)
     reserver_ssn = serializers.CharField(required=False)
     partial = True
+    berth = BerthSerializer(required=True)
 
     class Meta:
         model = HMLReservation
-        fields = ['id', 'is_paid', 'reserver_ssn', 'reservation', 'state_updated_at', 'is_paid_at', 'key_returned', 'key_returned_at']
+        fields = ['id', 'berth', 'is_paid', 'reserver_ssn', 'reservation', 'state_updated_at', 'is_paid_at', 'key_returned', 'key_returned_at']
 
     def validate(self, data):
         request_user = self.context['request'].user
@@ -54,7 +57,7 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
                 validated_data['key_returned_at'] = timezone.now()
             else:
                 validated_data['key_returned_at'] = None
-                
+
         data = super(HMLReservationSerializer, self).update(instance, validated_data);
 
         return data
@@ -126,17 +129,36 @@ class HMLReservationFilterBackend(filters.BaseFilterBackend):
 
         return queryset
 
+class HMLReservationPagination(pagination.PageNumberPagination):
+    page_size = 2
+    page_size_query_param = 'page_size'
+    max_page_size = 5000
+    def get_paginated_response(self, data):
+        next_page = ''
+        previous_page = ''
+        if self.page.has_next():
+            next_page = self.page.next_page_number()
+        if self.page.has_previous():
+            previous_page = self.page.previous_page_number()
+        return Response({
+            'next': next_page,
+            'previous': previous_page,
+            'count': self.page.paginator.count,
+            'results': data
+        })
+
 class HMLReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     queryset = HMLReservation.objects.all().select_related('reservation', 'reservation__user', 'reservation__resource', 'reservation__resource__unit')
     serializer_class = HMLReservationSerializer
     lookup_field = 'id'
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     filter_class = HMLReservationFilter
 
     filter_backends = (DjangoFilterBackend,filters.SearchFilter, HMLReservationFilterBackend,RelatedOrderingFilter)
     filter_fields = ('reserver_ssn')
     search_fields = ['reserver_ssn', 'reservation__billing_address_street', 'reservation__reserver_email_address', 'reservation__reserver_name']
     ordering_fields = ('__all__')
+    pagination_class = HMLReservationPagination
 
     def perform_create(self, serializer):
         serializer.save()

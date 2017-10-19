@@ -12,7 +12,7 @@ define([
         filterKey: 'boat_reservation_filters',
         initialize: function() {
             var me = this;
-            this.deferred = this.fetch({data: {show_cancelled: true}});
+            // this.fetch({data: {show_cancelled: true}});
             this.mainRadioChannel = Radio.channel('main');
             this.mainRadioChannel.on('reservation-filter-changed', function() {
                 me.fetchFiltered();
@@ -31,6 +31,20 @@ define([
                 return reservation.getResourceId() == resourceId;
             });
             return new Collection(filtered);
+        },
+
+        parse: function(response) {
+            var obj = response.results;
+            var reservation = _.map(obj, function (value, key) {
+                return obj[key];
+            });
+            var resourceCollection = window.App.boatResourceCollection;
+            var unitCollection = window.App.unitCollection;
+            var resource = _.map(obj, function (value, key) {
+                return obj[key].berth;
+            });
+            resourceCollection.push(resource);
+            return reservation
         }
     });
 

@@ -3,7 +3,7 @@ define(["jquery","backbone"],
     var Collection = Backbone.Collection.extend({
         isFiltered: false,
         fetchAll: function() {
-            this.deferred = this.fetch();
+            // this.deferred = this.fetch();
             this.isFiltered = false;
         },
 
@@ -30,8 +30,11 @@ define(["jquery","backbone"],
 
         fetchPaginated: function(page, remove) {
             var me = this;
+            if (remove) {
+                this.reset();
+            }
             this.fetch({
-                data: {page: page},
+                data: {page: page, show_cancelled: true},
                 remove: remove,
                 success: function(collection, response) {
                     if (response.next) {

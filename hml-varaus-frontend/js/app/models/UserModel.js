@@ -14,6 +14,10 @@ define(["jquery", "backbone", "models/BaseModel"],
 
             },
 
+            isStaff: function() {
+                return this.get('is_staff');
+            },
+
             getId: function() {
                 return this.get('uuid');
             },

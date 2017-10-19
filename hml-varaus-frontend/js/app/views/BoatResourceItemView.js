@@ -17,7 +17,7 @@ define( ['App', 'backbone', 'marionette', 'jquery', 'text!templates/boat_resourc
                 var variables = {
                     model: this.model,
                     reservation_collection: this.boatReservationCollection,
-                    unit: this.unitCollection.get(this.model.getUnitId()),
+                    // unit: this.unitCollection.get(this.model.getUnitId()),
                     is_reserved: this.model.isReserved(this.boatReservationCollection) ? "Kyllä" : "Ei"
                 }
                 var tmpl = _.template(template);

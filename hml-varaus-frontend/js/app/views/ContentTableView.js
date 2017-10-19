@@ -32,6 +32,9 @@ define( [
             },
 
             initialize: function() {
+                this.collection = this.options.collection;
+                this.collection.fetchPaginated(1, true);
+                
                 this.mainRadioChannel = Radio.channel('main');
                 this.contentType = this.options.contentType;
 
@@ -50,12 +53,6 @@ define( [
                         filterTag = 'unit_filters';
                         eventTag = 'unit-filter-changed';
                         break;
-                }
-
-                this.collection = this.options.collection;
-                // this.collection.fetchFiltered()
-                if (!this.collection.page){
-                    this.collection.fetchPaginated(1, false);
                 }
             },
 

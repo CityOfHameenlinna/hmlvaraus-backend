@@ -13,11 +13,10 @@ define([
         initialize: function() {
             var me = this;
             this.mainRadioChannel = Radio.channel('main');
-            this.deferred = this.fetch();
-
             this.mainRadioChannel.on('resource-filter-changed', function() {
                 me.fetchFiltered();
             });
+            this.deferred = this.fetch();
         },
 
         getByResourceId: function(id) {
@@ -28,6 +27,13 @@ define([
             });
 
             return needle;
+        },
+
+        parse: function(response) {
+            var obj = response.results;
+            return _.map(obj, function (value, key) {
+              return obj[key];
+            });
         }
     });
 

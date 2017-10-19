@@ -118,6 +118,14 @@ define([
                     $('#nav-reservations').addClass('active');
                 });
 
+                this.mainRadioChannel.on('reservations-fetched', function() {
+                    // me.boatReservationCollection.each(function(item) {
+                    //     var resource = item.get('reservation').resource
+                    //     me.boatResourceCollection.add(resource);
+                    //     me.unitCollection.add(resource.unit);
+                    // });
+                });
+
                 this.layoutView = new LayoutView()
                 me.showView(this.layoutView);
                 Backbone.history.start();
@@ -196,7 +204,7 @@ define([
         }
 
         App.showBoatResourceList = function() {
-            App.refetchFilteredCollections();
+            // App.refetchFilteredCollections();
             $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred, App.unitCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new ContentTableView({
                     collection: App.boatResourceCollection,

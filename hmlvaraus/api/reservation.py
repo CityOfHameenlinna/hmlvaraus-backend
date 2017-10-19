@@ -1,12 +1,14 @@
-from rest_framework import serializers 
+from rest_framework import serializers
 from resources.models import Reservation
 from resources.models.reservation import RESERVATION_EXTRA_FIELDS
 from resources.api.reservation import ReservationSerializer
 from resources.api.base import TranslatedModelSerializer
+from hmlvaraus.api.resource import ResourceSerializer
 
 class ReservationSerializer(ReservationSerializer):
 
     reserver_name = serializers.CharField(required=True)
+    resource = ResourceSerializer(required=True)
 
     class Meta:
         model = Reservation
