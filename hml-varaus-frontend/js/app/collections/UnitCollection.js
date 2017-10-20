@@ -11,7 +11,6 @@ define([
         filterKey: 'unit_filters',
         initialize: function() {
             var me = this;
-            this.deferred = this.fetch();
             this.mainRadioChannel = Radio.channel('main');
             this.mainRadioChannel.on('unit-filter-changed', function() {
                 me.fetchFiltered();

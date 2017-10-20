@@ -2,6 +2,8 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
     function(App, Backbone, Radio, Marionette, $, moment, template) {
         return Marionette.View.extend({
             initialize: function() {
+                this.userCollection = window.App.userCollection;
+                this.currentUser = this.userCollection.currentUser;
                 this.boatReservationCollection = this.options.boatReservationCollection;
                 this.boatResourceCollection = this.options.boatResourceCollection;
                 this.unitCollection = this.options.unitCollection;
@@ -71,6 +73,7 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
             render: function() {
                 var me = this;
                 var variables = {
+                    currentUser: this.currentUser,
                     data: this.createManageData()
                 }
 

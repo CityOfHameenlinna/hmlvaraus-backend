@@ -3,9 +3,12 @@ define(["jquery","backbone", "collections/BaseCollection", "models/UserModel"],
     var Collection = BaseCollection.extend({
         model: UserModel,
         url: '/api/user/',
-        
+
         initialize: function() {
             this.deferred = this.fetch();
+            this.fetch({
+                url: '/api/user/current/'
+            });
         },
 
         getByUID: function(id) {
@@ -15,6 +18,18 @@ define(["jquery","backbone", "collections/BaseCollection", "models/UserModel"],
                     user = user2;
             });
             return user;
+        },
+
+        parse: function(response) {
+            if (response.last_login) {
+                this.currentUser = response;
+                return
+            }
+            var obj = response.results;
+
+            return _.map(obj, function (value, key) {
+              return obj[key];
+            });
         }
     });
 

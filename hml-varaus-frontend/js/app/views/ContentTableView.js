@@ -32,9 +32,12 @@ define( [
             },
 
             initialize: function() {
+                this.userCollection = window.App.userCollection;
+                this.currentUser = this.userCollection.currentUser;
+
                 this.collection = this.options.collection;
                 this.collection.fetchPaginated(1, true);
-                
+
                 this.mainRadioChannel = Radio.channel('main');
                 this.contentType = this.options.contentType;
 
@@ -140,6 +143,7 @@ define( [
             render: function() {
                 var me = this;
                 var variables = {
+                    currentUser: this.currentUser,
                     content_type: this.contentType
                 }
 

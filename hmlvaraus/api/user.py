@@ -12,8 +12,10 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def get_object(self):
         pk = self.kwargs.get('pk')
-        if pk == "current":
+        if pk == "current" and not self.request.user.is_anonymous():
             return self.request.user
+        else:
+            return None
         return super(UserViewSet, self).get_object()
 
 register_view(UserViewSet, 'user', base_name='user')

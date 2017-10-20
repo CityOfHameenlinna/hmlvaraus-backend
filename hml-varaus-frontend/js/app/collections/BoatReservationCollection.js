@@ -12,7 +12,6 @@ define([
         filterKey: 'boat_reservation_filters',
         initialize: function() {
             var me = this;
-            // this.fetch({data: {show_cancelled: true}});
             this.mainRadioChannel = Radio.channel('main');
             this.mainRadioChannel.on('reservation-filter-changed', function() {
                 me.fetchFiltered();
@@ -43,7 +42,11 @@ define([
             var resource = _.map(obj, function (value, key) {
                 return obj[key].berth;
             });
+            var unit = _.map(obj, function (value, key) {
+                return obj[key].berth.resource.unit;
+            });
             resourceCollection.push(resource);
+            unitCollection.push(unit);
             return reservation
         }
     });

@@ -1,3 +1,7 @@
+<!-- <div class="container-fluid"> -->
+	<a href="#boat-reservation-new" class="pull-right new-object-button">Tee uusi varaus</a>
+<!-- </div> -->
+
 <div class="container-fluid">
 	<div class="row manage-view-container">
 		<div class="col-md-4">
@@ -12,12 +16,14 @@
 				<p class="manage-view-count">{{data.free_boat_resources}}</p>
 			</div>
 		</div>
-		<div class="col-md-4">
-			<div id="boat-reservations-current-future">
-				<p class="manage-view-header">Nykyiset ja tulevat varaukset</p>
-				<p class="manage-view-count">{{data.current_or_future_reservations}}</p>
+		<%if(currentUser){%>
+			<div class="col-md-4">
+				<div id="boat-reservations-current-future">
+					<p class="manage-view-header">Nykyiset ja tulevat varaukset</p>
+					<p class="manage-view-count">{{data.current_or_future_reservations}}</p>
+				</div>
 			</div>
-		</div>
+		<%}%>
 	</div>
 	<div class="row">
 		<div class="col-md-4">

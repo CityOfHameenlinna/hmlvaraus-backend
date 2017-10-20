@@ -12,17 +12,25 @@ define( ['App', 'backbone', 'marionette', 'jquery', 'models/Model', 'text!templa
                 "click .main-nav-item": "updateNavBarActive"
             },
 
+            initialize: function() {
+                this.userCollection = window.App.userCollection;
+                this.currentUser = this.userCollection.currentUser;
+            },
+
             updateNavBarActive: function(e) {
                 this.$('.main-nav-item.active').removeClass('active');
                 $(e.currentTarget).addClass('active');
             },
 
             render: function() {
-            	var tmpl = _.template(template, {});
-            	this.$el.html(tmpl);
+                var variables = {
+                    currentUser: this.currentUser
+                }
+              	var tmpl = _.template(template, {});
+                this.$el.html(tmpl(variables));
 
                 this.$('.main-nav-item.active').removeClass('active');
-                this.$('a[href="' + location.hash + '"]').closest('.main-nav-item').addClass('active'); 
+                this.$('a[href="' + location.hash + '"]').closest('.main-nav-item').addClass('active');
             }
         });
     });

@@ -16,7 +16,6 @@ define([
             this.mainRadioChannel.on('resource-filter-changed', function() {
                 me.fetchFiltered();
             });
-            this.deferred = this.fetch();
         },
 
         getByResourceId: function(id) {
@@ -31,9 +30,15 @@ define([
 
         parse: function(response) {
             var obj = response.results;
-            return _.map(obj, function (value, key) {
-              return obj[key];
+            var resource = _.map(obj, function (value, key) {
+                return obj[key];
             });
+            var unitCollection = window.App.unitCollection;
+            var unit = _.map(obj, function (value, key) {
+                return obj[key].resource.unit;
+            });
+            unitCollection.push(unit);
+            return resource
         }
     });
 
