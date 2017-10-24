@@ -8,6 +8,47 @@ respa – Resource reservation and management service
 Installation
 ------------
 
+# Using Docker (tested and working)
+
+This project uses both python2.7 and python3.5. Python2.7 is used only when building frontend. Python3.5 is used to all manage.py commands.
+
+Frontend has been done with backbone so there's no normal static root. Instead it uses nginx to map the js files to the project. That's why you run the django on the port 8010 but can access the site on port 8011.
+
+*Prerequisities:*
+- Docker
+
+*Docker:*
+- Get the most recent docker image on `https://code.haltu.net/c-hameenlinna/varaus/container_registry`
+- Run your venepaikkavarus container ```docker run --rm -ti -p 8010:8010 -p 8011:8011 -v $(dirname $SSH_AUTH_SOCK):$(dirname $SSH_AUTH_SOCK) -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK -v <path_to_local_repo>:/var/www/varaus docker.haltu.net/c-hameenlinna/varaus:<revision> /bin/bash```
+-example:```docker run --rm -ti -p 8010:8010 -p 8011:8011 -v $(dirname $SSH_AUTH_SOCK):$(dirname $SSH_AUTH_SOCK) -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK -v /home/atzu/Documents/varaus:/var/www/varaus docker.haltu.net/c-hameenlinna/varaus:2017-10-2 /bin/bash```
+
+*Running the server*
+- Create a new postgres database (PG already installed)
+- Project root can be found in location `var/www/varaus/`
+- Create local_settings to project root with correct DB info *example:*
+```DEBUG = True
+DATABASES = {
+  'default': {
+  'ENGINE': 'django.contrib.gis.db.backends.postgis',
+  'NAME': 'venepaikka',
+  'USER': 'venepaikka',
+  'PASSWORD': 'venepaikka',
+  'HOST': '127.0.0.1',
+  'PORT': '5432',
+  'ATOMIC_REQUESTS': True,
+ }
+}```
+- Run migrations `python manage.py migrate`
+- Start NGINX `sudo /etc/init.d/nginx start`
+- install dependencies by running `pip3 install -r requirements.txt`
+- go to `cd var/www/varaus/hml-varaus-frontend`
+- Build front end by running `python build.py` with python2
+- go back to `var/www/varaus/` by running `cd ..`
+- Run your project with `python3 manage.py runserver 0.0.0.0:8010`
+- You can access the site now on `localhost:8011`
+
+
+# Using virtualenv (not tested)
 ### Prepare virtualenv
 
      virtualenv -p /usr/bin/python3 ~/.virtualenvs/
