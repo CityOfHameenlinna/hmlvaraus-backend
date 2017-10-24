@@ -71,16 +71,16 @@ define( ['App', 'backbone', 'marionette', 'jquery', 'bootbox', 'views/BaseView',
             },
 
             render: function() {
-                var resourceModel = this.boatResourceCollection.getByResourceId(this.model.getResourceId());
+                var resourceModel = this.boatResourceCollection.getByResourceId(this.model.get('berth').resource.id);
                 var unitModel = this.unitCollection.get(resourceModel.getUnitId());
-            	var variables = {
-            		model: this.model,
+                var variables = {
+                    model: this.model,
                     resource_model: resourceModel,
                     unit_model: unitModel,
                     user_collection: this.userCollection
-            	}
-            	var tmpl = _.template(template);
-            	this.$el.html(tmpl(variables));
+                }
+                var tmpl = _.template(template);
+                this.$el.html(tmpl(variables));
             }
         });
     });

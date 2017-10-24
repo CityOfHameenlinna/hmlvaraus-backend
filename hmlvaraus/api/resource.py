@@ -14,7 +14,7 @@ class ResourceSerializer(ResourceSerializer):
     description_fi = serializers.CharField(required=False)
     type_id = serializers.CharField(max_length=100)
     unit_id = serializers.CharField(max_length=50)
-    unit = UnitSerializer(required=True)
+    unit = UnitSerializer(read_only=True)
 
     def validate(self, data):
         request_user = self.context['request'].user

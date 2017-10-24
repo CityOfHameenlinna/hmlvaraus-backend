@@ -9,6 +9,7 @@ from resources.api.unit import UnitSerializer
 from django.contrib.gis.geos import GEOSGeometry
 from resources.api.base import register_view
 from hmlvaraus.utils.utils import RelatedOrderingFilter
+from hmlvaraus.api.resource import ResourceSerializer
 
 class UnitSerializer(UnitSerializer):
     name = serializers.CharField(required=True)

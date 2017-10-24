@@ -14,7 +14,7 @@
 		<%}else if(content_type == 'units' && currentUser){%>
 			<a href="#unit-new" class="pull-right new-object-button">Uusi kohde</a>
 		<%}%>
-		
+
 </div>
 <div id="filter-container"></div>
 <div class="table-container">
@@ -25,4 +25,7 @@
 		</tbody>
 	</table>
 </div>
-<button class="btn btn-primary" id="pagination-next">Lisää tuloksia</button>
+
+<%if(content_type == 'boatReservations' || content_type == 'boatResources'){%>
+	<button class="btn btn-primary" id="pagination-next">Lisää tuloksia</button>
+<%}%>

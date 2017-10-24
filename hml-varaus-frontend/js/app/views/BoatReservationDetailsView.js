@@ -11,7 +11,7 @@ define( [
             initialize: function() {
                 this.resourceCollection = this.options.resourceCollection;
                 this.unitCollection = this.options.unitCollection;
-                this.resourceModel = this.resourceCollection.getByResourceId(this.model.getResourceId());
+                this.resourceModel = this.resourceCollection.getByResourceId(this.model.get('berth').resource.id);
                 this.unitModel = this.unitCollection.get(this.resourceModel.getUnitId());
             },
 

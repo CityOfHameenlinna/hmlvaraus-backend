@@ -29,7 +29,14 @@ define([
         },
 
         parse: function(response) {
-            var obj = response.results;
+            var obj = undefined;
+            if (response.results) {
+                obj = response.results;
+            }
+            else {
+                obj = [response];
+            }
+
             var resource = _.map(obj, function (value, key) {
                 return obj[key];
             });

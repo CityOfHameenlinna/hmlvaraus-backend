@@ -7,6 +7,8 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
                 this.boatReservationCollection = this.options.boatReservationCollection;
                 this.boatResourceCollection = this.options.boatResourceCollection;
                 this.unitCollection = this.options.unitCollection;
+                this.unitCollection.fetch();
+                this.listenTo(this.unitCollection, 'sync', this.render);
                 this.listenTo(this.boatReservationCollection, 'sync', this.render);
                 this.listenTo(this.boatResourceCollection, 'sync', this.render);
                 this.mainRadioChannel = Radio.channel('main');
@@ -48,23 +50,26 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
 
             createManageData: function() {
                 var me = this;
-                var freeBoatResources = 0;
+                resourcesList = [];
+                freeResourcesList = [];
+                currentFutureReservationsList = [];
 
-                this.boatResourceCollection.each(function(resource) {
-                    if(!resource.isReserved(me.boatReservationCollection))
-                        freeBoatResources++;
+                this.unitCollection.each(function(unit) {
+                    var resources = unit.get('resources');
+                    $(resources).each(function(index) {
+                        if (this.reservable) {
+                            freeResourcesList.push(this);
+                        }
+                        else if (!this.reservable) {
+                            currentFutureReservationsList.push(this);
+                        }
+                        resourcesList.push(this);
+                    });
                 });
-
-                var currentFutureReservations = 0;
-                this.boatReservationCollection.each(function(res) {
-                    if(moment().isBefore(moment(res.getEndTime())) && res.getState() == 'confirmed')
-                        currentFutureReservations++;
-                });
-
                 var data = {
-                    boat_resources: this.boatResourceCollection.length,
-                    current_or_future_reservations: currentFutureReservations,
-                    free_boat_resources: freeBoatResources
+                    boat_resources: resourcesList.length,
+                    current_or_future_reservations: currentFutureReservationsList.length,
+                    free_boat_resources: freeResourcesList.length
                 }
 
                 return data;
@@ -116,11 +121,7 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
                         permament: true
                     }, marker);
 
-                    var boatResourceCount = 0;
-                    me.boatResourceCollection.each(function(resource) {
-                        if(resource.getUnit() == unit.getId())
-                            boatResourceCount++;
-                    });
+                    var boatResourceCount = unit.get('resources').length;
 
                     var toolTipContent = '<div><h4>' + unit.getName() + '</h4><p>Venepaikkoja: ' + boatResourceCount + '</p></div>';
                     var modelLocation = unit.getLocation();

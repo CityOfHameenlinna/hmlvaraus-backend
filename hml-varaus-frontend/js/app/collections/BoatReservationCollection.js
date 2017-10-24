@@ -34,6 +34,12 @@ define([
 
         parse: function(response) {
             var obj = response.results;
+            if (response.results) {
+                obj = response.results;
+            }
+            else {
+                obj = [response];
+            }
             var reservation = _.map(obj, function (value, key) {
                 return obj[key];
             });

@@ -8,7 +8,6 @@ from hmlvaraus.api.resource import ResourceSerializer
 class ReservationSerializer(ReservationSerializer):
 
     reserver_name = serializers.CharField(required=True)
-    resource = ResourceSerializer(required=True)
 
     class Meta:
         model = Reservation

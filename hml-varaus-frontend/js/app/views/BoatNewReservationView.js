@@ -1,11 +1,11 @@
-define( ['App', 
-    'backbone', 
+define( ['App',
+    'backbone',
     'backbone-radio',
     'bootbox',
-    'marionette', 
-    'jquery', 
-    'moment', 
-    'bootstrap-datepicker', 
+    'marionette',
+    'jquery',
+    'moment',
+    'bootstrap-datepicker',
     'views/BaseView',
     'text!templates/boat_new_reservation_view.tmpl'],
     function(App, Backbone, Radio, bootbox, Marionette, $, moment, datepicker, BaseView, template) {
@@ -115,7 +115,17 @@ define( ['App',
 
                 delete data.reserver_ssn;
 
+                var berth = undefined;
+                var me = this;
+
+                this.boatResourceCollection.forEach(function(resource) {
+                    if (resource.get('resource').id == data.resource) {
+                        berth = resource.attributes;
+                    }
+                });
+
                 hmlreservationData = {
+                    berth: berth,
                     reservation: data,
                     is_paid: false,
                     reserver_ssn: reserverSSN
@@ -130,6 +140,7 @@ define( ['App',
                 var bodyJson = this.objectifyForm($('#new-reservation-form').serializeArray());
 
                 bodyJson = this.validateAndReformatData(bodyJson);
+                
                 if(!bodyJson)
                     return;
                 $.ajax({

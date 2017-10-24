@@ -15,6 +15,8 @@ from hmlvaraus.models.hml_reservation import HMLReservation
 from resources.api.base import TranslatedModelSerializer, register_view
 from hmlvaraus.utils.utils import RelatedOrderingFilter
 from django.utils.translation import ugettext_lazy as _
+from hmlvaraus.models.berth import Berth
+from resources.models.resource import Resource
 
 class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer):
     reservation = ReservationSerializer(required=True)
@@ -40,7 +42,10 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
     def create(self, validated_data):
         reservation_data = validated_data.pop('reservation')
         reservation = Reservation.objects.create(**reservation_data)
-        hmlReservation = HMLReservation.objects.create(reservation=reservation, **validated_data)
+        resource = Resource.objects.get(id=reservation_data['resource'].id)
+        berth_data = validated_data.pop('berth')
+        berth = Berth.objects.get(pk=resource.berth.pk)
+        hmlReservation = HMLReservation.objects.create(reservation=reservation, berth=berth, **validated_data)
         return hmlReservation
 
     def update(self, instance, validated_data):

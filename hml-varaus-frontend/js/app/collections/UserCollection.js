@@ -6,9 +6,6 @@ define(["jquery","backbone", "collections/BaseCollection", "models/UserModel"],
 
         initialize: function() {
             this.deferred = this.fetch();
-            this.fetch({
-                url: '/api/user/current/'
-            });
         },
 
         getByUID: function(id) {
