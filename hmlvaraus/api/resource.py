@@ -27,10 +27,6 @@ class ResourceSerializer(ResourceSerializer):
 
     def validate(self, data):
         request_user = self.context['request'].user
-
-        if not request_user.is_staff:
-            raise PermissionDenied()
-
         return data
 
     def validate_name(self, value):

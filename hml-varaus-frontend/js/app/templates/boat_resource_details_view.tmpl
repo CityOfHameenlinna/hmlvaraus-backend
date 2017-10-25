@@ -106,7 +106,9 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <button id="resource-edit" class="btn btn-default">Muokkaa</button>
+            <%if(currentUser){%>
+                <button id="resource-edit" class="btn btn-default">Muokkaa</button>
+            <%}%>
             <%if(!resource.isDisabled()) {%>
                 <button id="resource-new-reservation" class="btn btn-primary">Uusi varaus</button>
             <%}%>

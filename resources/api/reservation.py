@@ -415,7 +415,8 @@ class ReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     serializer_class = ReservationSerializer
     filter_backends = (filters.OrderingFilter, UserFilterBackend, ResourceFilterBackend, ReservationFilterBackend,
                        NeedManualConfirmationFilterBackend, StateFilterBackend, CanApproveFilterBackend)
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, ReservationPermission)
+    # permission_classes = (permissions.IsAuthenticatedOrReadOnly, ReservationPermission)
+    permission_classes = [permissions.AllowAny]
     renderer_classes = (renderers.JSONRenderer, renderers.BrowsableAPIRenderer, ReservationExcelRenderer)
     pagination_class = ReservationPagination
     #authentication_classes = (JWTAuthentication, TokenAuthentication)

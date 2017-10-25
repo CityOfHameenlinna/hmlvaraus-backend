@@ -32,9 +32,6 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
     def validate(self, data):
         request_user = self.context['request'].user
 
-        if not request_user.is_staff:
-            raise PermissionDenied()
-
         if self.context['request'].method == 'POST' and Reservation.objects.filter(resource__id=data['reservation']['resource'].id, state=Reservation.CONFIRMED).exists():
             raise serializers.ValidationError(_('Resource is already reserved and scheduled for renewal'))
 

@@ -5,6 +5,7 @@ define( ['App', 'backbone', 'marionette', 'jquery', 'bootbox', 'views/BaseView',
             tagName: 'tr',
 
         	initialize: function() {
+                this.currentUser = window.App.userCollection.currentUser;
                 this.boatResourceCollection = window.App.boatResourceCollection;
                 this.unitCollection = window.App.unitCollection;
                 this.userCollection = window.App.userCollection;
@@ -74,6 +75,7 @@ define( ['App', 'backbone', 'marionette', 'jquery', 'bootbox', 'views/BaseView',
                 var resourceModel = this.boatResourceCollection.getByResourceId(this.model.get('berth').resource.id);
                 var unitModel = this.unitCollection.get(resourceModel.getUnitId());
                 var variables = {
+                    currentUser: this.currentUser,
                     model: this.model,
                     resource_model: resourceModel,
                     unit_model: unitModel,

@@ -8,9 +8,7 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
                 this.boatReservationCollection = this.options.boatReservationCollection;
                 this.boatResourceCollection = this.options.boatResourceCollection;
                 this.unitCollection = this.options.unitCollection;
-                this.unitCollection.fetch({
-                    url: '/api/unit/'
-                });
+                this.unitCollection.fetch();
                 this.listenTo(this.unitCollection, 'sync', this.render);
                 this.listenTo(this.boatReservationCollection, 'sync', this.render);
                 this.listenTo(this.boatResourceCollection, 'sync', this.render);

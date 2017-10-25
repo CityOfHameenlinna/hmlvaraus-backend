@@ -66,10 +66,6 @@ class BerthSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer)
 
     def validate(self, data):
         request_user = self.context['request'].user
-
-        if not request_user.is_staff:
-            raise PermissionDenied()
-
         return data
 
     def validate_price(self, value):

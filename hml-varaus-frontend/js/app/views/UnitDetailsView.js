@@ -8,6 +8,7 @@ define( ['App',
     function(App, Backbone, Marionette, $, template, L) {
         return Marionette.View.extend({
             initialize: function() {
+                this.currentUser = window.App.userCollection.currentUser;
             },
             events: {
                 'click #unit-edit': 'editUnit'
@@ -20,6 +21,7 @@ define( ['App',
                 var me = this;
 
                 var variables = {
+                    currentUser: this.currentUser,
                     unit: this.model,
                 }
                 var tmpl = _.template(template);

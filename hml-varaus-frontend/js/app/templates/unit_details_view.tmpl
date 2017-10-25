@@ -28,7 +28,9 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <button id="unit-edit" class="btn btn-default edit-button">Muokkaa</button>
+            <%if(currentUser){%>
+              <button id="unit-edit" class="btn btn-default edit-button">Muokkaa</button>
+            <%}%>
         </div>
     </div>
 </div>

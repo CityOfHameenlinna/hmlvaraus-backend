@@ -12,9 +12,8 @@ define( [
             reservationModel: false,
             initialize: function() {
                 var me = this;
-
                 this.mainRadioChannel = Radio.channel('main');
-
+                this.currentUser = window.App.userCollection.currentUser;
                 this.options.boatReservationCollection.each(function(reservation) {
                     if(reservation.getResourceId() == me.model.getResourceId()) {
                         if(!me.reservationModel || moment(me.reservationModel.getEndTime()).isBefore(moment(reservation.getEndTime()))) {
@@ -32,6 +31,7 @@ define( [
 
             render: function() {
                 var variables = {
+                    currentUser: this.currentUser,
                     resource: this.model,
                     reservation: this.reservationModel
                 }
