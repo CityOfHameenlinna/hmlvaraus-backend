@@ -20,7 +20,7 @@ class BerthSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer)
     depth_cm = serializers.IntegerField(required=True)
     length_cm = serializers.IntegerField(required=True)
     type = serializers.CharField(required=True)
-    partial=True
+    partial = True
 
     class Meta:
         model = Berth

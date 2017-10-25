@@ -77,12 +77,14 @@ define([
 
                 this.mainRadioChannel.on('resource-changed', function(id) {
                     var url = 'boat-resources';
+                    var fetchUrl = me.boatResourceCollection.url;
                     if(id) {
                         url = 'boat-resource-details/' + id;
+                        fetchUrl += id + '/'
                     }
                     me.boatReservationCollection.fetch();
                     me.boatResourceCollection.fetch({
-                        url: '/api/berth/' + id + '/',
+                        url: fetchUrl,
                         remove: false
                     }).done(function() {
                         me.router.navigate(url, {trigger: true});

@@ -13,6 +13,7 @@ from hmlvaraus.api.resource import ResourceSerializer
 
 class UnitSerializer(UnitSerializer):
     name = serializers.CharField(required=True)
+    resources = ResourceSerializer(read_only=True, many=True)
 
     def validate(self, data):
         request_user = self.context['request'].user

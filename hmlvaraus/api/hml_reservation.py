@@ -43,6 +43,8 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
         reservation_data = validated_data.pop('reservation')
         reservation = Reservation.objects.create(**reservation_data)
         resource = Resource.objects.get(id=reservation_data['resource'].id)
+        resource.reservable = False
+        resource.save()
         berth_data = validated_data.pop('berth')
         berth = Berth.objects.get(pk=resource.berth.pk)
         hmlReservation = HMLReservation.objects.create(reservation=reservation, berth=berth, **validated_data)
@@ -59,6 +61,9 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
         key_returned = validated_data.get('key_returned')
         if key_returned != None:
             if key_returned:
+                resource = instance.reservation.resource
+                resource.reservable = True
+                resource.save()
                 validated_data['key_returned_at'] = timezone.now()
             else:
                 validated_data['key_returned_at'] = None

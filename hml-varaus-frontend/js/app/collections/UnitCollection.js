@@ -13,7 +13,7 @@ define([
             var me = this;
             this.mainRadioChannel = Radio.channel('main');
             this.mainRadioChannel.on('unit-filter-changed', function() {
-                me.fetchFiltered();
+                // me.fetchFiltered();
             });
         },
     });

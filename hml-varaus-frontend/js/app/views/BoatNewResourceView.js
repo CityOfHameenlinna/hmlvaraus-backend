@@ -38,6 +38,7 @@ define( ['App',
                     description: data.description,
                     description_fi: data.description,
                     unit_id: data.unit,
+                    reservable: true
                 }
                 delete data.name;
                 delete data.unit;
@@ -101,7 +102,7 @@ define( ['App',
 
                 if(!bodyJson)
                     return;
-                
+
                 $.ajax({
                     url: '/api/berth/',
                     method: 'post',

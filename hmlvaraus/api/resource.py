@@ -5,7 +5,16 @@ from rest_framework.exceptions import ValidationError
 from munigeo import api as munigeo_api
 from resources.models import Resource, Unit, ResourceType
 from resources.api.resource import ResourceSerializer
-from hmlvaraus.api.unit import UnitSerializer
+from resources.api.base import TranslatedModelSerializer
+
+
+class SimpleUnitSerializer(TranslatedModelSerializer):
+    name = serializers.CharField(required=True)
+
+    class Meta:
+        model = Unit
+        fields = '__all__'
+
 
 class ResourceSerializer(ResourceSerializer):
     name = serializers.CharField(required=True)
@@ -14,7 +23,7 @@ class ResourceSerializer(ResourceSerializer):
     description_fi = serializers.CharField(required=False)
     type_id = serializers.CharField(max_length=100)
     unit_id = serializers.CharField(max_length=50)
-    unit = UnitSerializer(read_only=True)
+    unit = SimpleUnitSerializer(read_only=True)
 
     def validate(self, data):
         request_user = self.context['request'].user
@@ -62,5 +71,6 @@ class ResourceSerializer(ResourceSerializer):
             'description': data.get('description'),
             'description_fi': data.get('description_fi'),
             'unit': unit_instance,
-            'type': type_instance
+            'type': type_instance,
+            'reservable': data.get('reservable')
         }

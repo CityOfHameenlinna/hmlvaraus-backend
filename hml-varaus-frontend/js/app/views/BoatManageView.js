@@ -2,12 +2,15 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
     function(App, Backbone, Radio, Marionette, $, moment, template) {
         return Marionette.View.extend({
             initialize: function() {
+                var me = this;
                 this.userCollection = window.App.userCollection;
                 this.currentUser = this.userCollection.currentUser;
                 this.boatReservationCollection = this.options.boatReservationCollection;
                 this.boatResourceCollection = this.options.boatResourceCollection;
                 this.unitCollection = this.options.unitCollection;
-                this.unitCollection.fetch();
+                this.unitCollection.fetch({
+                    url: '/api/unit/'
+                });
                 this.listenTo(this.unitCollection, 'sync', this.render);
                 this.listenTo(this.boatReservationCollection, 'sync', this.render);
                 this.listenTo(this.boatResourceCollection, 'sync', this.render);
@@ -86,7 +89,7 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
                 this.$el.html(tmpl(variables));
 
                 setTimeout(function() {
-                    me.setupMap();
+                    me.listenTo(me.unitCollection, 'sync', me.setupMap);
                 }, 10);
             },
 

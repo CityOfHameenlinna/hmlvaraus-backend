@@ -111,6 +111,8 @@ define( ['App',
                     id: data.user
                 }
 
+                data.reservable = false;
+
                 var reserverSSN = data.reserver_ssn;
 
                 delete data.reserver_ssn;
@@ -140,7 +142,7 @@ define( ['App',
                 var bodyJson = this.objectifyForm($('#new-reservation-form').serializeArray());
 
                 bodyJson = this.validateAndReformatData(bodyJson);
-                
+
                 if(!bodyJson)
                     return;
                 $.ajax({

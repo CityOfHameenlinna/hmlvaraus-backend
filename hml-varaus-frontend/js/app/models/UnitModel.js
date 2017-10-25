@@ -66,7 +66,7 @@ define(["jquery", "backbone", "models/BaseModel"],
                     return false;
                 }
             },
-            
+
             getDescription: function() {
                 var description = this.get('description');
                 if(description) {
