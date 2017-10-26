@@ -22,8 +22,8 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
     reservation = ReservationSerializer(required=True)
     is_paid = serializers.BooleanField(required=False)
     reserver_ssn = serializers.CharField(required=False)
-    partial = True
     berth = BerthSerializer(required=True)
+    partial = True
 
     class Meta:
         model = HMLReservation

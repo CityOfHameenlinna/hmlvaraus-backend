@@ -14,6 +14,7 @@ define([
     'views/BoatNewReservationView',
     'views/BoatNewResourceView',
     'views/BoatReservationDetailsView',
+    'views/BoatReservationEditView',
     'views/BoatResourceDetailsView',
     'views/BoatResourceEditView',
     'views/UnitEditView',
@@ -29,7 +30,7 @@ define([
     ],
     function ($, cookie, Backbone, Radio, Marionette, _, Router, LayoutView, WelcomeView, BoatManageView,
     BoatReservationListView, BoatResourceListView, BoatNewReservationView, BoatNewResourceView,
-    BoatReservationDetailsView, BoatResourceDetailsView, BoatResourceEditView,
+    BoatReservationDetailsView, BoatReservationEditView, BoatResourceDetailsView, BoatResourceEditView,
     UnitEditView, UnitDetailsView, UnitNewView, ContentTableView,
     BoatResourceCollection, BoatReservationCollection, UserCollection, UnitCollection) {
 
@@ -204,6 +205,18 @@ define([
                     model: App.boatReservationCollection.get(id),
                     resourceCollection: App.boatResourceCollection,
                     unitCollection: App.unitCollection
+                }));
+            });
+        }
+
+        App.showBoatReservationEdit = function(id) {
+            App.refetchFilteredCollections();
+            $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred, App.unitCollection.deferred).done(function() {
+                App.layoutView.showChildView('contentRegion', new BoatReservationEditView({
+                    model: App.boatReservationCollection.get(id),
+                    boatResourceCollection: App.boatResourceCollection,
+                    unitCollection: App.unitCollection,
+                    resourceId: id
                 }));
             });
         }

@@ -5,35 +5,31 @@ define( ['App',
     'marionette',
     'jquery',
     'moment',
-    'bootstrap-datepicker',
     'views/BaseView',
-    'text!templates/boat_new_reservation_view.tmpl'],
-    function(App, Backbone, Radio, bootbox, Marionette, $, moment, datepicker, BaseView, template) {
+    'text!templates/boat_reservation_edit_view.tmpl'],
+    function(App, Backbone, Radio, bootbox, Marionette, $, moment, BaseView, template) {
         return BaseView.extend({
-
             initialize: function() {
-                this.boatReservationCollection = this.options.boatReservationCollection;
                 this.boatResourceCollection = this.options.boatResourceCollection;
-                this.unitCollection = this.options.unitCollection;
+                this.unitCollection = this.options.unitCollection
                 this.mainRadioChannel = Radio.channel('main');
             },
 
             events: {
-                'click #reservation-submit': 'save',
-                'change input.required,textarea.required': 'checkRequired',
+                'click #reservation-submit': 'saveReservation',
+                'change .required': 'checkRequired',
+                'change .validated-data': 'validateData'
             },
 
             render: function() {
                 var me = this;
-
                 var filteredCollection = this.boatResourceCollection.filter(function(resource) {
                     if(!resource.isDisabled())
                         return true;
                 });
-
                 var variables = {
-                    boat_reservation_collection: this.boatReservationCollection,
                     boat_resource_collection: filteredCollection,
+                    reservation: this.model,
                     unit_collection: this.unitCollection,
                     resource_id: this.options.resourceId
                 }
@@ -98,9 +94,47 @@ define( ['App',
                 }
             },
 
+            saveReservation: function(e) {
+                var me = this;
+                e.preventDefault();
+                var data = this.objectifyForm($('#edit-reservation-form').serializeArray());
+                data = this.validateAndReformatData(data);
+
+                if(!data)
+                    return;
+
+                this.model.set('begin', data.begin);
+                this.model.set('end', data.end);
+                this.model.set('state', data.state);
+                this.model.set('user', data.user);
+                this.model.set('reservable', data.reservable);
+                this.model.set('reserver_ssn', data.reserverSSN);
+                this.model.set('berth', data.berth);
+
+                var reservation = this.model.get('reservation');
+
+                reservation.description = data.description ? {fi: data.reservation.description} : {fi:''};
+                reservation.reserver_name = data.reserver_name;
+                reservation.reserver_email_address = data.reserver_email_address;
+                reservation.reserver_phone_number = data.reserver_phone_number;
+                reservation.reserver_address_street = data.reserver_address_street;
+                reservation.reserver_address_zip = data.reserver_address_zip;
+
+                this.model.set('reservation', reservation);
+
+                this.model.save()
+                .done(function(data) {
+                    me.mainRadioChannel.trigger('reservation-changed', data.id);
+                })
+                .fail(function(result) {
+                    me.showRequestErrors(result.responseJSON);
+                });
+            },
+
             validateAndReformatData: function(data) {
-                if(!this.checkRequired() && !this.checkDateRequired())
+                if (!this.checkRequired()) {
                     return false;
+                }
 
                 data.begin = moment(data.begin, 'D.M.YYYY HH:mm').toISOString();
                 data.end = moment(data.end, 'D.M.YYYY HH:mm').toISOString();
@@ -109,8 +143,6 @@ define( ['App',
                     id: data.user
                 }
                 data.reservable = false;
-                var reserverSSN = data.reserver_ssn;
-                delete data.reserver_ssn;
 
                 var berth = undefined;
                 var me = this;
@@ -119,39 +151,9 @@ define( ['App',
                         berth = resource.attributes;
                     }
                 });
+                data.berth = berth;
 
-                hmlreservationData = {
-                    berth: berth,
-                    reservation: data,
-                    is_paid: false,
-                    reserver_ssn: reserverSSN
-                }
-
-                return hmlreservationData;
-            },
-
-            save: function(e) {
-                var me = this;
-                e.preventDefault();
-                var bodyJson = this.objectifyForm($('#new-reservation-form').serializeArray());
-
-                bodyJson = this.validateAndReformatData(bodyJson);
-
-                if(!bodyJson)
-                    return;
-                $.ajax({
-                    url: '/api/hml_reservation/',
-                    method: 'post',
-                    data: JSON.stringify(bodyJson),
-                    dataType: 'json',
-                    contentType: 'application/json'
-                })
-                .done(function(data) {
-                    me.mainRadioChannel.trigger('reservation-changed', data.id);
-                })
-                .fail(function(result) {
-                    me.showRequestErrors(result.responseJSON);
-                });
+                return data;
             }
         });
     });

@@ -199,8 +199,6 @@ class Resource(ModifiableModel, AutoIdentifiedModel):
         else:
             end = tz.localize(end)
 
-        print('beign', begin.date(), 'end', end.date())
-
         if begin.date() != end.date():
             raise ValidationError(_("You cannot make a multi day reservation"))
 

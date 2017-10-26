@@ -9,6 +9,7 @@ define( [
     function(App, Backbone, bootbox, Marionette, $, BaseView, template) {
         return BaseView.extend({
             initialize: function() {
+                this.currentUser = window.App.userCollection.currentUser;
                 this.resourceCollection = this.options.resourceCollection;
                 this.unitCollection = this.options.unitCollection;
                 this.resourceModel = this.resourceCollection.getByResourceId(this.model.get('berth').resource.id);
@@ -16,6 +17,7 @@ define( [
             },
 
             events: {
+                'click #reservation-edit': 'editReservation',
                 'click input.reservation-is-paid': 'changeIsPaid',
                 'click #reservation-cancel': 'cancelReservation',
                 'click input.reservation-key-returned': 'changeKeyReturned'
@@ -23,6 +25,7 @@ define( [
 
             render: function() {
                 var variables = {
+                    currentUser: this.currentUser,
                     reservation: this.model,
                     resource: this.resourceModel,
                     unit: this.unitModel
@@ -30,6 +33,10 @@ define( [
                 var tmpl = _.template(template);
                 this.$el.html(tmpl(variables));
 
+            },
+
+            editReservation: function() {
+                window.App.router.navigate('boat-reservation-edit/' + this.model.getId(), {trigger: true});
             },
 
             cancelReservation: function() {
