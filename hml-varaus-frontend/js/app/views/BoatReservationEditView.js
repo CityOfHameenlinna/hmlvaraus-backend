@@ -109,11 +109,10 @@ define( ['App',
                 this.model.set('user', data.user);
                 this.model.set('reservable', data.reservable);
                 this.model.set('reserver_ssn', data.reserverSSN);
-                this.model.set('berth', data.berth);
 
                 var reservation = this.model.get('reservation');
 
-                reservation.description = data.description ? {fi: data.reservation.description} : {fi:''};
+                reservation.event_description = data.event_description;
                 reservation.reserver_name = data.reserver_name;
                 reservation.reserver_email_address = data.reserver_email_address;
                 reservation.reserver_phone_number = data.reserver_phone_number;
@@ -136,6 +135,16 @@ define( ['App',
                     return false;
                 }
 
+                data.reservation = {
+                    reserver_name: data.reserver_name,
+                    reserver_email_address: data.reserver_email_address,
+                    reserver_phone_number: data.reserver_phone_number,
+                    reserver_address_street: data.reserver_address_street,
+                    reserver_address_zip: data.reserver_address_zip,
+                    event_description: data.event_description,
+                    event_description_fi: data.event_description,
+                }
+
                 data.begin = moment(data.begin, 'D.M.YYYY HH:mm').toISOString();
                 data.end = moment(data.end, 'D.M.YYYY HH:mm').toISOString();
                 data.state = 'confirmed';
@@ -143,15 +152,6 @@ define( ['App',
                     id: data.user
                 }
                 data.reservable = false;
-
-                var berth = undefined;
-                var me = this;
-                this.boatResourceCollection.forEach(function(resource) {
-                    if (resource.get('resource').id == data.resource) {
-                        berth = resource.attributes;
-                    }
-                });
-                data.berth = berth;
 
                 return data;
             }

@@ -36,6 +36,7 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
             raise serializers.ValidationError(_('Resource is already reserved and scheduled for renewal'))
 
         return data
+
     def create(self, validated_data):
         reservation_data = validated_data.pop('reservation')
         reservation = Reservation.objects.create(**reservation_data)
@@ -48,26 +49,52 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
         return hmlReservation
 
     def update(self, instance, validated_data):
+        if self.context['request'].method == 'PUT':
+            return self.update_reservation_info(instance, validated_data)
+        elif self.context['request'].method == 'PATCH':
+            return self.update_reservation_status(instance, validated_data)
+
+    def update_reservation_info(self, instance, validated_data):
+        reservation_data = validated_data.pop('reservation')
+        reservation = instance.reservation
+
+        reservation.begin = reservation_data.get('begin', reservation.begin)
+        reservation.end = reservation_data.get('end', reservation.end)
+        reservation.event_description = reservation_data.get('event_description', reservation.event_description)
+        reservation.reserver_name = reservation_data.get('reserver_name', reservation.reserver_name)
+        reservation.reserver_email_address = reservation_data.get('reserver_email_address', reservation.reserver_email_address)
+        reservation.reserver_phone_number = reservation_data.get('reserver_phone_number', reservation.reserver_phone_number)
+        reservation.reserver_address_street = reservation_data.get('reserver_address_street', reservation.reserver_address_street)
+        reservation.reserver_address_zip = reservation_data.get('reserver_address_zip', reservation.reserver_address_zip)
+        reservation.save()
+
+        return instance
+
+    def update_reservation_status(self, instance, validated_data):
+        print(validated_data)
         is_paid = validated_data.get('is_paid')
         if is_paid != None:
             if is_paid:
-                validated_data['is_paid_at'] = timezone.now()
+                instance.is_paid_at = timezone.now()
+                instance.is_paid = True
             else:
-                validated_data['is_paid_at'] = None
-
+                instance.is_paid_at = None
+                instance.is_paid = False
         key_returned = validated_data.get('key_returned')
         if key_returned != None:
             if key_returned:
                 resource = instance.reservation.resource
                 resource.reservable = True
                 resource.save()
-                validated_data['key_returned_at'] = timezone.now()
+                instance.key_returned_at = timezone.now()
+                instance.key_returned = True
             else:
-                validated_data['key_returned_at'] = None
+                instance.key_returned_at = None
+                instance.key_returned = False
 
-        data = super(HMLReservationSerializer, self).update(instance, validated_data);
+        instance.save()
 
-        return data
+        return instance
 
     def to_representation(self, instance):
         data = super(HMLReservationSerializer, self).to_representation(instance)
@@ -176,10 +203,9 @@ class HMLReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
             id = int(self.kwargs.get('id'))
             hml_reservation = HMLReservation.objects.get(pk=id)
             reservation = hml_reservation.reservation
-            reservation.set_state(Reservation.CANCELLED, self.request.user)
+            reservation.set_state(data['state'], self.request.user)
             hml_reservation.state_updated_at = timezone.now()
             hml_reservation.save()
-        else:
-            serializer.save()
+        return serializer.save()
 
 register_view(HMLReservationViewSet, 'hml_reservation')

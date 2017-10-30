@@ -18,6 +18,9 @@ class ReservationSerializer(ReservationSerializer):
         fields = ['url', 'id', 'resource', 'user', 'begin', 'end', 'comments', 'is_own', 'state',
                   'need_manual_confirmation', 'staff_event', 'access_code'] + list(RESERVATION_EXTRA_FIELDS)
 
+    # def validate(self, data):
+    #     return data
+
     def validate(self, data):
         reservation = self.instance
         request_user = self.context['request'].user
@@ -70,6 +73,7 @@ class ReservationSerializer(ReservationSerializer):
         # even if it exceeds the limit. (one that was created via admin ui for example).
         if reservation is None:
             resource.validate_max_reservations_per_user(request_user)
+            return data # FIXME Prevents "Run model clean". For some reason this validation can't get self.instance.
 
         # Run model clean
         data.pop('staff_event', None)

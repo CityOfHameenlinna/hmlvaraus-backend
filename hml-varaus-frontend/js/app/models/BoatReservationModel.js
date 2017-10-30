@@ -141,6 +141,16 @@ define(["jquery", "backbone", "moment", "models/BaseModel"],
                 return this.getState() == 'cancelled';
             },
 
+            saveUpdate: function(data) {
+                return $.ajax({
+                    url: this.url() + '?show_cancelled=true',
+                    method: 'patch',
+                    data: JSON.stringify(data),
+                    dataType: 'json',
+                    contentType: 'application/json'
+                });
+            },
+
             saveIsPaid: function(value) {
                 return $.ajax({
                     url: this.url() + '?show_cancelled=true',
@@ -168,7 +178,7 @@ define(["jquery", "backbone", "moment", "models/BaseModel"],
                 return $.ajax({
                     url: this.url(),
                     method: 'patch',
-                    data: JSON.stringify({state: 'cancelled'}),
+                    data: JSON.stringify({state: reservation.state}),
                     dataType: 'json',
                     contentType: 'application/json'
                 });
