@@ -187,7 +187,7 @@ class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     permission_classes = [permissions.AllowAny]
     filter_backends = (DjangoFilterBackend,filters.SearchFilter,RelatedOrderingFilter, BerthFilterBackend)
     filter_fields = ['type']
-    search_fields = ['type', 'resource__name', 'resource__name_fi', 'resource__unit__name', 'resource__unit__name_fi']
+    search_fields = ['type', 'resource__name', 'resource__name_fi', 'resource__unit__name', 'resource__unit__name_fi', 'hml_reservations__reservation__reserver_name']
     ordering_fields = ('__all__')
     pagination_class = BerthPagination
 

@@ -35,15 +35,13 @@ define(["jquery", "backbone", 'moment', "models/BaseModel"],
                 return url;
             },
 
-            isReserved: function(collection) {
-                var me = this;
-                var isReserved = false;
-                collection.each(function(reservation) {
-                    if(reservation.getState() != 'cancelled' && me.getResourceId() == reservation.getResourceId() && moment().isBetween(moment(reservation.getBeginTime()), moment(reservation.getEndTime())))
-                        isReserved = true;
-                });
-
-                return isReserved;
+            isReserved: function() {
+                if (this.get('resource').reservable) {
+                    return false
+                }
+                else {
+                    return true
+                }
             },
 
             cmToMeter: function(cm, separator) {
