@@ -20,7 +20,7 @@ Frontend has been done with backbone so there's no normal static root. Instead i
 *Docker:*
 - Get the most recent docker image on `https://code.haltu.net/c-hameenlinna/varaus/container_registry`
 - Run your venepaikkavarus container ```docker run --rm -ti -p 8010:8010 -p 8011:8011 -v $(dirname $SSH_AUTH_SOCK):$(dirname $SSH_AUTH_SOCK) -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK -v <path_to_local_repo>:/var/www/varaus docker.haltu.net/c-hameenlinna/varaus:<revision> /bin/bash```
--example:```docker run --rm -ti -p 8010:8010 -p 8011:8011 -v $(dirname $SSH_AUTH_SOCK):$(dirname $SSH_AUTH_SOCK) -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK -v /home/atzu/Documents/varaus:/var/www/varaus docker.haltu.net/c-hameenlinna/varaus:2017-10-2 /bin/bash```
+- example:```docker run --rm -ti -p 8010:8010 -p 8011:8011 -v $(dirname $SSH_AUTH_SOCK):$(dirname $SSH_AUTH_SOCK) -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK -v /home/atzu/Documents/varaus:/var/www/varaus docker.haltu.net/c-hameenlinna/varaus:2017-10-2 /bin/bash```
 
 *Running the server*
 - Create a new postgres database (PG already installed)
