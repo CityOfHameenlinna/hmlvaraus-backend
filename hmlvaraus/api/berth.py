@@ -161,7 +161,7 @@ class BerthFilterBackend(filters.BaseFilterBackend):
         return queryset
 
 class BerthPagination(pagination.PageNumberPagination):
-    page_size = 2
+    page_size = 50
     page_size_query_param = 'page_size'
     max_page_size = 5000
     def get_paginated_response(self, data):
@@ -187,7 +187,7 @@ class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     permission_classes = [permissions.AllowAny]
     filter_backends = (DjangoFilterBackend,filters.SearchFilter,RelatedOrderingFilter, BerthFilterBackend)
     filter_fields = ['type']
-    search_fields = ['type', 'resource__name', 'resource__name_fi', 'resource__unit__name', 'resource__unit__name_fi', 'hml_reservations__reservation__reserver_name']
+    search_fields = ['type', 'resource__name', 'resource__name_fi', 'resource__unit__name', 'resource__unit__name_fi', 'hml_reservations__reservation__reserver_name', 'hml_reservations__reservation__reserver_email_address', 'hml_reservations__reservation__reserver_phone_number']
     ordering_fields = ('__all__')
     pagination_class = BerthPagination
 

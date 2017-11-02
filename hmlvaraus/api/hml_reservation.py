@@ -164,7 +164,7 @@ class HMLReservationFilterBackend(filters.BaseFilterBackend):
         return queryset
 
 class HMLReservationPagination(pagination.PageNumberPagination):
-    page_size = 2
+    page_size = 50
     page_size_query_param = 'page_size'
     max_page_size = 5000
     def get_paginated_response(self, data):
@@ -190,7 +190,7 @@ class HMLReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
 
     filter_backends = (DjangoFilterBackend,filters.SearchFilter, HMLReservationFilterBackend,RelatedOrderingFilter)
     filter_fields = ('reserver_ssn')
-    search_fields = ['reserver_ssn', 'reservation__billing_address_street', 'reservation__reserver_email_address', 'reservation__reserver_name']
+    search_fields = ['reserver_ssn', 'reservation__billing_address_street', 'reservation__reserver_email_address', 'reservation__reserver_name', 'reservation__reserver_phone_number']
     ordering_fields = ('__all__')
     pagination_class = HMLReservationPagination
 

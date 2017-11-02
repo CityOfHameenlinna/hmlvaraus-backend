@@ -65,7 +65,7 @@ define([
                     if(id) {
                         url = 'boat-reservation-details/' + id;
                     }
-                    me.boatResourceCollection.fetch();
+                    // me.boatResourceCollection.fetch();
                     me.boatReservationCollection.fetch({
                         url: '/api/hml_reservation/' + id + '/',
                         remove: false
@@ -83,7 +83,7 @@ define([
                         url = 'boat-resource-details/' + id;
                         fetchUrl += id + '/'
                     }
-                    me.boatReservationCollection.fetch();
+                    // me.boatReservationCollection.fetch();
                     me.boatResourceCollection.fetch({
                         url: fetchUrl,
                         remove: false
@@ -166,7 +166,7 @@ define([
 
         App.showBoatManage = function() {
             App.refetchFilteredCollections();
-            $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred, App.unitCollection.deferred).done(function() {
+            $.when(App.unitCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new BoatManageView({
                     boatReservationCollection: App.boatReservationCollection,
                     boatResourceCollection: App.boatResourceCollection,
@@ -177,7 +177,7 @@ define([
 
         App.showBoatReservationList = function() {
             App.refetchFilteredCollections();
-            $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred, App.unitCollection.deferred).done(function() {
+            $.when(App.boatReservationCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new ContentTableView({
                     collection: App.boatReservationCollection,
                     contentType: 'boatReservations',
@@ -188,7 +188,7 @@ define([
 
         App.showBoatReservationNew = function(id) {
             App.refetchFilteredCollections();
-            $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred, App.unitCollection.deferred).done(function() {
+            $.when(App.boatResourceCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new BoatNewReservationView({
                     boatResourceCollection: App.boatResourceCollection,
                     boatReservationCollection: App.boatReservationCollection,
@@ -200,7 +200,7 @@ define([
 
         App.showBoatReservationDetails = function(id) {
             App.refetchFilteredCollections('reservation');
-            $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred, App.unitCollection.deferred).done(function() {
+            $.when(App.boatReservationCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new BoatReservationDetailsView({
                     model: App.boatReservationCollection.get(id),
                     resourceCollection: App.boatResourceCollection,
@@ -211,7 +211,7 @@ define([
 
         App.showBoatReservationEdit = function(id) {
             App.refetchFilteredCollections();
-            $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred, App.unitCollection.deferred).done(function() {
+            $.when(App.boatReservationCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new BoatReservationEditView({
                     model: App.boatReservationCollection.get(id),
                     boatResourceCollection: App.boatResourceCollection,
@@ -223,7 +223,7 @@ define([
 
         App.showBoatResourceList = function() {
             App.refetchFilteredCollections();
-            $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred, App.unitCollection.deferred).done(function() {
+            $.when(App.boatResourceCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new ContentTableView({
                     collection: App.boatResourceCollection,
                     contentType: 'boatResources',
@@ -234,7 +234,7 @@ define([
 
         App.showBoatResourceNew = function() {
             App.refetchFilteredCollections();
-            $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred, App.unitCollection.deferred).done(function() {
+            $.when(App.boatResourceCollection.deferred, App.unitCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new BoatNewResourceView({
                     boatResourceCollection: App.boatResourceCollection,
                     boatReservationCollection: App.boatReservationCollection,
@@ -245,7 +245,7 @@ define([
 
         App.showBoatResourceDetails = function(id) {
             App.refetchFilteredCollections();
-            $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred, App.unitCollection.deferred).done(function() {
+            $.when(App.boatResourceCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new BoatResourceDetailsView({
                     model: App.boatResourceCollection.get(id),
                     unitCollection: App.unitCollection,
@@ -256,7 +256,7 @@ define([
 
         App.showBoatResourceEdit = function(id) {
             App.refetchFilteredCollections();
-            $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred, App.unitCollection.deferred).done(function() {
+            $.when(App.boatResourceCollection.deferred, App.unitCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new BoatResourceEditView({
                     model: App.boatResourceCollection.get(id),
                     unitCollection: App.unitCollection
@@ -266,7 +266,7 @@ define([
 
         App.showUnitList = function() {
             App.refetchFilteredCollections();
-            $.when(App.boatResourceCollection.deferred, App.unitCollection.deferred).done(function() {
+            $.when(App.unitCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new ContentTableView({
                     collection: App.unitCollection,
                     contentType: 'units'
@@ -276,7 +276,7 @@ define([
 
         App.showUnitDetails = function(id) {
             App.refetchFilteredCollections();
-            $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred, App.unitCollection.deferred).done(function() {
+            $.when(App.unitCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new UnitDetailsView({
                     model: App.unitCollection.get(id)
                 }));
