@@ -8,6 +8,65 @@ respa – Resource reservation and management service
 Installation
 ------------
 
+# Using Docker (tested and working)
+
+This project uses both python2.7 and python3.5. Python2.7 is used only when building frontend. Python3.5 is used to all manage.py commands.
+
+Frontend has been done with backbone so there's no normal static root. Instead it uses nginx to map the js files to the project. That's why you run the django on the port 8010 but can access the site on port 8011.
+
+*Prerequisities:*
+- Docker
+
+*Docker:*
+- Login to code.haltu.net docker registry `docker login code.haltu.net`
+- Pull image 2017-10-19 on `https://code.haltu.net/c-hameenlinna/varaus/container_registry`(if not available take the most recent and update the name in dockerfile)
+- Run command `docker build -t hmlvaraus` (uses dockerfile)
+- Run the container `docker run -ti -p 8010:8010 -p 8011:8011 -v $(dirname $SSH_AUTH_SOCK):$(dirname $SSH_AUTH_SOCK) -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK -v <path_to_varaus_repo>:/var/www/varaus hmlvaraus /bin/bash`
+- Example ---> `docker run -ti -p 8010:8010 -p 8011:8011 -v $(dirname $SSH_AUTH_SOCK):$(dirname $SSH_AUTH_SOCK) -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK -v /media/viljami/442E61D62E61C192/Projects/hml/varaus:/var/www/varaus hmlvaraus /bin/bash`
+
+*Running the server*
+- Create local_settings to project root with correct DB info *example:*
+```DEBUG = True
+DATABASES = {
+  'default': {
+  'ENGINE': 'django.contrib.gis.db.backends.postgis',
+  'NAME': 'venepaikka',
+  'USER': 'venepaikka',
+  'PASSWORD': 'venepaikka',
+  'HOST': '127.0.0.1',
+  'PORT': '5432',
+  'ATOMIC_REQUESTS': True,
+ }
+}```
+
+*Run all the needed services:*
+- `sudo /etc/init.d/nginx start`
+- `sudo /etc/init.d/rabbitmq-server start`
+- `sudo /etc/init.d/postgresql start`
+
+*Requirements, migrations and project building*
+- `cd var/www/varaus/`
+- `pip3 install -r requirements.txt`
+- `cd hml-varaus-frontend/`
+- `python build.py`
+- `cd ../`
+- To export settings run `export DJANGO_SETTINGS_MODULE=hmlvaraus.settings`
+- `python3 manage.py makemigrations`
+- `python3 manage.py migrate`
+- `python3 manage.pycreatesuperuser`
+
+- Run the app with `python3 manage.py runserver 0.0.0.0:8010`
+- Now you should be able to browse the site. However you shouldn't be able to add new venepaikka. To fix that do the next steps:
+  - Access the site on `localhost:8011/sysadmin`
+  - Add new Purpose from the admin panel. Info inside purpose may be anything. [REQUIRED fin and eng version]
+Then add new Resource type 'vene'. (Main type: item, Name[fi] 'vene')
+
+Website runs in both ports 8010 and 8011. /Login/, /sysadmin/ and /api/ requests are redirected automatically to port 8010 by nginx. All the rest should run on 8011.
+
+Note:
+>> Remember to disable caching from your browser to avoid odd problems.
+
+# Using virtualenv (not tested)
 ### Prepare virtualenv
 
      virtualenv -p /usr/bin/python3 ~/.virtualenvs/
