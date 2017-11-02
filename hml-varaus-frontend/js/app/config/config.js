@@ -15,7 +15,8 @@ require.config({
         "bootstrap-datepicker":"../libs/plugins/bootstrap-datetimepicker",
         "bootbox":"../libs/plugins/bootbox.min",
         "leaflet":"../libs/leaflet-src",
-        "cookie":"../libs/cookie"
+        "cookie":"../libs/cookie",
+        "endsWithPatch":"../libs/endsWith"
     },
 
     shim:{

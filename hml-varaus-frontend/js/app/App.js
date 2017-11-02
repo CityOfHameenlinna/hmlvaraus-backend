@@ -26,7 +26,8 @@ define([
     'collections/UserCollection',
     'collections/UnitCollection',
     '../libs/require',
-    'launcher'
+    'launcher',
+    'endsWithPatch'
     ],
     function ($, cookie, Backbone, Radio, Marionette, _, Router, LayoutView, WelcomeView, BoatManageView,
     BoatReservationListView, BoatResourceListView, BoatNewReservationView, BoatNewResourceView,
