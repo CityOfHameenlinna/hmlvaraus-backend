@@ -18,13 +18,13 @@ Frontend has been done with backbone so there's no normal static root. Instead i
 - Docker
 
 *Docker:*
-- Get the most recent docker image on `https://code.haltu.net/c-hameenlinna/varaus/container_registry`
-- Run your venepaikkavarus container ```docker run --rm -ti -p 8010:8010 -p 8011:8011 -v $(dirname $SSH_AUTH_SOCK):$(dirname $SSH_AUTH_SOCK) -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK -v <path_to_local_repo>:/var/www/varaus docker.haltu.net/c-hameenlinna/varaus:<revision> /bin/bash```
-- example:```docker run --rm -ti -p 8010:8010 -p 8011:8011 -v $(dirname $SSH_AUTH_SOCK):$(dirname $SSH_AUTH_SOCK) -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK -v /home/atzu/Documents/varaus:/var/www/varaus docker.haltu.net/c-hameenlinna/varaus:2017-10-2 /bin/bash```
+- Login to code.haltu.net docker registry `docker login code.haltu.net`
+- Pull image 2017-10-19 on `https://code.haltu.net/c-hameenlinna/varaus/container_registry`(if not available take the most recent and update the name in dockerfile)
+- Run command `docker build -t hmlvaraus` (uses dockerfile)
+- Run the container `docker run -ti -p 8010:8010 -p 8011:8011 -v $(dirname $SSH_AUTH_SOCK):$(dirname $SSH_AUTH_SOCK) -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK -v <path_to_varaus_repo>:/var/www/varaus hmlvaraus /bin/bash`
+- Example ---> `docker run -ti -p 8010:8010 -p 8011:8011 -v $(dirname $SSH_AUTH_SOCK):$(dirname $SSH_AUTH_SOCK) -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK -v /media/viljami/442E61D62E61C192/Projects/hml/varaus:/var/www/varaus hmlvaraus /bin/bash`
 
 *Running the server*
-- Create a new postgres database (PG already installed)
-- Project root can be found in location `var/www/varaus/`
 - Create local_settings to project root with correct DB info *example:*
 ```DEBUG = True
 DATABASES = {
@@ -38,15 +38,33 @@ DATABASES = {
   'ATOMIC_REQUESTS': True,
  }
 }```
-- Run migrations `python manage.py migrate`
-- Start NGINX `sudo /etc/init.d/nginx start`
-- install dependencies by running `pip3 install -r requirements.txt`
-- go to `cd var/www/varaus/hml-varaus-frontend`
-- Build front end by running `python build.py` with python2
-- go back to `var/www/varaus/` by running `cd ..`
-- Run your project with `python3 manage.py runserver 0.0.0.0:8010`
-- You can access the site now on `localhost:8011`
 
+*Run all the needed services:*
+- `sudo /etc/init.d/nginx start`
+- `sudo /etc/init.d/rabbitmq-server start`
+- `sudo /etc/init.d/postgresql start`
+
+*Requirements, migrations and project building*
+- `cd var/www/varaus/`
+- `pip3 install -r requirements.txt`
+- `cd hml-varaus-frontend/`
+- `python build.py`
+- `cd ../`
+- To export settings run `export DJANGO_SETTINGS_MODULE=hmlvaraus.settings`
+- `python3 manage.py makemigrations`
+- `python3 manage.py migrate`
+- `python3 manage.pycreatesuperuser`
+
+- Run the app with `python3 manage.py runserver 0.0.0.0:8010`
+- Now you should be able to browse the site. However you shouldn't be able to add new venepaikka. To fix that do the next steps:
+  - Access the site on `localhost:8011/sysadmin`
+  - Add new Purpose from the admin panel. Info inside purpose may be anything. [REQUIRED fin and eng version]
+Then add new Resource type 'vene'. (Main type: item, Name[fi] 'vene')
+
+Website runs in both ports 8010 and 8011. /Login/, /sysadmin/ and /api/ requests are redirected automatically to port 8010 by nginx. All the rest should run on 8011.
+
+Note:
+>> Remember to disable caching from your browser to avoid odd problems.
 
 # Using virtualenv (not tested)
 ### Prepare virtualenv
