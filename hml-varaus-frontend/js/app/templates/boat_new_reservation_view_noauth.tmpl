@@ -1,0 +1,63 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <form id="new-reservation-form">
+
+                <h3>Varauksen tiedot</h3>
+                <dl class="dl-horizontal align-left">
+                    <dt>Venepaikka</dt>
+                    <dd>{{getUnitName(boat_resource_collection.getByResourceId(resource_id).getUnitId())}} ({{boat_resource_collection.getByResourceId(resource_id).getName()}})</dd>
+
+                    <dt>Varaus alkaa</dt>
+                    <dd>{{now_date}}</dd>
+
+                    <dt>Varaus päättyy</dt>
+                    <dd>{{end_date}}</dd>
+                </dl>
+
+                <h3>Varauksen tekijän tiedot</h3>
+                <div class="form-group">
+                    <label for="reservation-reserver-name">Nimi</label>
+                    <input name="reserver_name" type="text" class="form-control required" id="reservation-reserver-name">
+                    <span class="error"><p class="text-danger"></p></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="reservation-reserver-email">Sähköpostiosoite</label>
+                    <input name="reserver_email_address" type="email" class="form-control required" id="reservation-reserver-email">
+                    <span class="error"><p class="text-danger"></p></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="reservation-reserver-phone">Puhelinnumero</label>
+                    <input name="reserver_phone_number" type="number" class="form-control required" id="reservation-reserver-phone">
+                    <span class="error"><p class="text-danger"></p></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="reservation-reserver-address">Katuosoite</label>
+                    <input name="reserver_address_street" type="text" class="form-control required" id="reservation-reserver-address">
+                    <span class="error"><p class="text-danger"></p></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="reservation-reserver-city">Kaupunki</label>
+                    <input name="reserver_address_city" type="text" class="form-control required" id="reservation-reserver-city">
+                    <span class="error"><p class="text-danger"></p></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="reservation-reserver-zip">Postinumero</label>
+                    <input name="reserver_address_zip" type="number" class="form-control required" id="reservation-reserver-zip">
+                    <span class="error"><p class="text-danger"></p></span>
+                </div>
+
+              <button id="reservation-submit" type="submit" class="btn btn-default submit-button">Lisää varaus</button>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <p id="reservation-countdown-wrapper">Varausaikaa jäljellä: <span id="reservation-countdown">15m 00s</span></p>
+            <p>Venepaikka pysyy sinulle varattuna 15 minuuttia. Mikäli aika loppuu tai varaus keskeytyy, venepaikka palaa taas kaikille varattavaksi.</p>
+        </div>
+    </div>
+</div>

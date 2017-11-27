@@ -7,7 +7,7 @@ define([
     'underscore',
     'routers/AppRouter',
     'views/LayoutView',
-    'views/WelcomeView',
+    'views/PurchaseResultView',
     'views/BoatManageView',
     'views/BoatReservationListView',
     'views/BoatResourceListView',
@@ -30,7 +30,7 @@ define([
     'launcher',
     'endsWithPatch'
     ],
-    function ($, cookie, Backbone, Radio, Marionette, _, Router, LayoutView, WelcomeView, BoatManageView,
+    function ($, cookie, Backbone, Radio, Marionette, _, Router, LayoutView, PurchaseResultView, BoatManageView,
     BoatReservationListView, BoatResourceListView, BoatManageNewReservationView, BoatNewReservationView, BoatNewResourceView,
     BoatReservationDetailsView, BoatReservationEditView, BoatResourceDetailsView, BoatResourceEditView,
     UnitEditView, UnitDetailsView, UnitNewView, ContentTableView,
@@ -190,7 +190,8 @@ define([
                     boatResourceCollection: App.boatResourceCollection,
                     boatReservationCollection: App.boatReservationCollection,
                     unitCollection: App.unitCollection,
-                    resourceId: id
+                    resourceId: id,
+                    userCollection: App.userCollection
                 }));
             });
         }
@@ -282,6 +283,12 @@ define([
                     model: App.unitCollection.get(id)
                 }));
             });
+        }
+
+        App.showPurchaseResult = function(code) {
+            App.layoutView.showChildView('contentRegion', new PurchaseResultView({
+                code: code
+            }));
         }
 
         App.start();

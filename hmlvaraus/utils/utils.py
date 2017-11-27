@@ -13,16 +13,13 @@ from django.utils import timezone
 
 from hmlvaraus import tasks
 from hmlvaraus.models.hml_reservation import HMLReservation
+from hmlvaraus.models.purchase import Purchase
 
-
-@receiver(post_save, sender=HMLReservation)
+@receiver(post_save, sender=Purchase)
 def set_reservation_renew(sender, instance, **kwargs):
     if kwargs.get('created'):
-        cancel_eta = instance.reservation.begin + timedelta(days=30)
-        if cancel_eta > timezone.now():
-            tasks.set_reservation_cancel.apply_async((instance.id,), eta=cancel_eta)
-        tasks.set_reservation_renewal.apply_async((instance.id,), eta=instance.reservation.end)
-
+        cancel_eta = timezone.now() + timedelta(minutes=20)
+        tasks.cancel_failed_reservation.apply_async((instance.id,), eta=cancel_eta)
 
 class RelatedOrderingFilter(OrderingFilter):
     """

@@ -20,6 +20,7 @@ class Berth(models.Model):
     price = models.DecimalField(max_digits=6, decimal_places=2, default=0.00)
     type = models.CharField(choices=TYPE_CHOICES, verbose_name=_('Berth type'), default=DOCK, max_length=20)
     is_disabled = models.BooleanField(default=False)
+    reserving = models.DateTimeField(verbose_name=_('Reserving'), blank=True, null=True)
 
     def __str__(self):
         return "%s" % self.resource.name

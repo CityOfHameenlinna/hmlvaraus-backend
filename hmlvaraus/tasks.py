@@ -4,31 +4,25 @@
 from datetime import timedelta
 from celery import shared_task
 from django.core.exceptions import ObjectDoesNotExist
+from hmlvaraus import celery_app as app
+from django.contrib.auth.models import AnonymousUser
+from django.utils import timezone
 
+@app.task
+def cancel_failed_reservation(purchase_id):
+    from hmlvaraus.models.purchase import Purchase
+    purchase = Purchase.objects.get(pk=purchase_id)
+    if not purchase.is_success() and not purchase.is_finished():
+        user = AnonymousUser()
+        purchase.hml_reservation.cancel_reservation(user)
+        purchase.set_finished()
 
-@shared_task
-def set_reservation_renewal(reservation_id):
-    from hmlvaraus.models.hml_reservation import HMLReservation
-    try:
-        instance = HMLReservation.objects.get(pk=reservation_id)
-    except ObjectDoesNotExist:
-        return False
-    reservation = instance.reservation
-    if reservation.state == reservation.CONFIRMED:
-        instance.is_paid = False
-        instance.save()
-        reservation.end = reservation.end + timedelta(days=365)
-        reservation.save()
-
-
-@shared_task
-def set_reservation_cancel(reservation_id):
-    from hmlvaraus.models.hml_reservation import HMLReservation
-    try:
-        instance = HMLReservation.objects.get(pk=reservation_id)
-    except ObjectDoesNotExist:
-        return False
-    if not instance.is_paid:
-        reservation.state = reservation.CANCELLED
-        reservation.save()
-
+@app.task
+def cancel_failed_reservations():
+    from hmlvaraus.models.purchase import Purchase
+    three_days_ago = timezone.now() - timedelta(days=3)
+    failed_purchases = Purchase.objects.filter(created_at__lte=three_days_ago, purchase_process_notified__isnull=True, finished__isnull=True)
+    user = AnonymousUser()
+    for purchase in failed_purchases:
+        purchase.hml_reservation.cancel_reservation(user)
+        purchase.set_finished()

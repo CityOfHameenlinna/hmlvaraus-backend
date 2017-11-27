@@ -57,7 +57,7 @@ define( ['App',
                 }
                 else {
                     $('div.required').each(function() {
-                        if($(this).val() == '') {
+                        if($(this).find('input').val() == '') {
                             $(this).find('input').addClass('required-error');
                             $(this).next('span.error').find('p').text('Tämä kenttä vaaditaan');
                             isValid = false;

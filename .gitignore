@@ -16,9 +16,11 @@ perf*csv
 *.egg-info
 /build
 /dist
-/src
 newrelic.ini
 celerybeat-schedule
 celerybeat.pid
+celerybeat-schedule.db
 static/
-templates/
+/templates/
+/src/django*
+/src/pip*

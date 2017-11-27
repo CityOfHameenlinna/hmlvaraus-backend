@@ -33,3 +33,4 @@ raven
 delorean
 freezegun
 python-docx
+-e ./src/paytrail-payments

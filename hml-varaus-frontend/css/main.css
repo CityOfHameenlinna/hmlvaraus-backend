@@ -72,60 +72,60 @@ input:checked + .slider:before {
 }
 
 .manage-view-count {
-	font-size: 20px;
+    font-size: 20px;
 }
 
 #root {
-	padding-left: 10%;
-	padding-right: 10%;
+    padding-left: 10%;
+    padding-right: 10%;
 }
 
 @media screen and (min-width: 0px) and (max-width: 758px) {
-	#root {
-		padding-left: 0px;
-		padding-right: 0px;
-	}
-	.hide-in-mobile {
-		display:none !important;
-	}
+    #root {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+    .hide-in-mobile {
+        display:none !important;
+    }
 }
 
 #notification-container {
-	top: 10px;
+    top: 10px;
 }
 
 .filter-container {
-	margin-bottom: 10px;
+    margin-bottom: 10px;
 }
 
 body, #header > .navbar {
-	background-color: #e0d6b9;
+    background-color: #e0d6b9;
 }
 
 #root > div {
-	background-color: white;
-	padding-left: 1%;
-	padding-right: 1%;
+    background-color: white;
+    padding-left: 1%;
+    padding-right: 1%;
 }
 
 body, #root,  #root > div{
-	height: 100%;
+    height: 100%;
 }
 
 html {
-	height: auto;
+    height: auto;
 
 }
 
 #header, #header .navbar > li.main-nav-item > a , thead > tr > th {
-	font-family: shareBold;
-	font-size: 18pt;
-	color: #1e3250;
+    font-family: shareBold;
+    font-size: 18pt;
+    color: #1e3250;
 }
 
 body {
-	font-family: Verdana;
-	font-size: 12pt;
+    font-family: Verdana;
+    font-size: 12pt;
 }
 
 
@@ -145,117 +145,117 @@ body {
 }
 
 .manage-view-container>div>div {
-	border: 1px solid rgba(0, 0, 0, .1);
-	cursor: pointer;
+    border: 1px solid rgba(0, 0, 0, .1);
+    cursor: pointer;
 }
 
 .manage-view-count {
-	text-align: center;
-	font-family: shareBold;
-	font-size: 32pt;
-	color: #f77952;
+    text-align: center;
+    font-family: shareBold;
+    font-size: 32pt;
+    color: #f77952;
 }
 
 .manage-view-header {
-	text-align: center;
-	font-family: shareBold;
-	font-size: 16pt;
-	padding: 2px;
-	color: #1e3250;
+    text-align: center;
+    font-family: shareBold;
+    font-size: 16pt;
+    padding: 2px;
+    color: #1e3250;
 }
 
 #logo-container {
-	width: 100%;
-	height: 79px;
+    width: 100%;
+    height: 79px;
 }
 
 .navbar-default .navbar-nav > li.main-nav-item > a {
-	color: #1e3250;
+    color: #1e3250;
 }
 
 .navbar-default .navbar-nav > li.main-nav-item > a:hover {
-	color: #f77952;
+    color: #f77952;
 }
 
 .navbar-default .navbar-nav > li.main-nav-item > a:focus {
-	color: #1e3250;
+    color: #1e3250;
 }
 
 nav.navbar-default {
-	border-bottom: solid 5px #1e3250;
+    border-bottom: solid 5px #1e3250;
 }
 
 .submit-button,.edit-button {
-	margin-bottom: 5px;
+    margin-bottom: 5px;
 }
 
 #google-map {
-	width: 350px;
-	height: 350px;
+    width: 350px;
+    height: 350px;
 }
 
 #footer {
-	min-height: 20px;
+    min-height: 20px;
 }
 
 .table-container {
-	overflow-x: auto;
+    overflow-x: auto;
 }
 
 .filter-row {
-	margin-bottom: 10px;
+    margin-bottom: 10px;
 }
 
 .validation-error {
-	box-shadow: 0 0 3px #ff0000;
+    box-shadow: 0 0 3px #ff0000;
 }
 
 .required-error {
-	box-shadow: 0 0 3px #ff0000;
+    box-shadow: 0 0 3px #ff0000;
 }
 
 .list-header-text {
-	font-size: 22pt;
+    font-size: 22pt;
 }
 
 .list-header-row {
-	margin-bottom: 10px;
+    margin-bottom: 10px;
 }
 
 #top-container {
-	min-height: 30px;
+    min-height: 30px;
 }
 
 .float-filter,.money-filter {
-	max-width: 100px;
-	display: inline-block;
+    max-width: 100px;
+    display: inline-block;
 }
 
 .dimension-label {
-	width: 60px;
+    width: 60px;
 }
 
 .boat-reservation-row,.boat-resource-row,.unit-row {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 .main-nav-item:hover {
-	border-bottom: 5px solid #ee724b;
+    border-bottom: 5px solid #ee724b;
     margin-bottom: -5px;
 }
 
 .manage-view-container > div {
-	margin-bottom: 10px;
+    margin-bottom: 10px;
 }
 
 .manage-view-header {
-	border-bottom: 1px solid rgba(0, 0, 0, .1);
-	padding: 10px;
-	text-transform: uppercase;
+    border-bottom: 1px solid rgba(0, 0, 0, .1);
+    padding: 10px;
+    text-transform: uppercase;
 }
 
 .new-object-button {
-	font-family: Share,sans-serif;
+    font-family: Share,sans-serif;
     font-size: 16px;
     display: inline-block;
     height: 35px;
@@ -274,51 +274,56 @@ nav.navbar-default {
 }
 
 #filter-clear {
-	margin-left: 10px;
+    margin-left: 10px;
 }
 
 .list-header-text {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 dl.dl-horizontal > dt {
-	font-weight: normal;
-	text-align: left;
+    font-weight: normal;
+    text-align: left;
 }
 
 dl.dl-horizontal > dd {
-	padding-bottom: 10px;
+    padding-bottom: 10px;
 }
 
 .no-padding-right {
-	padding-right: 0px;
+    padding-right: 0px;
 }
 
 .no-padding-left {
-	padding-left: 0px;
+    padding-left: 0px;
 }
 
 .no-margin-row {
-	margin-left: 0px;
-	margin-right: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
 }
 
 #map {
-	height: 600px;
-	border: 1px solid rgba(0, 0, 0, .1);
+    height: 600px;
+    border: 1px solid rgba(0, 0, 0, .1);
 }
 
 .filter-container-map {
-  position: relative;
-  margin-top: 10px;
-  margin-left: 70px;
-  z-index: 2000;
-  max-width: 60%;
+    position: relative;
+    margin-top: 10px;
+    margin-left: 70px;
+    z-index: 2000;
+    max-width: 60%;
 }
+
 .filter-row-map {
-  position: relative;
-  left: -16px;
-	background: #fff;
-  padding: 15px;
-  border: solid 1px rgba(0, 0, 0, 0.2);
+    position: relative;
+    left: -16px;
+    background: #fff;
+    padding: 15px;
+    border: solid 1px rgba(0, 0, 0, 0.2);
+}
+
+#reservation-countdown-wrapper {
+    font-size: 24px;
 }

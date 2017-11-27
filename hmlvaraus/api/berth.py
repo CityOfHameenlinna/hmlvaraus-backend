@@ -13,6 +13,9 @@ from hmlvaraus.models.hml_reservation import HMLReservation
 from resources.api.base import TranslatedModelSerializer, register_view
 from hmlvaraus.utils.utils import RelatedOrderingFilter
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
+from datetime import timedelta
+from django.db.models import Q
 
 class BerthSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer):
     resource = ResourceSerializer(required=True)
@@ -195,6 +198,16 @@ class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     ordering_fields = ('__all__')
     pagination_class = BerthPagination
 
+    def get_queryset(self):
+        user = self.request.user
+        qs = Berth.objects.all().select_related('resource', 'resource__unit');
+        if user.is_staff:
+            return qs
+        else:
+            #Only fetch berth if nobody has been reserving it for two minutes
+            two_minutes_ago = timezone.now() - timedelta(minutes=2)
+            return qs.filter(Q(reserving__lte=two_minutes_ago) | Q(reserving__isnull=True)).distinct()
+
     def destroy(self, request, *args, **kwargs):
         try:
             berth = self.get_object();
@@ -209,6 +222,5 @@ class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND, data=_('Boat resource cannot be found'))
 
         return Response(status=status.HTTP_204_NO_CONTENT, data=_('Boat resource successfully created'))
-
 
 register_view(BerthViewSet, 'berth')

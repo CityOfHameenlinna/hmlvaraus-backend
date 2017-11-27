@@ -1,0 +1,46 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <%if(model.isSuccess()) {%>
+                <h3><strong>Venepaikkavaraus onnistui!</strong></h3>
+                <p>Alla varauksesi tiedot. Suosittelemme tallentamaan tai tulostamaan tämän sivun.</p>
+            <%}else{%>
+                <h3><strong>Venepaikkavaraus epäonnistui!</strong></h3>
+                <p>Alla epäonnistuneen varauksen tiedot.</p>
+            <%}%>
+
+            <h4>Varaus</h4>
+            <dl class="dl-horizontal align-left">
+                <dt>Venepaikka</dt>
+                <dd>{{model.getProductName()}}</dd>
+
+                <dt>Varaus alkaa</dt>
+                <dd>{{model.getReservationStart()}}</dd>
+
+                <dt>Varaus päättyy</dt>
+                <dd>{{model.getReservationEnd()}}</dd>
+            </dl>
+
+            <h4>Varaaja</h4>
+            <dl class="dl-horizontal align-left">
+                <dt>Nimi</dt>
+                <dd>{{model.getReserverName()}}</dd>
+
+                <dt>Katuosoite</dt>
+                <dd>{{model.getReserverStreetAddress()}}</dd>
+
+                <dt>Kaupunki</dt>
+                <dd>{{model.getReserverCity()}}</dd>
+
+                <dt>Postinumero</dt>
+                <dd>{{model.getReserverZip()}}</dd>
+
+                <dt>Sähköpostiosoite</dt>
+                <dd>{{model.getReserverEmail()}}</dd>
+
+                <dt>Puhelinnumero</dt>
+                <dd>{{model.getReserverPhone()}}</dd>
+            </dl>
+        </div>
+    </div>
+</div>
