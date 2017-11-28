@@ -1,8 +1,14 @@
-<td>{{model.getName()}}</td>
-<td>{{unit.getName()}}</td>
-<td>{{model.getTypeFinnish()}}</td>
-<td>{{model.getPriceFinnish()}}</td>
-<td>{{model.getLength()}}</td>
-<td>{{model.getWidth()}}</td>
-<td>{{model.getDepth()}}</td>
-<td>{{is_reserved}}</td>
+<td class="clickable">{{model.getName()}}</td>
+<td class="clickable">{{unit.getName()}}</td>
+<td class="clickable">{{model.getTypeFinnish()}}</td>
+<td class="clickable">{{model.getPriceFinnish()}}</td>
+<td class="clickable">{{model.getLength()}}</td>
+<td class="clickable">{{model.getWidth()}}</td>
+<td class="clickable">{{model.getDepth()}}</td>
+<td>
+  <%if(model.isReserved()){%>
+    Varattu
+  <%}else{%>
+    <button id="resource-new-reservation" class="new-object-button reserve">Varaa</button>
+  <%}%>
+</td>

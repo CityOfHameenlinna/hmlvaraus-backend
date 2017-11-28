@@ -199,7 +199,7 @@ nav.navbar-default {
 }
 
 .table-container {
-	overflow-x: auto; 
+	overflow-x: auto;
 }
 
 .filter-row {
@@ -266,6 +266,11 @@ nav.navbar-default {
     color: #fff;
     font-weight: bold;
     text-decoration: none;
+}
+.new-object-button.reserve {
+  height: 21px;
+  line-height: 21px;
+  border: 0;
 }
 
 #filter-clear {
