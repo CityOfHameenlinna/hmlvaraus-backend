@@ -178,13 +178,17 @@ class BerthPagination(pagination.PageNumberPagination):
             'results': data
         })
 
+class StaffWriteOnly(permissions.BasePermission):
+     def has_permission(self, request, view):
+        return request.method in permissions.SAFE_METHODS or request.user.is_staff
+
 class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     queryset = Berth.objects.all().select_related('resource', 'resource__unit')
     serializer_class = BerthSerializer
     lookup_field = 'id'
 
     filter_class = BerthFilter
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [StaffWriteOnly]
     filter_backends = (DjangoFilterBackend,filters.SearchFilter,RelatedOrderingFilter, BerthFilterBackend)
     filter_fields = ['type']
     search_fields = ['type', 'resource__name', 'resource__name_fi', 'resource__unit__name', 'resource__unit__name_fi', 'hml_reservations__reservation__reserver_name', 'hml_reservations__reservation__reserver_email_address', 'hml_reservations__reservation__reserver_phone_number']

@@ -128,6 +128,8 @@ class HMLReservationFilterBackend(filters.BaseFilterBackend):
     """
 
     def filter_queryset(self, request, queryset, view):
+        g = request.COOKIES
+        print('#####', g)
         params = request.query_params
         times = {}
         filter_type = 'all';
@@ -181,11 +183,15 @@ class HMLReservationPagination(pagination.PageNumberPagination):
             'results': data
         })
 
+class StaffWriteOnly(permissions.BasePermission):
+     def has_permission(self, request, view):
+        return request.method in permissions.SAFE_METHODS or request.user.is_staff
+
 class HMLReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     queryset = HMLReservation.objects.all().select_related('reservation', 'reservation__user', 'reservation__resource', 'reservation__resource__unit')
     serializer_class = HMLReservationSerializer
     lookup_field = 'id'
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [StaffWriteOnly]
     filter_class = HMLReservationFilter
 
     filter_backends = (DjangoFilterBackend,filters.SearchFilter, HMLReservationFilterBackend,RelatedOrderingFilter)

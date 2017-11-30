@@ -48,10 +48,14 @@ class UnitFilter(django_filters.FilterSet):
         model = Unit
         fields = []
 
+class StaffWriteOnly(permissions.BasePermission):
+     def has_permission(self, request, view):
+        return request.method in permissions.SAFE_METHODS or request.user.is_staff
+
 class UnitViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     queryset = Unit.objects.all()
     serializer_class = UnitSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [StaffWriteOnly]
     filter_class = UnitFilter
 
     filter_backends = (DjangoFilterBackend,filters.SearchFilter,RelatedOrderingFilter)

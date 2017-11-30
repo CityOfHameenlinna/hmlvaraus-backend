@@ -4,10 +4,13 @@ from users.api import UserSerializer
 from users.models import User
 from resources.api.base import TranslatedModelSerializer, register_view
 
+class StaffWriteOnly(permissions.BasePermission):
+     def has_permission(self, request, view):
+        return request.method in permissions.SAFE_METHODS or request.user.is_staff
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [StaffWriteOnly]
     serializer_class = UserSerializer
 
     def get_object(self):
