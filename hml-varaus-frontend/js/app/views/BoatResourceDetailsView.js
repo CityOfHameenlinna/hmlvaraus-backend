@@ -14,6 +14,8 @@ define( [
                 var me = this;
                 this.mainRadioChannel = Radio.channel('main');
                 this.currentUser = window.App.userCollection.currentUser;
+                this.unitCollection = this.options.unitCollection;
+                this.unitModel = this.unitCollection.get(this.model.getUnitId());
                 this.options.boatReservationCollection.each(function(reservation) {
                     if(reservation.getResourceId() == me.model.getResourceId()) {
                         if(!me.reservationModel || moment(me.reservationModel.getEndTime()).isBefore(moment(reservation.getEndTime()))) {
@@ -33,7 +35,8 @@ define( [
                 var variables = {
                     currentUser: this.currentUser,
                     resource: this.model,
-                    reservation: this.reservationModel
+                    reservation: this.reservationModel,
+                    unit: this.unitModel
                 }
                 var tmpl = _.template(template);
                 this.$el.html(tmpl(variables));
