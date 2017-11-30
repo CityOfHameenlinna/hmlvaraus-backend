@@ -195,6 +195,11 @@ class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     ordering_fields = ('__all__')
     pagination_class = BerthPagination
 
+    def filter_queryset(self, queryset):
+        if not self.request.user.is_staff:
+          queryset = Berth.objects.filter(resource__reservable=True).select_related('resource', 'resource__unit')
+        return queryset
+
     def destroy(self, request, *args, **kwargs):
         try:
             berth = self.get_object();
