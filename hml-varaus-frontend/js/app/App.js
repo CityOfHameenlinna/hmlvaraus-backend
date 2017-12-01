@@ -179,7 +179,7 @@ define([
 
         App.showBoatReservationList = function() {
             App.refetchFilteredCollections();
-            $.when(App.boatReservationCollection.deferred).done(function() {
+            $.when(App.boatReservationCollection.deferred, App.unitCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new ContentTableView({
                     collection: App.boatReservationCollection,
                     contentType: 'boatReservations',
@@ -237,7 +237,7 @@ define([
 
         App.showBoatResourceList = function() {
             App.refetchFilteredCollections();
-            $.when(App.boatResourceCollection.deferred).done(function() {
+            $.when(App.boatResourceCollection.deferred, App.unitCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new ContentTableView({
                     collection: App.boatResourceCollection,
                     contentType: 'boatResources',

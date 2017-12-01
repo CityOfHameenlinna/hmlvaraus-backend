@@ -61,7 +61,8 @@ define( [
 
             events: {
                 'click th': 'sortChanged',
-                'click #pagination-next': 'paginationNext'
+                'click #pagination-next': 'paginationNext',
+                'click #pagination-previous': 'paginationPrevious'
             },
 
             showChildViews: function() {
@@ -137,7 +138,11 @@ define( [
             },
 
             paginationNext: function(e) {
-                this.collection.fetchPaginated(this.collection.nextPage, false);
+                this.collection.fetchPaginated(this.collection.nextPage, false, true);
+            },
+
+            paginationPrevious: function(e) {
+                this.collection.fetchPaginated(this.collection.previousPage, false, true);
             },
 
             render: function() {

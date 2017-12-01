@@ -28,9 +28,9 @@ define(["jquery","backbone"],
             return this.fetch(options);
         },
 
-        fetchPaginated: function(page, remove) {
+        fetchPaginated: function(page, reset, remove) {
             var me = this;
-            if (remove) {
+            if (reset) {
                 this.reset();
             }
             this.fetch({
@@ -41,7 +41,7 @@ define(["jquery","backbone"],
                         me.page = response.next - 1;
                         me.nextPage = response.next;
                     }
-                    else if (response.previous) {
+                    if (response.previous) {
                         me.page = response.previous + 1;
                         me.previousPage = response.previous;
                     }

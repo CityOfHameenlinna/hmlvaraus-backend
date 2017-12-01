@@ -1,6 +1,12 @@
-define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 'text!templates/boat_manage_view.tmpl'],
-    function(App, Backbone, Radio, Marionette, $, moment, template) {
+define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 'text!templates/boat_manage_view.tmpl', 'views/BoatManageResourceFilterView'],
+    function(App, Backbone, Radio, Marionette, $, moment, template, BoatManageResourceFilterView) {
         return Marionette.View.extend({
+          regions: {
+              filterRegion: {
+                  el: '#filter-container',
+                  replaceElement: true
+              }
+          },
             initialize: function() {
                 var me = this;
                 this.userCollection = window.App.userCollection;
@@ -11,8 +17,17 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
                 this.unitCollection.fetch();
                 this.listenTo(this.unitCollection, 'sync', this.render);
                 this.listenTo(this.boatReservationCollection, 'sync', this.render);
-                this.listenTo(this.boatResourceCollection, 'sync', this.render);
                 this.mainRadioChannel = Radio.channel('main');
+
+                this.mainRadioChannel.on('resource-filter-changed', function(filters) {
+                    me.filters = filters;
+                    me.refreshMap();
+                });
+
+                this.hml = undefined;
+                this.cMarker = undefined;
+                this.map = undefined;
+                this.markerLayer = undefined;
             },
 
             events: {
@@ -92,13 +107,14 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
             },
 
             setupMap: function() {
+                this.showChildView('filterRegion', new BoatManageResourceFilterView(this.options));
                 var me = this;
-                var hml = {
+                this.hml = {
                     lng: 24.4590,
                     lat: 60.9929
                 }
 
-                var cMarker = L.icon({
+                this.cMarker = L.icon({
                     iconUrl:       '/img/marker-icon.png',
                     iconRetinaUrl: '/img/marker-icon-2x.png',
                     shadowUrl:     '/img/marker-shadow.png',
@@ -109,13 +125,14 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
                     shadowSize:  [41, 41]
                 });
 
-                var map = L.map(this.$('#map')[0], {
-                }).setView(hml, 10);
+                this.map = L.map(this.$('#map')[0], {
+                }).setView(me.hml, 10);
 
                 L.tileLayer.wms('https://kartta.hameenlinna.fi/teklaogcweb/WMS.ashx?', {
                     layers: 'Opaskartta'
-                }).addTo(map);
+                }).addTo(me.map);
 
+                this.markerLayer = L.layerGroup().addTo(me.map);
 
                 this.unitCollection.each(function(unit) {
                     var toolTip = L.tooltip({
@@ -126,7 +143,40 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
 
                     var toolTipContent = '<div><h4>' + unit.getName() + '</h4><p>Venepaikkoja: ' + boatResourceCount + '</p></div>';
                     var modelLocation = unit.getLocation();
-                    var marker = L.marker(modelLocation ? modelLocation : hml, {icon: cMarker}).bindTooltip(toolTipContent, toolTip).openTooltip().addTo(map);
+                    var marker = L.marker(modelLocation ? modelLocation : me.hml, {icon: me.cMarker}).bindTooltip(toolTipContent, toolTip).openTooltip().addTo(me.markerLayer);
+
+                    marker.on('click', function(e) {
+                        var filters = {
+                            show: true,
+                            unit_id: unit.getId()
+                        };
+                        localStorage.setItem('boat_resource_filters', JSON.stringify(filters));
+                        me.mainRadioChannel.trigger('show-resources');
+                    });
+                });
+            },
+
+            refreshMap: function() {
+                var me = this;
+
+                var units = [];
+                if (this.filters.unit_id) {
+                    units.push(this.unitCollection.get(this.filters.unit_id));
+                }
+
+                this.map.removeLayer(this.markerLayer);
+                this.markerLayer = L.layerGroup().addTo(me.map);
+
+                $(units).each(function(index, unit) {
+                    var toolTip = L.tooltip({
+                        permament: true
+                    }, marker);
+
+                    var boatResourceCount = unit.get('resources').length;
+
+                    var toolTipContent = '<div><h4>' + unit.getName() + '</h4><p>Venepaikkoja: ' + boatResourceCount + '</p></div>';
+                    var modelLocation = unit.getLocation();
+                    var marker = L.marker(modelLocation ? modelLocation : me.hml, {icon: me.cMarker}).bindTooltip(toolTipContent, toolTip).openTooltip().addTo(me.markerLayer);
 
                     marker.on('click', function(e) {
                         var filters = {
