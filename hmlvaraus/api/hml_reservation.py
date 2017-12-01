@@ -2,6 +2,7 @@ import arrow
 import django_filters
 import re
 import hashlib
+import logging
 from arrow.parser import ParserError
 from django.core.exceptions import PermissionDenied, ImproperlyConfigured, SuspiciousOperation, ValidationError
 from django.utils import timezone
@@ -25,6 +26,7 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from datetime import timedelta
 
+LOG = logging.getLogger(__name__)
 
 class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer):
     reservation = ReservationSerializer(required=True)
@@ -266,7 +268,7 @@ class PurchaseView(APIView):
             payment = PaytrailPaymentExtended(order_number=purchase.pk, contact=contact, urlset=url_set)
             payment.add_product(product)
             client = PaytrailAPIClient(merchant_id=settings.PAYTRAIL_MERCHANT_ID, merchant_secret=settings.PAYTRAIL_MERCHANT_SECRET)
-            
+
             response = client.initialize_payment(payment)
 
             if response.url:
@@ -274,7 +276,7 @@ class PurchaseView(APIView):
             else:
                 raise ValidationError(_('Invalid payment data'))
         else:
-            print(serializer.errors)
+            LOG.info(serializer.errors)
             raise ValidationError(_('Invalid payment data'))
 
     def get(self, request, format=None):
@@ -345,6 +347,79 @@ class PurchaseView(APIView):
             else:
                 return Response(None, status=status.HTTP_404_NOT_FOUND)
             return Response({'code': hashlib.sha1(str(berth.reserving).encode('utf-8')).hexdigest()}, status=status.HTTP_200_OK)
+
+        return Response(None, status=status.HTTP_404_NOT_FOUND)
+
+class RenewalView(APIView):
+    permission_classes = (permissions.AllowAny,)
+    def post(self, request, format=None):
+        code = request.data.pop('code')
+
+        if not code:
+            raise ValidationError(_('Invalid renewal code'))
+
+        old_hml_reservation = HMLReservation.objects.get(renewal_code=code)
+
+        if not old_hml_reservation:
+            raise ValidationError(_('Invalid renewal code'))
+
+        old_reservation = old_hml_reservation.reservation
+
+        new_start = old_reservation.end
+        new_end = new_start + timedelta(days=365)
+        parent_id = old_hml_reservation.pk
+        old_reservation.pk = None
+        old_hml_reservation.pk = None
+        new_reservation = old_reservation
+        new_hml_reservation = old_hml_reservation
+
+        new_reservation.begin = new_start
+        new_reservation.end = new_end
+
+        if request.data.get('reserver_email_address'):
+            new_reservation.reserver_email_address = request.data.get('reserver_email_address')
+        if request.data.get('reserver_phone_number'):
+            new_reservation.reserver_phone_number = request.data.get('reserver_phone_number')
+        if request.data.get('reserver_address_street'):
+            new_reservation.reserver_address_street = request.data.get('reserver_address_street')
+        if request.data.get('reserver_address_zip'):
+            new_reservation.reserver_address_zip = request.data.get('reserver_address_zip')
+        if request.data.get('reserver_address_city'):
+            new_reservation.reserver_address_city = request.data.get('reserver_address_city')
+
+        new_reservation.save()
+
+        new_hml_reservation.reservation = new_reservation
+        new_hml_reservation.parent_id = parent_id
+        new_hml_reservation.renewal_notification_day_sent_at = None
+        new_hml_reservation.renewal_notification_week_sent_at = None
+        new_hml_reservation.renewal_notification_month_sent_at = None
+        new_hml_reservation.save()
+        location = location = '//%s' % '/api/purchase/'
+        url = request.build_absolute_uri(location)
+        purchase_code = hashlib.sha1(str(new_hml_reservation.reservation.created_at).encode('utf-8') + str(new_hml_reservation.pk).encode('utf-8')).hexdigest()
+
+        contact = PaytrailContact(**new_hml_reservation.get_payment_contact_data())
+        product = PaytrailProduct(**new_hml_reservation.get_payment_product_data())
+        url_set = PaytrailUrlset(success_url=url + '?success=' + purchase_code, failure_url=url + '?failure=' + purchase_code, notification_url=url + '?notification=' + purchase_code)
+        purchase = Purchase.objects.create(hml_reservation=new_hml_reservation, purchase_code=purchase_code, reserver_name=new_hml_reservation.reservation.reserver_name, reserver_email_address=new_hml_reservation.reservation.reserver_email_address, reserver_phone_number=new_hml_reservation.reservation.reserver_phone_number, reserver_address_street=new_hml_reservation.reservation.reserver_address_street, reserver_address_zip=new_hml_reservation.reservation.reserver_address_zip, reserver_address_city=new_hml_reservation.reservation.reserver_address_city, vat_percent=product.get_data()['vat'], price_vat=product.get_data()['price'], product_name=product.get_data()['title'])
+        payment = PaytrailPaymentExtended(order_number=purchase.pk, contact=contact, urlset=url_set)
+        payment.add_product(product)
+        client = PaytrailAPIClient(merchant_id=settings.PAYTRAIL_MERCHANT_ID, merchant_secret=settings.PAYTRAIL_MERCHANT_SECRET)
+
+        response = client.initialize_payment(payment)
+
+        if response.url:
+            return Response({'redirect': response.url}, status=status.HTTP_200_OK)
+        else:
+            raise ValidationError(_('Invalid payment data'))
+
+    def get(self, request, format=None):
+        if request.GET.get('code', None):
+            code = request.GET.get('code', None)
+            reservation = HMLReservation.objects.get(renewal_code=code)
+            serializer = HMLReservationSerializer(reservation, context={'request': request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         return Response(None, status=status.HTTP_404_NOT_FOUND)
 

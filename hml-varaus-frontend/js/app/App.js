@@ -22,6 +22,7 @@ define([
     'views/UnitDetailsView',
     'views/UnitNewView',
     'views/ContentTableView',
+    'views/RenewalView',
     'collections/BoatResourceCollection',
     'collections/BoatReservationCollection',
     'collections/UserCollection',
@@ -33,7 +34,7 @@ define([
     function ($, cookie, Backbone, Radio, Marionette, _, Router, LayoutView, PurchaseResultView, BoatManageView,
     BoatReservationListView, BoatResourceListView, BoatManageNewReservationView, BoatNewReservationView, BoatNewResourceView,
     BoatReservationDetailsView, BoatReservationEditView, BoatResourceDetailsView, BoatResourceEditView,
-    UnitEditView, UnitDetailsView, UnitNewView, ContentTableView,
+    UnitEditView, UnitDetailsView, UnitNewView, ContentTableView, RenewalView,
     BoatResourceCollection, BoatReservationCollection, UserCollection, UnitCollection) {
 
         var App = new Marionette.Application({
@@ -67,7 +68,6 @@ define([
                     if(id) {
                         url = 'boat-reservation-details/' + id;
                     }
-                    // me.boatResourceCollection.fetch();
                     me.boatReservationCollection.fetch({
                         url: '/api/hml_reservation/' + id + '/',
                         remove: false
@@ -287,6 +287,12 @@ define([
 
         App.showPurchaseResult = function(code) {
             App.layoutView.showChildView('contentRegion', new PurchaseResultView({
+                code: code
+            }));
+        }
+
+        App.showReservationRenewal = function(code) {
+            App.layoutView.showChildView('contentRegion', new RenewalView({
                 code: code
             }));
         }

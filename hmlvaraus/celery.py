@@ -15,5 +15,9 @@ app.conf.beat_schedule = {
     'cancel_failed_reservations': {
         'task': 'hmlvaraus.tasks.cancel_failed_reservations',
         'schedule': crontab(minute=0, hour=0)
-    }
+    },
+    'check_and_handle_reservation_renewals': {
+        'task': 'hmlvaraus.tasks.check_and_handle_reservation_renewals',
+        'schedule': crontab(minute='*/1')#crontab(minute=0, hour='*/1')
+    },
 }

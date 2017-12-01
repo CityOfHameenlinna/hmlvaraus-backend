@@ -2,7 +2,6 @@ define(["jquery", "backbone", "moment", "models/BaseModel"],
     function($, Backbone, moment, BaseModel) {
         // Creates a new Backbone Model class object
         var Model = BaseModel.extend({
-
             initialize: function() {
 
             },
@@ -50,6 +49,16 @@ define(["jquery", "backbone", "moment", "models/BaseModel"],
 
             getEndTime: function() {
                 return this.get('reservation').end;
+            },
+
+            getBeginDateFinnish: function() {
+                var time = moment(this.get('reservation').begin);
+                return time.format("D.M.YYYY");
+            },
+
+            getEndDateFinnish: function() {
+                var time = moment(this.get('reservation').end);
+                return time.format("D.M.YYYY");
             },
 
             getBeginTimeFinnish: function() {
