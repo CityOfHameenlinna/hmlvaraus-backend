@@ -104,9 +104,10 @@ define( ['App',
 
                 if(!this.userCollection.currentUser) {
                     var countDownTime = moment().add(15, 'minutes');
+                    this.intervalCounter = 0;
                     this.pollCounter = 0;
                     this.counterInterval = setInterval(function() {
-                        if(me.pollCounter % 60 === 0 || me.pollCounter === 0) {
+                        if(me.intervalCounter % 60 === 0 || me.intervalCounter === 0) {
                             $.ajax({
                                 url: '/api/purchase/',
                                 method: 'patch',
@@ -116,9 +117,24 @@ define( ['App',
                             })
                             .done(function(data) {
                                 me.lastPollCode = data.code;
+                                me.pollCounter++;
+                            })
+                            .fail(function(err) {
+                                if(me.pollCounter === 0) {
+                                    bootbox.alert('Joku on jo varaamassa valitsemaasi venepaikkaa. Siirrytään venepaikkalistaukseen...')
+                                    clearInterval(this.counterInterval);
+                                    window.onbeforeunload = null;
+                                    $('.main-nav-item a').off('click.navigation');
+                                    me.$('#reservation-countdown-wrapper').text('Varaus peruutettu. Siirrytään venepaikkalistaukseen...');
+                                    setTimeout(function() {
+                                        window.App.router.navigate('#boat-resources', {trigger: true});
+                                        bootbox.hideAll()
+                                    }, 5000);
+                                }
+                                me.pollCounter++;
                             });
                         }
-                        me.pollCounter++;
+                        me.intervalCounter++;
                         var now = moment();
                         var distance = countDownTime.diff(now);
                         var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));

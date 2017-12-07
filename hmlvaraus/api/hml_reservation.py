@@ -418,6 +418,8 @@ class RenewalView(APIView):
         if request.GET.get('code', None):
             code = request.GET.get('code', None)
             reservation = HMLReservation.objects.get(renewal_code=code)
+            if reservation.reservation.end < timezone.now():
+                return Response(None, status=status.HTTP_404_NOT_FOUND)
             serializer = HMLReservationSerializer(reservation, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
 

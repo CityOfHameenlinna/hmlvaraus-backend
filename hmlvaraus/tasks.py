@@ -40,7 +40,7 @@ def check_and_handle_reservation_renewals():
     now_plus_month = timezone.now() + timedelta(days=30)
     now_plus_week = timezone.now() + timedelta(days=7)
     now_plus_day = timezone.now() + timedelta(days=1)
-    reservations = HMLReservation.objects.filter(reservation__end__lte=now_plus_month, reservation__state=Reservation.CONFIRMED, child=None)
+    reservations = HMLReservation.objects.filter(reservation__end__lte=now_plus_month, reservation__end__gte=timezone.now(), reservation__state=Reservation.CONFIRMED, child=None)
     sent = False
 
     for reservation in reservations:

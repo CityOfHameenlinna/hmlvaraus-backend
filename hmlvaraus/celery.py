@@ -18,6 +18,6 @@ app.conf.beat_schedule = {
     },
     'check_and_handle_reservation_renewals': {
         'task': 'hmlvaraus.tasks.check_and_handle_reservation_renewals',
-        'schedule': crontab(minute='*/1')#crontab(minute=0, hour='*/1')
+        'schedule': crontab(minute=0, hour=12)
     },
 }
