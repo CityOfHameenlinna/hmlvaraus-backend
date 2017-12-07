@@ -27,7 +27,7 @@ class ImporterView(generics.CreateAPIView):
         del data_rows[0]
         for row in data_rows:
             fields = row.split(';')
-            if len(fields) == 7: 
+            if len(fields) == 7:
                 print('Kohdedataa')
                 location = None
                 if fields[5] and fields[5] != '':
@@ -41,7 +41,7 @@ class ImporterView(generics.CreateAPIView):
                     location = GEOSGeometry(json.dumps({'type': 'Point', 'coordinates': coordinates}))
                 Unit.objects.get_or_create(name=fields[0], street_address=fields[1], address_zip=fields[2], email=fields[3], phone=fields[4], location=location, description=fields[6])
             elif len(fields) == 9:
-                print('Venepaikkadataa')
+                print('Venepaikkadataa, Kohde:', fields[0])
                 unit = Unit.objects.get(name=fields[0]);
 
                 resource_types = ResourceType.objects.all();
@@ -73,7 +73,7 @@ class ImporterView(generics.CreateAPIView):
                 if fields[7] and fields[7] != '':
                     depth = int(fields[7])
 
-                berth_type = type_mapping.get(fields[8], None)
+                berth_type = type_mapping.get(fields[8].lower(), None)
                 Berth.objects.get_or_create(resource=resource, is_disabled=is_disabled, price=price, length_cm=length, width_cm=width, depth_cm=depth, type=berth_type)
             elif len(fields) == 12:
                 print('Varausdataa')

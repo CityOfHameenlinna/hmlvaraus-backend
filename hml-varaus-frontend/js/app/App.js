@@ -86,14 +86,14 @@ define([
                         fetchUrl += id + '/'
                     }
                     // me.boatReservationCollection.fetch();
-                    me.boatResourceCollection.fetch({
-                        url: fetchUrl,
-                        remove: false
-                    }).done(function() {
-                        me.router.navigate(url, {trigger: true});
-                        $('.main-nav-item.active').removeClass('active');
-                        $('#nav-resources').addClass('active');
-                    });
+                    // me.boatResourceCollection.fetch({
+                    //     url: fetchUrl,
+                    //     remove: false
+                    // }).done(function() {
+                    //     me.router.navigate(url, {trigger: true});
+                    //     $('.main-nav-item.active').removeClass('active');
+                    //     $('#nav-resources').addClass('active');
+                    // });
                 });
 
                 this.mainRadioChannel.on('unit-changed', function(id) {
@@ -237,7 +237,7 @@ define([
 
         App.showBoatResourceList = function() {
             App.refetchFilteredCollections();
-            $.when(App.boatResourceCollection.deferred, App.unitCollection.deferred).done(function() {
+            $.when(App.boatResourceCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new ContentTableView({
                     collection: App.boatResourceCollection,
                     contentType: 'boatResources',
@@ -280,7 +280,7 @@ define([
 
         App.showUnitList = function() {
             App.refetchFilteredCollections();
-            $.when(App.unitCollection.deferred).done(function() {
+            $.when(App.unitCollection.deferred, App.boatResourceCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new ContentTableView({
                     collection: App.unitCollection,
                     contentType: 'units'
@@ -314,4 +314,3 @@ define([
 
         return App;
     });
-

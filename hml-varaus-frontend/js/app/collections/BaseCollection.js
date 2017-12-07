@@ -23,7 +23,7 @@ define(["jquery","backbone"],
                 options.traditional = true;
             }
 
-            // this.isFiltered = true;
+            this.isFiltered = true;
 
             return this.fetch(options);
         },
@@ -50,6 +50,7 @@ define(["jquery","backbone"],
         },
 
         parse: function(response) {
+            // console.log('parse', response);
             var obj = response.results;
 
             return _.map(obj, function (value, key) {

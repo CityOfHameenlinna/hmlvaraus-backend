@@ -13,15 +13,10 @@ define( ['App', 'backbone', 'marionette', 'jquery', 'text!templates/unit_item_vi
             },
 
             render: function() {
-                var me = this;
-                var boatResourceCount = 0;
-                this.boatResourceCollection.each(function(resource) {
-                    if(resource.getUnit() == me.model.getId())
-                        boatResourceCount++;
-                });
+              var me = this;
             	var variables = {
             		model: this.model,
-                    boat_resource_count: boatResourceCount,
+                    boat_resource_count: this.model.getResourcesCount(),
             	}
             	var tmpl = _.template(template);
             	this.$el.html(tmpl(variables));

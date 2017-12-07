@@ -4,16 +4,27 @@ from django.core.exceptions import PermissionDenied
 from rest_framework import viewsets, serializers, filters, permissions
 from django_filters.rest_framework import DjangoFilterBackend
 from munigeo import api as munigeo_api
-from resources.models import Unit
+from resources.models import Resource, Unit
 from resources.api.unit import UnitSerializer
 from django.contrib.gis.geos import GEOSGeometry
 from resources.api.base import register_view
 from hmlvaraus.utils.utils import RelatedOrderingFilter
-from hmlvaraus.api.resource import ResourceSerializer
+from resources.api.base import TranslatedModelSerializer
+
+class SimpleResourceSerializer(TranslatedModelSerializer):
+    name = serializers.StringRelatedField(many=True)
+
+    class Meta:
+        model = Resource
+        fields = ['name']
 
 class UnitSerializer(UnitSerializer):
     name = serializers.CharField(required=True)
-    resources = ResourceSerializer(read_only=True, many=True)
+    resources = SimpleResourceSerializer(read_only=True, many=True)
+    resources_count = serializers.SerializerMethodField()
+
+    def get_resources_count(self, obj):
+        return obj.resources.count()
 
     def validate(self, data):
         request_user = self.context['request'].user
@@ -53,7 +64,7 @@ class StaffWriteOnly(permissions.BasePermission):
         return request.method in permissions.SAFE_METHODS or request.user.is_staff
 
 class UnitViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
-    queryset = Unit.objects.all()
+    queryset = Unit.objects.all().prefetch_related('resources')
     serializer_class = UnitSerializer
     permission_classes = [StaffWriteOnly]
     filter_class = UnitFilter

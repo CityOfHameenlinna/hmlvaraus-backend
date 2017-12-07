@@ -161,7 +161,7 @@ class BerthFilterBackend(filters.BaseFilterBackend):
         return queryset
 
 class BerthPagination(pagination.PageNumberPagination):
-    page_size = 50
+    page_size = 20
     page_size_query_param = 'page_size'
     max_page_size = 5000
     def get_paginated_response(self, data):
@@ -183,7 +183,7 @@ class StaffWriteOnly(permissions.BasePermission):
         return request.method in permissions.SAFE_METHODS or request.user.is_staff
 
 class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
-    queryset = Berth.objects.all().select_related('resource', 'resource__unit')
+    queryset = Berth.objects.all().select_related('resource', 'resource__unit').prefetch_related('resource', 'resource__unit')
     serializer_class = BerthSerializer
     lookup_field = 'id'
 
@@ -197,7 +197,7 @@ class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
 
     def filter_queryset(self, queryset):
         if not self.request.user.is_staff:
-          queryset = Berth.objects.filter(resource__reservable=True).select_related('resource', 'resource__unit')
+          queryset = Berth.objects.filter(resource__reservable=True).select_related('resource', 'resource__unit').prefetch_related('resource', 'resource__unit')
         return queryset
 
     def destroy(self, request, *args, **kwargs):

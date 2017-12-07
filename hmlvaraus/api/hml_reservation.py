@@ -71,7 +71,6 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
         return instance
 
     def update_reservation_status(self, instance, validated_data):
-        print(validated_data)
         is_paid = validated_data.get('is_paid')
         if is_paid != None:
             if is_paid:
@@ -128,8 +127,6 @@ class HMLReservationFilterBackend(filters.BaseFilterBackend):
     """
 
     def filter_queryset(self, request, queryset, view):
-        g = request.COOKIES
-        print('#####', g)
         params = request.query_params
         times = {}
         filter_type = 'all';

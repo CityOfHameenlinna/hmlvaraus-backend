@@ -19,6 +19,10 @@ define(["jquery", "backbone", "models/BaseModel"],
 
             },
 
+            getResourcesCount: function() {
+                return this.get('resources_count');
+            },
+
             getId: function() {
                 return this.get('id');
             },
