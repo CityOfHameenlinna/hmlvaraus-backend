@@ -24,10 +24,13 @@ class ImporterView(generics.CreateAPIView):
         data = uploaded_file.read().decode("utf-8")
 
         data_rows = data.split('\n')
-        del data_rows[0]
-        for row in data_rows:
-            fields = row.split(';')
-            if len(fields) == 7:
+
+        # Kohteet
+        if data_rows[0][0] == '1':
+            del data_rows[1]
+            del data_rows[0]
+            for row in data_rows:
+                fields = row.split(';')
                 print('Kohdedataa')
                 location = None
                 if fields[5] and fields[5] != '':
@@ -40,16 +43,27 @@ class ImporterView(generics.CreateAPIView):
 
                     location = GEOSGeometry(json.dumps({'type': 'Point', 'coordinates': coordinates}))
                 Unit.objects.get_or_create(name=fields[0], street_address=fields[1], address_zip=fields[2], email=fields[3], phone=fields[4], location=location, description=fields[6])
-            elif len(fields) == 9:
-                print('Venepaikkadataa, Kohde:', fields[0])
-                unit = Unit.objects.get(name=fields[0]);
+
+
+        # Venepaikat
+        if data_rows[0][0] == '2':
+            del data_rows[1]
+            del data_rows[0]
+            for row in data_rows:
+                fields = row.split(';')
+
+                try:
+                    print('Venepaikkadataa, Kohde:', fields[0])
+                    unit = Unit.objects.get(name=fields[0]);
+                except:
+                    continue
 
                 resource_types = ResourceType.objects.all();
                 for resource_type in resource_types:
                     if 'vene' in resource_type.name.lower() or 'boat' in resource_type.name.lower():
                         type_instance = resource_type
 
-                resource = Resource.objects.get_or_create(unit=unit, name=fields[1], description=fields[2], type=type_instance)[0]
+                resource = Resource.objects.get_or_create(unit=unit, name=fields[1], description=fields[2], type=type_instance, reservable=True)[0]
                 is_disabled = False
                 if fields[3] == 'kyllä':
                     is_disabled = True
@@ -75,10 +89,24 @@ class ImporterView(generics.CreateAPIView):
 
                 berth_type = type_mapping.get(fields[8].lower(), None)
                 Berth.objects.get_or_create(resource=resource, is_disabled=is_disabled, price=price, length_cm=length, width_cm=width, depth_cm=depth, type=berth_type)
-            elif len(fields) == 12:
-                print('Varausdataa')
-                unit = Unit.objects.get(name=fields[1])
-                resource = Resource.objects.get(unit=unit, name=str(fields[0]))
+
+
+        # Varaukset
+        if data_rows[0][0] == '3':
+            del data_rows[1]
+            del data_rows[0]
+            for i, row in enumerate(data_rows):
+                fields = row.split(';')
+                try:
+                    print(i, 'Varausdataa, Kohde:', fields[1])
+                    unit = Unit.objects.get(name=fields[1])
+                    resource = Resource.objects.get(unit=unit, name=str(fields[0]), description=str(fields[4]))
+                except:
+                    continue
+
+                resource.reservable = False
+
+                berth = Berth.objects.get(resource=resource)
                 begin = datetime.datetime.strptime(fields[2], "%d.%m.%Y %H:%M")
                 end = datetime.datetime.strptime(fields[3], "%d.%m.%Y %H:%M")
                 state = 'confirmed'
@@ -93,11 +121,22 @@ class ImporterView(generics.CreateAPIView):
                     is_paid_at = datetime.datetime.strptime(fields[6], "%d.%m.%Y %H:%M")
                     is_paid = True
 
-                reservation = Reservation.objects.get_or_create(resource=resource, begin=begin, end=end, event_description=fields[4], state=state, reserver_name=fields[7], reserver_email_address=fields[8], reserver_phone_number=fields[9], reserver_address_street=fields[10], reserver_address_zip=fields[11])[0]
 
-                HMLReservation.objects.get_or_create(reservation=reservation, state_updated_at=state_updated_at, is_paid_at=is_paid_at, is_paid=is_paid)
-            else:
-                continue
+                reservation = Reservation.objects.create(
+                    resource=resource,
+                    begin=begin,
+                    end=end,
+                    event_description=fields[4] or '',
+                    state=state,
+                    reserver_name=fields[7] or '',
+                    reserver_email_address=fields[8] or '',
+                    reserver_phone_number=fields[9] or '',
+                    reserver_address_street=fields[10] or '',
+                    reserver_address_zip=fields[11] or ''
+                )
+
+                HMLReservation.objects.get_or_create(reservation=reservation, berth=berth, state_updated_at=state_updated_at, is_paid_at=is_paid_at, is_paid=is_paid)
+                resource.save()
 
         return Response(
             status=status.HTTP_201_CREATED

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from datetime import timedelta
+from datetime import datetime
 
 from rest_framework.filters import OrderingFilter
 
@@ -19,7 +20,7 @@ from hmlvaraus.models.hml_reservation import HMLReservation
 def set_reservation_renew(sender, instance, **kwargs):
     if kwargs.get('created'):
         cancel_eta = instance.reservation.begin + timedelta(days=30)
-        if cancel_eta > timezone.now():
+        if cancel_eta > datetime.now():
             tasks.set_reservation_cancel.apply_async((instance.id,), eta=cancel_eta)
         tasks.set_reservation_renewal.apply_async((instance.id,), eta=instance.reservation.end)
 
@@ -56,4 +57,3 @@ class RelatedOrderingFilter(OrderingFilter):
     def remove_invalid_fields(self, queryset, fields, view, foo):
         return [term for term in fields
                 if self.is_valid_field(queryset.model, term.lstrip('-'))]
-

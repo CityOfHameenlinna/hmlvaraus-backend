@@ -16,6 +16,7 @@ define( ['App',
             events: {
                 'click #resource-submit': 'saveResource',
                 'click #resource-delete': 'deleteResource',
+                'click #resource-cancel': 'viewResource',
                 'change .required': 'checkRequired',
                 'change .validated-data': 'validateData'
             },
@@ -29,6 +30,10 @@ define( ['App',
                 this.$el.html(tmpl(variables));
             },
 
+            viewResource: function(e) {
+                e.preventDefault();
+                window.App.router.navigate('boat-resource-details/' + this.model.getId(), {trigger: true});
+            },
             deleteResource: function(e) {
                 var me = this;
                 e.preventDefault();
@@ -85,6 +90,7 @@ define( ['App',
                 this.model.save()
                 .done(function(data) {
                     me.mainRadioChannel.trigger('resource-changed', data.id);
+                    window.App.router.navigate('boat-resource-details/' + me.model.getId(), {trigger: true});
                 })
                 .fail(function(result) {
                     me.showRequestErrors(result.responseJSON);
@@ -157,6 +163,6 @@ define( ['App',
                 data.price = Number(data.price);
 
                 return data;
-            }     
+            }
         });
     });

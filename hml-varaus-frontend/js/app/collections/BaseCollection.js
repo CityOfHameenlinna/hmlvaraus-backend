@@ -2,10 +2,6 @@ define(["jquery","backbone"],
   function($, Backbone) {
     var Collection = Backbone.Collection.extend({
         isFiltered: false,
-        fetchAll: function() {
-            // this.deferred = this.fetch();
-            this.isFiltered = false;
-        },
 
         fetchFiltered: function(options, page, remove) {
             if(!options)

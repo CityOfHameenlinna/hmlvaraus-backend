@@ -57,12 +57,11 @@ define( [
             },
 
             clearFilters: function(e) {
-                this.collection.fetchPaginated(1, true);
                 this.$('textarea,input,select').val('');
                 this.$('input.checkbox').prop('checked', false);
                 this.filters = {};
                 localStorage.setItem('boat_resource_filters', JSON.stringify(this.filters));
-                this.mainRadioChannel.trigger('resource-filter-changed');
+                this.collection.fetchPaginated(1, true);
                 $('.ordering-icon').removeClass('glyphicon-triangle-bottom glyphicon-triangle-top');
             },
 

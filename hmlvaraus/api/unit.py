@@ -16,7 +16,7 @@ class SimpleResourceSerializer(TranslatedModelSerializer):
 
     class Meta:
         model = Resource
-        fields = ['name']
+        fields = ['name', 'reservable']
 
 class UnitSerializer(UnitSerializer):
     name = serializers.CharField(required=True)
