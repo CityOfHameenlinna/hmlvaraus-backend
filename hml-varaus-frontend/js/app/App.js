@@ -85,15 +85,14 @@ define([
                         url = 'boat-resource-details/' + id;
                         fetchUrl += id + '/'
                     }
-                    // me.boatReservationCollection.fetch();
-                    // me.boatResourceCollection.fetch({
-                    //     url: fetchUrl,
-                    //     remove: false
-                    // }).done(function() {
-                    //     me.router.navigate(url, {trigger: true});
-                    //     $('.main-nav-item.active').removeClass('active');
-                    //     $('#nav-resources').addClass('active');
-                    // });
+                    me.boatResourceCollection.fetch({
+                        url: fetchUrl,
+                        remove: false
+                    }).done(function() {
+                        me.router.navigate(url, {trigger: true});
+                        $('.main-nav-item.active').removeClass('active');
+                        $('#nav-resources').addClass('active');
+                    });
                 });
 
                 this.mainRadioChannel.on('unit-changed', function(id) {

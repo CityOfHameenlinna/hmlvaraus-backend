@@ -10,6 +10,9 @@ from django.contrib.gis.geos import GEOSGeometry
 from rest_framework import status
 from rest_framework.response import Response
 
+from django.utils.dateparse import parse_datetime
+import pytz
+
 class ImporterView(generics.CreateAPIView):
     base_name = 'importer'
     permission_classes = [permissions.IsAuthenticated]
@@ -113,8 +116,11 @@ class ImporterView(generics.CreateAPIView):
                 resource.reservable = False
 
                 berth = Berth.objects.get(resource=resource)
-                begin = datetime.datetime.strptime(fields[2], "%d.%m.%Y %H:%M")
-                end = datetime.datetime.strptime(fields[3], "%d.%m.%Y %H:%M")
+                begin = parse_datetime(str(fields[2]) + ' 00:00:00')
+                begin = pytz.timezone("Europe/Helsinki").localize(begin, is_dst=None)
+                end = parse_datetime(str(fields[3]) + ' 00:00:00')
+                end = pytz.timezone("Europe/Helsinki").localize(end, is_dst=None)
+
                 state = 'confirmed'
                 state_updated_at = timezone.now()
                 is_paid = False
