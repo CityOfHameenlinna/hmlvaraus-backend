@@ -52,7 +52,6 @@ define( [
                 }
 
                 if(value === '' || value === 0  || !value) {
-                    console.log('foo');
                     delete this.filters[filterName];
                 }
                 else {
@@ -65,7 +64,6 @@ define( [
             },
 
             render: function() {
-                console.log(this.unitCollection);
                 var me = this;
                 var variables = {
                     filters: this.filters,
