@@ -2,7 +2,7 @@
     <div style="padding-left:0;" class="col-md-6">
       <div class="form-group">
           <select name="unit_id" class="form-control filter-input" id="filter-resource-unit">
-              <option value="">Kohde</option>
+              <option value="">Kaikki kohteet</option>
               <% unit_collection.each(function(unit) {%>
                   <%if(filters.unit_id == unit.getId()) {%>
                       <option value="{{unit.getId()}}" selected>{{unit.getName()}}</option>

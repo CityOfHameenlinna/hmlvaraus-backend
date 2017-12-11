@@ -9,6 +9,7 @@ define( [
     function(App, Backbone, bootbox, Marionette, $, BaseView, template) {
         return BaseView.extend({
             initialize: function() {
+                this.model = this.options.model;
                 this.currentUser = window.App.userCollection.currentUser;
                 this.resourceCollection = this.options.resourceCollection;
                 this.unitCollection = this.options.unitCollection;

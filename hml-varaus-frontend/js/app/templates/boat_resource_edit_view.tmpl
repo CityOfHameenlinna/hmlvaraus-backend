@@ -6,7 +6,7 @@
                     <label for="resource-berth-unit">Kohde</label>
                     <select name="unit" class="form-control" id="resource-berth-unit">
                         <% unit_collection.each(function(unit) { %>
-                            <%if(resource.getUnit() == unit.getId()) {%>
+                            <%if(resource.getUnitId() == unit.getId()) {%>
                                 <option selected value="{{unit.getId()}}">{{unit.getName()}}</option>
                             <%} else {%>
                                 <option value="{{unit.getId()}}">{{unit.getName()}}</option>

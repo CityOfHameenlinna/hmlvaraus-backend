@@ -17,6 +17,7 @@ define( ['App',
 
             events: {
                 'click #reservation-submit': 'saveReservation',
+                'click #reservation-cancel': 'viewResource',
                 'change .required': 'checkRequired',
                 'change .validated-data': 'validateData'
             },
@@ -92,6 +93,11 @@ define( ['App',
                     endPicker.find('input').removeClass('validation-error');
                     beginPicker.next('span.error').find('p').text('');
                 }
+            },
+
+            viewResource: function(e) {
+                e.preventDefault();
+                window.App.router.navigate('boat-reservation-details/' + this.model.getId(), {trigger: true});
             },
 
             saveReservation: function(e) {

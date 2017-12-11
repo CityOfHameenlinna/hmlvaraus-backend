@@ -132,7 +132,8 @@ class ImporterView(generics.CreateAPIView):
                     reserver_email_address=fields[8] or '',
                     reserver_phone_number=fields[9] or '',
                     reserver_address_street=fields[10] or '',
-                    reserver_address_zip=fields[11] or ''
+                    reserver_address_city=fields[11] or '',
+                    reserver_address_zip=fields[12] or '',
                 )
 
                 HMLReservation.objects.get_or_create(reservation=reservation, berth=berth, state_updated_at=state_updated_at, is_paid_at=is_paid_at, is_paid=is_paid)
