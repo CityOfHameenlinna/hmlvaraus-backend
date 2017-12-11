@@ -31,7 +31,13 @@ class ImporterView(generics.CreateAPIView):
             del data_rows[0]
             for row in data_rows:
                 fields = row.split(';')
-                print('Kohdedataa')
+
+                try:
+                    print('Kohdedataa')
+                    a = fields[5]
+                except:
+                    continue
+
                 location = None
                 if fields[5] and fields[5] != '':
                     location = fields[5].split(',')
