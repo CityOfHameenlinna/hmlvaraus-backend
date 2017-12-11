@@ -51,10 +51,13 @@ define( [
                      value = Math.round(Number(target.val()) * 100);
                 }
 
-                if(value === '' || value === 0  || !value)
+                if(value === '' || value === 0  || !value) {
+                    console.log('foo');
                     delete this.filters[filterName];
-                else
+                }
+                else {
                     this.filters[filterName] = value;
+                }
 
                 localStorage.setItem('boat_resource_filters', JSON.stringify(this.filters));
 
@@ -62,6 +65,7 @@ define( [
             },
 
             render: function() {
+                console.log(this.unitCollection);
                 var me = this;
                 var variables = {
                     filters: this.filters,

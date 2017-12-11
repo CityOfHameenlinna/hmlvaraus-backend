@@ -17,6 +17,7 @@ define( ['App',
 
             events: {
                 'click #unit-submit': 'saveUnit',
+                'click #unit-cancel': 'viewResource',
                 'click #unit-delete': 'deleteUnit',
                 'change .required': 'checkRequired'
             },
@@ -76,6 +77,11 @@ define( ['App',
                 });
             },
 
+            viewResource: function(e) {
+                e.preventDefault();
+                window.App.router.navigate('unit-details/' + this.model.getId(), {trigger: true});
+            },
+
             deleteUnit: function(e) {
                 var me = this;
                 e.preventDefault();
@@ -109,7 +115,7 @@ define( ['App',
             saveUnit: function(e) {
                 e.preventDefault();
                 var me = this;
-                
+
                 var data = this.objectifyForm($('#edit-unit-form').serializeArray());
                 data = this.validateAndReformatData(data);
 
@@ -158,6 +164,6 @@ define( ['App',
                         returnArray[formArray[i]['name']] = formArray[i]['value'];
                 }
                 return returnArray;
-            }        
+            }
         });
     });

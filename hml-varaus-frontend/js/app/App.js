@@ -217,7 +217,7 @@ define([
         }
 
         App.showBoatResourceList = function() {
-            $.when(App.boatResourceCollection.deferred).done(function() {
+            $.when(App.boatResourceCollection.deferred, App.unitCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new ContentTableView({
                     collection: App.boatResourceCollection,
                     contentType: 'boatResources',

@@ -15,7 +15,7 @@ define([
             this.mainRadioChannel.on('unit-filter-changed', function() {
                 me.fetchFiltered();
             });
-            // this.deferred = this.fetch();
+            this.deferred = this.fetch();
         },
     });
 

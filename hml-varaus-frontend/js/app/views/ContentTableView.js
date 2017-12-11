@@ -138,11 +138,21 @@ define( [
             },
 
             paginationNext: function(e) {
-                this.collection.fetchPaginated(this.collection.nextPage, false, true);
+                if (this.collection.isFiltered) {
+                  this.collection.fetchFiltered(null, this.collection.nextPage, false, true);
+                }
+                else {
+                  this.collection.fetchPaginated(this.collection.nextPage, false, true);
+                }
             },
 
             paginationPrevious: function(e) {
-                this.collection.fetchPaginated(this.collection.previousPage, false, true);
+                if (this.collection.isFiltered) {
+                  this.collection.fetchFiltered(null, this.collection.previousPage, false, true);
+                }
+                else {
+                  this.collection.fetchPaginated(this.collection.previousPage, false, true);
+                }
             },
 
             render: function() {

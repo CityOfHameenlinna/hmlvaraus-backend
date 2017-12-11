@@ -1,10 +1,10 @@
 define( [
-    'App', 
+    'App',
     'backbone',
     'backbone-radio',
-    'marionette', 
+    'marionette',
     'jquery',
-    'moment', 
+    'moment',
     'text!templates/reservation_filter_view.tmpl'
     ],
     function(App, Backbone, Radio, Marionette, $, moment, template) {
@@ -38,7 +38,8 @@ define( [
                 this.$('input.checkbox').prop('checked', false)
                 this.filters = {};
                 localStorage.setItem('boat_reservation_filters', JSON.stringify(this.filters));
-                this.mainRadioChannel.trigger('reservation-filter-changed');
+                this.collection.fetchPaginated(1, true);
+                this.collection.isFiltered = false;
                 $('.ordering-icon').removeClass('glyphicon-triangle-bottom glyphicon-triangle-top');
             },
 

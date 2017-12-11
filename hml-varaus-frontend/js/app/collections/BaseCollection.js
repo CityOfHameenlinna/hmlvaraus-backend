@@ -3,7 +3,7 @@ define(["jquery","backbone"],
     var Collection = Backbone.Collection.extend({
         isFiltered: false,
 
-        fetchFiltered: function(options, page, remove) {
+        fetchFiltered: function(options, page, reset, remove) {
             if(!options)
                 options = {};
 
@@ -20,6 +20,14 @@ define(["jquery","backbone"],
             }
 
             this.isFiltered = true;
+
+            if (page && remove) {
+                options.data.page = page;
+                options.remove = remove;
+            }
+            if (reset) {
+                this.reset();
+            }
 
             return this.fetch(options);
         },
