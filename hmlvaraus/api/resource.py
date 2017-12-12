@@ -25,6 +25,9 @@ class ResourceSerializer(ResourceSerializer):
     unit_id = serializers.CharField(max_length=50)
     unit = SimpleUnitSerializer(read_only=True)
 
+    def parse_parameters(self):
+        pass
+
     def validate(self, data):
         request_user = self.context['request'].user
         return data

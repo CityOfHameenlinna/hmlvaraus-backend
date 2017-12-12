@@ -61,7 +61,7 @@ define( [
                 this.$('input.checkbox').prop('checked', false);
                 this.filters = {};
                 localStorage.setItem('boat_resource_filters', JSON.stringify(this.filters));
-                this.collection.fetchPaginated(1, true);
+                this.collection.fetchFiltered();
                 this.collection.isFiltered = false;
                 $('.ordering-icon').removeClass('glyphicon-triangle-bottom glyphicon-triangle-top');
             },
@@ -91,7 +91,7 @@ define( [
                     var value = target.val();
                 }
 
-                if(target.hasClass('dimension-filter')) {
+                if(target.hasClass('round')) {
                      value = Math.round(Number(target.val()) * 100);
                 }
 

@@ -191,7 +191,7 @@ class HMLReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     permission_classes = [StaffWriteOnly]
     filter_class = HMLReservationFilter
 
-    filter_backends = (DjangoFilterBackend,filters.SearchFilter, HMLReservationFilterBackend,RelatedOrderingFilter)
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter,RelatedOrderingFilter,HMLReservationFilterBackend)
     filter_fields = ('reserver_ssn')
     search_fields = ['reserver_ssn', 'reservation__billing_address_street', 'reservation__reserver_email_address', 'reservation__reserver_name', 'reservation__reserver_phone_number']
     ordering_fields = ('__all__')

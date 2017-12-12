@@ -3,7 +3,7 @@ define(["jquery","backbone"],
     var Collection = Backbone.Collection.extend({
         isFiltered: false,
 
-        fetchFiltered: function(options, page, reset, remove) {
+        fetchFiltered: function(options) {
             if(!options)
                 options = {};
 
@@ -21,40 +21,29 @@ define(["jquery","backbone"],
 
             this.isFiltered = true;
 
-            if (page && remove) {
-                options.data.page = page;
-                options.remove = remove;
-            }
-            if (reset) {
+            options.data.page = options.page;
+
+            if (options.reset) {
                 this.reset();
+            }
+
+            var me = this;
+
+            options.success = function(collection, response) {
+                if (response.next) {
+                    me.page = response.next - 1;
+                    me.nextPage = response.next;
+                }
+                if (response.previous) {
+                    me.page = response.previous + 1;
+                    me.previousPage = response.previous;
+                }
             }
 
             return this.fetch(options);
         },
 
-        fetchPaginated: function(page, reset, remove) {
-            var me = this;
-            if (reset) {
-                this.reset();
-            }
-            this.fetch({
-                data: {page: page, show_cancelled: true},
-                remove: remove,
-                success: function(collection, response) {
-                    if (response.next) {
-                        me.page = response.next - 1;
-                        me.nextPage = response.next;
-                    }
-                    if (response.previous) {
-                        me.page = response.previous + 1;
-                        me.previousPage = response.previous;
-                    }
-                }
-            });
-        },
-
         parse: function(response) {
-            // console.log('parse', response);
             var obj = response.results;
 
             return _.map(obj, function (value, key) {

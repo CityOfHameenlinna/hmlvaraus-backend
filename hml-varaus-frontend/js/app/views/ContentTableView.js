@@ -36,7 +36,7 @@ define( [
                 this.currentUser = this.userCollection.currentUser;
 
                 this.collection = this.options.collection;
-                this.collection.fetchPaginated(1, true);
+                this.collection.fetchFiltered();
 
                 this.mainRadioChannel = Radio.channel('main');
                 this.contentType = this.options.contentType;
@@ -138,21 +138,19 @@ define( [
             },
 
             paginationNext: function(e) {
-                if (this.collection.isFiltered) {
-                  this.collection.fetchFiltered(null, this.collection.nextPage, false, true);
-                }
-                else {
-                  this.collection.fetchPaginated(this.collection.nextPage, false, true);
-                }
+                this.collection.fetchFiltered({
+                  page: this.collection.nextPage,
+                  reset: false,
+                  remove: true,
+                });
             },
 
             paginationPrevious: function(e) {
-                if (this.collection.isFiltered) {
-                  this.collection.fetchFiltered(null, this.collection.previousPage, false, true);
-                }
-                else {
-                  this.collection.fetchPaginated(this.collection.previousPage, false, true);
-                }
+                this.collection.fetchFiltered({
+                  page: this.collection.previousPage,
+                  reset: false,
+                  remove: true,
+                });
             },
 
             render: function() {
