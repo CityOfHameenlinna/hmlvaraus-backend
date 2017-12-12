@@ -36,7 +36,7 @@ define( [
                 this.currentUser = this.userCollection.currentUser;
 
                 this.collection = this.options.collection;
-                this.collection.fetchFiltered();
+                this.collection.fetchFiltered({reset:true});
 
                 this.mainRadioChannel = Radio.channel('main');
                 this.contentType = this.options.contentType;
