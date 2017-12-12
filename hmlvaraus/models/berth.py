@@ -24,3 +24,6 @@ class Berth(models.Model):
 
     def __str__(self):
         return "%s" % self.resource.name
+
+    def get_name_and_unit(self):
+        return "%s / %s" % (self.resource.name, self.resource.unit.name)

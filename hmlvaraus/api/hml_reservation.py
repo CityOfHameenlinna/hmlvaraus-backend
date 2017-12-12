@@ -235,6 +235,10 @@ class HMLReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
             reservation.set_state(data['state'], self.request.user)
             hml_reservation.state_updated_at = timezone.now()
             hml_reservation.save()
+            if data['state'] == reservation.CANCELLED:
+                resource = reservation.resource
+                resource.reservable = True
+                resource.save()
         return serializer.save()
 
 class PurchaseView(APIView):
@@ -395,7 +399,7 @@ class RenewalView(APIView):
         new_hml_reservation.renewal_notification_week_sent_at = None
         new_hml_reservation.renewal_notification_month_sent_at = None
         new_hml_reservation.save()
-        location = location = '//%s' % '/api/purchase/'
+        location = '//%s' % '/api/purchase/'
         url = request.build_absolute_uri(location)
         purchase_code = hashlib.sha1(str(new_hml_reservation.reservation.created_at).encode('utf-8') + str(new_hml_reservation.pk).encode('utf-8')).hexdigest()
 

@@ -5,6 +5,7 @@ from hmlvaraus.models.hml_reservation import HMLReservation
 from resources.models.base import ModifiableModel
 from django.core.exceptions import SuspiciousOperation
 from django.contrib.auth.models import AnonymousUser
+from hmlvaraus import tasks
 
 class Purchase(ModifiableModel):
     hml_reservation = models.OneToOneField(HMLReservation, verbose_name=_('HMLReservation'), db_index=True, on_delete=models.CASCADE)
@@ -36,6 +37,7 @@ class Purchase(ModifiableModel):
 
         self.purchase_process_success = timezone.now()
         self.save()
+        tasks.send_confirmation.delay(self.hml_reservation.pk)
 
     def set_failure(self, user=AnonymousUser()):
         if self.purchase_process_failure or self.purchase_process_success or self.purchase_process_notified:
