@@ -115,9 +115,9 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
                 }
 
                 this.cMarker = L.icon({
-                    iconUrl:       '/static/img/marker-icon.png',
-                    iconRetinaUrl: '/static/img/marker-icon-2x.png',
-                    shadowUrl:     '/static/img/marker-shadow.png',
+                    iconUrl:       '/img/marker-icon.png',
+                    iconRetinaUrl: '/img/marker-icon-2x.png',
+                    shadowUrl:     '/img/marker-shadow.png',
                     iconSize:    [25, 41],
                     iconAnchor:  [12, 41],
                     popupAnchor: [1, -34],
