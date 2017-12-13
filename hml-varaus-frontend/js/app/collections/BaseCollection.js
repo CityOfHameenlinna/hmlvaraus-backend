@@ -21,7 +21,9 @@ define(["jquery","backbone"],
 
             this.isFiltered = true;
 
-            options.data.page = options.page;
+            if (options.page) {
+                options.data.page = options.page;
+            }
 
             if (options.reset) {
                 this.reset();
