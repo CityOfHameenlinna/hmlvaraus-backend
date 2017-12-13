@@ -38,9 +38,9 @@ define( ['App',
                 }
 
                 var cMarker = L.icon({
-                    iconUrl:       '/img/marker-icon.png',
-                    iconRetinaUrl: '/img/marker-icon-2x.png',
-                    shadowUrl:     '/img/marker-shadow.png',
+                    iconUrl:       '/static/img/marker-icon.png',
+                    iconRetinaUrl: '/static/img/marker-icon-2x.png',
+                    shadowUrl:     '/static/img/marker-shadow.png',
                     iconSize:    [25, 41],
                     iconAnchor:  [12, 41],
                     popupAnchor: [1, -34],
@@ -50,7 +50,7 @@ define( ['App',
 
                 var me = this;
                 var map = L.map(this.$('#map')[0], {
-                    
+
                 }).setView(hml, 13);
 
                 L.tileLayer.wms('https://kartta.hameenlinna.fi/teklaogcweb/WMS.ashx?', {
@@ -74,7 +74,7 @@ define( ['App',
             validateAndReformatData: function(data) {
                 if(!this.checkRequired())
                     return false;
-                
+
                 data.street_address = {fi: data.street_address}
                 data.name = {fi: data.name}
                 data.description = {fi:data.description};
