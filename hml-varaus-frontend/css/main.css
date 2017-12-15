@@ -266,11 +266,11 @@ nav.navbar-default {
     color: #fff;
     font-weight: bold;
     text-decoration: none;
+    border: 0;
 }
 .new-object-button.reserve {
   height: 21px;
   line-height: 21px;
-  border: 0;
 }
 
 #filter-clear {

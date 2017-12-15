@@ -88,46 +88,75 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="filter-date-type">Päivämääräsuodatuksen tyyppi</label>
-                <select id="filter-date-type" name="date_filter_type" class="form-control filter-input">
-                    <%if(filters.date_filter_type == '') {%>
-                        <option selected value="">Ei päivämääräsuodatusta</option>
-                    <%} else {%>
-                        <option value="">Ei päivämääräsuodatusta</option>
-                    <%}%>
-                    <%if(filters.date_filter_type == 'not_reserved') {%>
-                        <option selected value="not_reserved">Vapaa aikavälillä</option>
-                    <%} else {%>
-                        <option value="not_reserved">Vapaa aikavälillä</option>
-                    <%}%>
-                    <%if(filters.date_filter_type == 'reserved') {%>
-                        <option selected value="reserved">Varattu aikavälillä</option>
-                    <%} else {%>
-                        <option value="reserved">Varattu aikavälillä</option>
-                    <%}%>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="resource-begin">Alkaen</label>
-                <div class='input-group date' id='resource-begin-datepicker'>
-                    <input name="berth_begin" id="resource-begin" type='text' class="form-control" value="{{isoToFinnishDate(filters.berth_begin)}}"/>
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="resource-end">Päättyen</label>
-                <div class='input-group date' id='resource-end-datepicker'>
-                    <input name="berth_end" id="resource-end" type='text' class="form-control" value="{{isoToFinnishDate(filters.berth_end)}}"/>
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
-                </div>
-            </div>
-        </div>
+        <%if(currentUser == undefined){%>
+          <div class="col-md-4">
+              <div class="form-group hidden">
+                  <label for="filter-date-type">Päivämääräsuodatuksen tyyppi</label>
+                  <select id="filter-date-type" name="date_filter_type" class="form-control filter-input">
+                      <option selected value="not_reserved">Vapaa aikavälillä</option>
+                  </select>
+              </div>
+              <div class="form-group">
+                  <label for="resource-begin">Vapaa alkaen</label>
+                  <div class='input-group date' id='resource-begin-datepicker'>
+                      <input name="berth_begin" id="resource-begin" type='text' class="form-control" value="{{isoToFinnishDate(filters.berth_begin)}}"/>
+                      <span class="input-group-addon">
+                          <span class="glyphicon glyphicon-calendar"></span>
+                      </span>
+                  </div>
+              </div>
+              <div class="form-group">
+                  <label for="resource-end">Vapaa päättyen</label>
+                  <div class='input-group date' id='resource-end-datepicker'>
+                      <input name="berth_end" id="resource-end" type='text' class="form-control" value="{{isoToFinnishDate(filters.berth_end)}}"/>
+                      <span class="input-group-addon">
+                          <span class="glyphicon glyphicon-calendar"></span>
+                      </span>
+                  </div>
+              </div>
+          </div>
+        <%}else{%>
+          <div class="col-md-4">
+              <div class="form-group">
+                  <label for="filter-date-type">Päivämääräsuodatuksen tyyppi</label>
+                  <select id="filter-date-type" name="date_filter_type" class="form-control filter-input">
+                      <%if(filters.date_filter_type == '') {%>
+                          <option selected value="">Ei päivämääräsuodatusta</option>
+                      <%} else {%>
+                          <option value="">Ei päivämääräsuodatusta</option>
+                      <%}%>
+                      <%if(filters.date_filter_type == 'not_reserved') {%>
+                          <option selected value="not_reserved">Vapaa aikavälillä</option>
+                      <%} else {%>
+                          <option value="not_reserved">Vapaa aikavälillä</option>
+                      <%}%>
+                      <%if(filters.date_filter_type == 'reserved') {%>
+                          <option selected value="reserved">Varattu aikavälillä</option>
+                      <%} else {%>
+                          <option value="reserved">Varattu aikavälillä</option>
+                      <%}%>
+                  </select>
+              </div>
+              <div class="form-group">
+                  <label for="resource-begin">Alkaen</label>
+                  <div class='input-group date' id='resource-begin-datepicker'>
+                      <input name="berth_begin" id="resource-begin" type='text' class="form-control" value="{{isoToFinnishDate(filters.berth_begin)}}"/>
+                      <span class="input-group-addon">
+                          <span class="glyphicon glyphicon-calendar"></span>
+                      </span>
+                  </div>
+              </div>
+              <div class="form-group">
+                  <label for="resource-end">Päättyen</label>
+                  <div class='input-group date' id='resource-end-datepicker'>
+                      <input name="berth_end" id="resource-end" type='text' class="form-control" value="{{isoToFinnishDate(filters.berth_end)}}"/>
+                      <span class="input-group-addon">
+                          <span class="glyphicon glyphicon-calendar"></span>
+                      </span>
+                  </div>
+              </div>
+          </div>
+        <%}%>
     </div>
 </div>
 

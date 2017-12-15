@@ -22,6 +22,8 @@ define( [
                 }
 
                 this.unitCollection = this.options.unitCollection;
+                this.userCollection = window.App.userCollection;
+                this.currentUser = this.userCollection.currentUser;
             },
 
             regions: {
@@ -109,7 +111,8 @@ define( [
                 var me = this;
                 var variables = {
                     filters: this.filters,
-                    unit_collection: this.unitCollection
+                    unit_collection: this.unitCollection,
+                    currentUser: this.currentUser,
                 }
 
                 var helpers = {

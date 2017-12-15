@@ -137,6 +137,9 @@ class BerthFilterBackend(filters.BaseFilterBackend):
         if 'hide_disabled' in params:
             queryset = queryset.exclude(is_disabled=True)
 
+        if 'hide_reserved' in params:
+            queryset = queryset.exclude(resource__reservable=False)
+
         for name in ('berth_begin', 'berth_end'):
             if name not in params:
                 continue

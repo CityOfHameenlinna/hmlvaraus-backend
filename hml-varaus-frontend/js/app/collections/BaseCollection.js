@@ -25,6 +25,11 @@ define(["jquery","backbone"],
                 options.data.page = options.page;
             }
 
+            var currentUser = window.App.userCollection.currentUser;
+            if (!currentUser) {
+              options.data.hide_reserved = true;
+            }
+
             if (options.reset) {
                 this.reset();
             }
