@@ -19,6 +19,8 @@ class HMLReservation(models.Model):
     renewal_notification_month_sent_at = models.DateTimeField(verbose_name=_('Renewal notification month before end sent at'), blank=True, null=True)
     renewal_notification_week_sent_at = models.DateTimeField(verbose_name=_('Renewal notification week before end sent at'), blank=True, null=True)
     renewal_notification_day_sent_at = models.DateTimeField(verbose_name=_('Renewal notification day before end sent at'), blank=True, null=True)
+    end_notification_sent_at = models.DateTimeField(verbose_name=_('End notification sent at'), blank=True, null=True)
+    key_return_notification_sent_at = models.DateTimeField(verbose_name=_('Key return notification sent at'), blank=True, null=True)
 
     def set_paid(self, paid=True):
         if paid:
@@ -80,3 +82,6 @@ class HMLReservation(models.Model):
             self.reservation.set_state(Reservation.CANCELLED, user)
             self.state_updated_at = timezone.now()
             self.save()
+            resource = self.reservation.resource
+            resource.reservable = True
+            resource.save()

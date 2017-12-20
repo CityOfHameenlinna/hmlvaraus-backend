@@ -20,4 +20,16 @@ app.conf.beat_schedule = {
         'task': 'hmlvaraus.tasks.check_and_handle_reservation_renewals',
         'schedule': crontab(minute=0, hour=12)
     },
+    'check_ended_reservations': {
+        'task': 'hmlvaraus.tasks.check_ended_reservations',
+        'schedule': crontab(minute=0, hour='12')
+    },
+    'check_key_returned': {
+        'task': 'hmlvaraus.tasks.check_key_returned',
+        'schedule': crontab(minute=0, hour='12')
+    },
+    'check_reservability': {
+        'task': 'hmlvaraus.tasks.check_reservability',
+        'schedule': crontab(minute=0, hour='*/1')
+    },
 }

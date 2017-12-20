@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-09 10:04+0300\n"
+"POT-Creation-Date: 2017-12-18 16:22+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,39 +17,89 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: hmlvaraus/api/berth.py:77 hmlvaraus/api/berth.py:82
-#: hmlvaraus/api/berth.py:87 hmlvaraus/api/berth.py:92
-#: hmlvaraus/api/berth.py:97
+#: hmlvaraus/api/berth.py:76 hmlvaraus/api/berth.py:81
+#: hmlvaraus/api/berth.py:86 hmlvaraus/api/berth.py:91
+#: hmlvaraus/api/berth.py:96
 msgid "Value out of bounds"
 msgstr "Arvo ei ole sallituissa rajoissa"
 
-#: hmlvaraus/api/berth.py:188
+#: hmlvaraus/api/berth.py:225
 msgid "Boat resource cannot be found"
 msgstr "Venepaikkaa ei löydy"
 
-#: hmlvaraus/api/berth.py:190
+#: hmlvaraus/api/berth.py:227
 msgid "Boat resource successfully created"
 msgstr "Venepaikka lisättiin onnistuneesti"
 
-#: hmlvaraus/api/hml_reservation.py:36
-#, fuzzy
-#| msgid "The resource is already reserved for some of the period"
+#: hmlvaraus/api/hml_reservation.py:45
 msgid "Resource is already reserved and scheduled for renewal"
-msgstr "Tila on varattu ja merkitty uusittavaksi. Peruuta ensin vanha varaus."
+msgstr ""
+"Venepaikka on varattu ja merkitty uusittavaksi. Peruuta ensin vanha varaus."
 
-#: hmlvaraus/api/hml_reservation.py:63 hmlvaraus/api/hml_reservation.py:71
+#: hmlvaraus/api/hml_reservation.py:52
+msgid "Someone is reserving the berth at the moment"
+msgstr "Joku on varaamassa venepaikkaa juuri nyt"
+
+#: hmlvaraus/api/hml_reservation.py:125 hmlvaraus/api/hml_reservation.py:133
 msgid "Social security number not valid"
 msgstr "Henkilötunnus on virheellinen"
 
-#: hmlvaraus/api/resource.py:40 hmlvaraus/api/resource.py:49
-#, fuzzy
-#| msgid "Invalid value"
+#: hmlvaraus/api/hml_reservation.py:244
+msgid "This API is only for non-authenticated users"
+msgstr "Tämä rajapinta on vain kirjautumattomille käyttäjille"
+
+#: hmlvaraus/api/hml_reservation.py:246 hmlvaraus/api/hml_reservation.py:284
+msgid "Paytrail credentials are incorrect or missing"
+msgstr "Paytrail tunnukset ovat virheelliset"
+
+#: hmlvaraus/api/hml_reservation.py:251
+msgid "Invalid meta data"
+msgstr "Epäkelpo arvo"
+
+#: hmlvaraus/api/hml_reservation.py:277 hmlvaraus/api/hml_reservation.py:280
+#: hmlvaraus/api/hml_reservation.py:415
+msgid "Invalid payment data"
+msgstr "Epäkelpo arvo"
+
+#: hmlvaraus/api/hml_reservation.py:289 hmlvaraus/api/hml_reservation.py:302
+#: hmlvaraus/api/hml_reservation.py:316
+msgid "Checksum failed. Invalid payment."
+msgstr "Tarkastus epäonnistui. Virheellinen maksu."
+
+#: hmlvaraus/api/hml_reservation.py:326
+msgid "Youre not allowed to see this purchase"
+msgstr "Sinulla ei ole lupaa nähdä tätä ostoa"
+
+#: hmlvaraus/api/hml_reservation.py:359 hmlvaraus/api/hml_reservation.py:364
+msgid "Invalid renewal code"
+msgstr "Epäkelpo arvo"
+
+#: hmlvaraus/api/reservation.py:38 resources/api/reservation.py:143
+msgid "You cannot make a reservation in the past"
+msgstr "Varauksen teko menneisyyteen ei ole sallittua"
+
+#: hmlvaraus/api/reservation.py:43 resources/api/reservation.py:148
+#, python-format
+msgid "The resource is reservable only before %(datetime)s"
+msgstr "Tila on varattavissa vain ennen %(datetime)s"
+
+#: hmlvaraus/api/reservation.py:52 resources/api/reservation.py:160
+msgid "Only allowed to be set by staff members"
+msgstr "Ainoastaan virkailijat saavat asettaa"
+
+#: hmlvaraus/api/reservation.py:61 resources/api/reservation.py:169
+msgid "This field cannot have a value with this resource"
+msgstr "Tällä kentällä ei voi olla arvoa tällä resurssilla"
+
+#: hmlvaraus/api/reservation.py:64 resources/api/reservation.py:172
+msgid "This field cannot be changed"
+msgstr "Tätä arvoa ei voi muuttaa"
+
+#: hmlvaraus/api/resource.py:50 hmlvaraus/api/resource.py:59
 msgid "Invalid type id"
 msgstr "Epäkelpo arvo"
 
-#: hmlvaraus/api/resource.py:52
-#, fuzzy
-#| msgid "Invalid value"
+#: hmlvaraus/api/resource.py:62
 msgid "Invalid unit id"
 msgstr "Epäkelpo arvo"
 
@@ -62,10 +112,8 @@ msgid "ground"
 msgstr "Maallevetopaikka"
 
 #: hmlvaraus/models/berth.py:13
-#, fuzzy
-#| msgid "Phone number"
 msgid "number"
-msgstr "Puhelinnumero"
+msgstr "numbero"
 
 #: hmlvaraus/models/berth.py:16 resources/models/availability.py:107
 #: resources/models/reservation.py:40 resources/models/resource.py:421
@@ -85,36 +133,329 @@ msgid "Berth length"
 msgstr "Venepaikan pituus"
 
 #: hmlvaraus/models/berth.py:21
-#, fuzzy
-#| msgid "resource type"
 msgid "Berth type"
 msgstr "resurssityyppi"
 
-#: hmlvaraus/models/hml_reservation.py:7
-#, fuzzy
-#| msgid "reservation"
+#: hmlvaraus/models/berth.py:23
+msgid "Reserving"
+msgstr "varataan"
+
+#: hmlvaraus/models/hml_reservation.py:9
+msgid "Berth"
+msgstr "resurssityyppi"
+
+#: hmlvaraus/models/hml_reservation.py:10
 msgid "Reservation"
 msgstr "varaus"
 
-#: hmlvaraus/models/hml_reservation.py:8
+#: hmlvaraus/models/hml_reservation.py:11
 msgid "Is paid"
 msgstr "Maksettu"
 
-#: hmlvaraus/models/hml_reservation.py:9
-#, fuzzy
-#| msgid "Reserver name"
+#: hmlvaraus/models/hml_reservation.py:12
 msgid "Reserver ssn"
-msgstr "Varaajan nimi"
+msgstr "Varaajan henkilötunnus"
 
-#: hmlvaraus/models/hml_reservation.py:10 resources/models/base.py:51
+#: hmlvaraus/models/hml_reservation.py:13 resources/models/base.py:51
 msgid "Time of modification"
 msgstr "Muokkausaika"
 
-#: hmlvaraus/models/hml_reservation.py:11
-#, fuzzy
-#| msgid "Time of creation"
+#: hmlvaraus/models/hml_reservation.py:14
 msgid "Time of payment"
-msgstr "Lisäysaika"
+msgstr "Maksuaika"
+
+#: hmlvaraus/models/hml_reservation.py:15
+msgid "Key returned"
+msgstr "Avain palautettu"
+
+#: hmlvaraus/models/hml_reservation.py:16
+msgid "Time of key returned"
+msgstr "Avaimen palautusaika"
+
+#: hmlvaraus/models/hml_reservation.py:17
+msgid "Renewal code"
+msgstr "Uusintakoodi"
+
+#: hmlvaraus/models/hml_reservation.py:19
+msgid "Renewal notification month before end sent at"
+msgstr "Uusintamuistutus kuukautta ennen lähetetty"
+
+#: hmlvaraus/models/hml_reservation.py:20
+msgid "Renewal notification week before end sent at"
+msgstr "Uusintamuistutus viikkoa ennen lähetetty"
+
+#: hmlvaraus/models/hml_reservation.py:21
+msgid "Renewal notification day before end sent at"
+msgstr "Uusintamuistutus päivää ennen lähetetty"
+
+#: hmlvaraus/models/hml_reservation.py:22
+msgid "End notification sent at"
+msgstr "Päättymisilmoitus lähetetty"
+
+#: hmlvaraus/models/hml_reservation.py:23
+msgid "Key return notification sent at"
+msgstr "Avaimen palautus muistutus lähetetty"
+
+#: hmlvaraus/models/purchase.py:11
+msgid "HMLReservation"
+msgstr "varaus"
+
+#: hmlvaraus/models/purchase.py:12
+msgid "Purchase code"
+msgstr "Ostokoodi"
+
+#: hmlvaraus/models/purchase.py:13 resources/models/reservation.py:64
+msgid "Reserver name"
+msgstr "Varaajan nimi"
+
+#: hmlvaraus/models/purchase.py:14 resources/models/reservation.py:66
+msgid "Reserver email address"
+msgstr "Varaajan sähköpostiosoite"
+
+#: hmlvaraus/models/purchase.py:15 resources/models/reservation.py:67
+msgid "Reserver phone number"
+msgstr "Varaajan puhelinnumero"
+
+#: hmlvaraus/models/purchase.py:16 hmlvaraus/models/purchase.py:31
+#: resources/models/reservation.py:68
+msgid "Reserver address street"
+msgstr "Varaajan katuosoite"
+
+#: hmlvaraus/models/purchase.py:17 resources/models/reservation.py:69
+msgid "Reserver address zip"
+msgstr "Varaajan postinumero"
+
+#: hmlvaraus/models/purchase.py:18 resources/models/reservation.py:70
+msgid "Reserver address city"
+msgstr "Varaajan kaupunki"
+
+#: hmlvaraus/models/purchase.py:21
+msgid "Product name"
+msgstr "Tuotteen nimi"
+
+#: hmlvaraus/models/purchase.py:22
+msgid "Purchase process started"
+msgstr "Maksuprosessi aloitettu"
+
+#: hmlvaraus/models/purchase.py:23
+msgid "Purchase process success"
+msgstr "Maksuprosessi onnistunut"
+
+#: hmlvaraus/models/purchase.py:24
+msgid "Purchase process failure"
+msgstr "Maksuprosessi epäonnistunut"
+
+#: hmlvaraus/models/purchase.py:25 hmlvaraus/models/purchase.py:26
+msgid "Purchase process notified"
+msgstr "Maksuprosessi vahvistettu"
+
+#: hmlvaraus/models/purchase.py:28
+msgid "Payment service timestamp"
+msgstr "Maksupalvelun aikaleima"
+
+#: hmlvaraus/models/purchase.py:29
+msgid "Payment service paid"
+msgstr "Maksupalvelun maksettu"
+
+#: hmlvaraus/models/purchase.py:32
+msgid "Purchase finished"
+msgstr "Maksu valmis"
+
+#: hmlvaraus/models/purchase.py:36 hmlvaraus/models/purchase.py:44
+msgid "Purchase callback has already returned"
+msgstr "Maksu paluukutsu on jo palannut"
+
+#: hmlvaraus/models/purchase.py:53
+msgid "Purchase success callback has not returned"
+msgstr "Maksu onnistui paluukutsu ei ole palannut"
+
+#: hmlvaraus/models/purchase.py:61
+msgid "Invalid purchase state"
+msgstr "Epävalidi maksun tila"
+
+#: hmlvaraus/models/purchase.py:67
+msgid "Purchase is already finished"
+msgstr "Maksuprosessi on päättynyt"
+
+#: hmlvaraus/tasks.py:143
+#, python-format
+msgid ""
+"<h2>Greetings %(full_name)s,</h2><br><br>Your berth reservation will end "
+"%(end_date_finnish)s. You can renew your reservation from the link eblow. If "
+"you don't renew your reservation before it ends the berth will be unlocked "
+"for everyone to reserve.<br><br>Renew your berth reservation <a href="
+"\"%(renewal_link)s\"> here</a>"
+msgstr ""
+"<h2>Hei %(full_name)s,</h2><br><br>Venepaikkavarauksesi päättyy "
+"%(end_date_finnish)s. Voit uusia venepaikkavarauksesi alla olevasta "
+"linkistä. Mikäli et uusi varaustasi ennen sen päättymistä, venepaikka "
+"vapautuu muille varattavaksi. <br> <br>Uusi venepaikkavarauksesi <a href="
+"\"%(renewal_link)s\"> tästä</a>"
+
+#: hmlvaraus/tasks.py:144 hmlvaraus/tasks.py:172
+#, python-format
+msgid ""
+"Greetings %(full_name)s\n"
+"\n"
+"Your berth reservation will end %(end_date_finnish)s. You can renew your "
+"reservation from the link below. If you don't renew your reservation before "
+"it ends the berth will be unlocked for everyone to reserve. \n"
+"\n"
+"Renew your berth reservation here: %(renewal_link)s"
+msgstr ""
+"Hei %(full_name)s,\n"
+"\n"
+"Venepaikkavarauksesi päättyy %(end_date_finnish)s. Voit uusia "
+"venepaikkavarauksesi alla olevasta linkistä. Mikäli et uusi varaustasi ennen "
+"sen päättymistä, venepaikka vapautuu muille varattavaksi. \n"
+"\n"
+"Uusi venepaikkavarauksesi tästä: %(renewal_link)s"
+
+#: hmlvaraus/tasks.py:147
+msgid "Your berth reservation will end in a month. Renew your reservation now!"
+msgstr "Venepaikkavarauksesi päättyy kuukauden päästä. Uusi varauksesi nyt!"
+
+#: hmlvaraus/tasks.py:149
+msgid "Your berth reservation will end in a week. Renew your reservation now!"
+msgstr "Venepaikkavarauksesi päättyy viikon päästä. Uusi varauksesi nyt!"
+
+#: hmlvaraus/tasks.py:151
+msgid "Your berth reservation will end. Renew your reservation now!"
+msgstr "Venepaikkavarauksesi päättyy tänään. Uusi varauksesi nyt!"
+
+#: hmlvaraus/tasks.py:182
+#, python-format
+msgid ""
+"<h2>Greetings %(full_name)s,</h2><br><br>Your berth reservation has ended "
+"%(end_date_finnish)s. The berth is now available for anyone to reserve. "
+"Thank you for your reservation. Remember to return the key if you were given "
+"one."
+msgstr ""
+"<h2>Hei %(full_name)s,</h2><br><br>Venepaikkavarauksesi on päättynyt "
+"%(end_date_finnish)s. Venepaikka on nyt kaikille varattavissa. Kiitos "
+"varauksestasi! Muista palauttaa venepaikan avain, mikäli olet sellaisen "
+"saanut."
+
+#: hmlvaraus/tasks.py:183 hmlvaraus/tasks.py:203
+#, python-format
+msgid ""
+"Greetings %(full_name)s\n"
+"\n"
+"Your berth reservation has ended %(end_date_finnish)s. The berth is now "
+"available for anyone to reserve. Thank you for your reservation. Remember to "
+"return the key if you were given one."
+msgstr ""
+"Hei %(full_name)s,\n"
+"\n"
+"Venepaikkavarauksesi on päättynyt %(end_date_finnish)s. Venepaikka on nyt "
+"kaikille varattavissa. Kiitos varauksestasi! Muista palauttaa venepaikan "
+"avain, mikäli olet sellaisen saanut."
+
+#: hmlvaraus/tasks.py:184
+msgid "Your berth reservation has ended"
+msgstr "Venepaikkavarauksesi on päättynyt"
+
+#: hmlvaraus/tasks.py:213
+#, python-format
+msgid ""
+"<h2>Greetings %(full_name)s,</h2><br><br>Your berth reservation has ended "
+"%(end_date_finnish)s but you haven't returned the key. Please return the key "
+"as soon as possible!"
+msgstr ""
+"<h2>Hei %(full_name)s,</h2><br><br>Venepaikkavarauksesi on päättynyt "
+"%(end_date_finnish)s, mutta et ole palauttanut vielä avainta. Palauta avain "
+"mahdollisimman pian!"
+
+#: hmlvaraus/tasks.py:214 hmlvaraus/tasks.py:234
+#, python-format
+msgid ""
+"Greetings %(full_name)s\n"
+"\n"
+"Your berth reservation has ended %(end_date_finnish)s but you haven't "
+"returned the key. Please return the key as soon as possible!"
+msgstr ""
+"Hei %(full_name)s,\n"
+"\n"
+"Venepaikkavarauksesi on päättynyt %(end_date_finnish)s mutta et ole vielä "
+"palauttanut avainta. Palauta avain mahdollisimman pian!"
+
+#: hmlvaraus/tasks.py:215
+msgid ""
+"You haven't returned the key of your berth reservation. Please return the "
+"key!"
+msgstr "Et ole vielä palauttanut varaamasi venepaikan avainta!"
+
+#: hmlvaraus/tasks.py:247
+#, python-format
+msgid ""
+"<h2>Greetings %(full_name)s,</h2><br><br>Thank you for your berth "
+"reservation! Here is a summary of your reservation: <br><br>Begin:"
+"%(begin_date_finnish)s <br>End: %(end_date_finnish)s <br>Berth: "
+"%(berth_name)s"
+msgstr ""
+"<h2>Hei %(full_name)s,</h2><br><br>Kiitos venepaikkavarauksestasi! Tässä "
+"yhteenveto varauksestasi: <br><br>Alkupäivä: %(begin_date_finnish)s "
+"<br>Loppupäivä: %(end_date_finnish)s <br>Venepaikka: %(berth_name)s"
+
+#: hmlvaraus/tasks.py:248 hmlvaraus/tasks.py:271
+#, python-format
+msgid ""
+"Greetings %(full_name)s\n"
+"\n"
+"Thank you for your berth reservation! Here is a summary of your "
+"reservation: \n"
+"\n"
+"Begin:%(begin_date_finnish)s \n"
+"End: %(end_date_finnish)s \n"
+"Berth: %(berth_name)s"
+msgstr ""
+"Hei %(full_name)s,\n"
+"\n"
+"Kiitos venepaikkavarauksestasi! Tässä yhteenveto varauksestasi: \n"
+"\n"
+"Alkupäivä: %(begin_date_finnish)s \n"
+"Loppupäivä: %(end_date_finnish)s \n"
+"Venepaikka: %(berth_name)s"
+
+#: hmlvaraus/tasks.py:249
+msgid "A confirmation of your berth reservation"
+msgstr "Vahvistus venepaikkavarauksestasi"
+
+#: hmlvaraus/tasks.py:284
+#, python-format
+msgid ""
+"<h2>Greetings %(full_name)s,</h2><br><br>Your berth reservation has been "
+"cancelled due to problems in payment process! Here is a summary of the "
+"cancelled reservation: <br><br>Begin:%(begin_date_finnish)s <br>End: "
+"%(end_date_finnish)s <br>Berth: %(berth_name)s"
+msgstr ""
+"<h2>Hei %(full_name)s,</h2><br><br>Venepaikkavarauksesi on peruutettu maksuongelmien vuoksi! Tässä "
+"yhteenveto peruutetusta varauksesta: <br><br>Alkupäivä: %(begin_date_finnish)s "
+"<br>Loppupäivä: %(end_date_finnish)s <br>Venepaikka: %(berth_name)s"
+
+#: hmlvaraus/tasks.py:285 hmlvaraus/tasks.py:308
+#, python-format
+msgid ""
+"Greetings %(full_name)s\n"
+"\n"
+"Your berth reservation has been cancelled due to problems in payment "
+"process! Here is a summary of the cancelled reservation: \n"
+"\n"
+"Begin:%(begin_date_finnish)s \n"
+"End: %(end_date_finnish)s \n"
+"Berth: %(berth_name)s"
+msgstr ""
+"Hei %(full_name)s,\n"
+"\n"
+"Venepaikkavarauksesi on peruutettu maksuongelmien vuoksi! Tässä yhteenveto peruutetusta varauksesta: \n"
+"\n"
+"Alkupäivä: %(begin_date_finnish)s \n"
+"Loppupäivä: %(end_date_finnish)s \n"
+"Venepaikka: %(berth_name)s"
+
+#: hmlvaraus/tasks.py:286
+msgid "Your berth reservation has been cancelled"
+msgstr "Venepaikkavarauksesi on peruutettu"
 
 #: reports/api/daily_reservations.py:53 reports/api/daily_reservations.py:87
 msgid "No reservations"
@@ -156,27 +497,6 @@ msgstr "TT:mm"
 #: resources/api/reservation.py:127
 msgid "Illegal state change"
 msgstr "Kielletty tilan vaihto"
-
-#: resources/api/reservation.py:143
-msgid "You cannot make a reservation in the past"
-msgstr "Varauksen teko menneisyyteen ei ole sallittua"
-
-#: resources/api/reservation.py:148
-#, python-format
-msgid "The resource is reservable only before %(datetime)s"
-msgstr "Tila on varattavissa vain ennen %(datetime)s"
-
-#: resources/api/reservation.py:160
-msgid "Only allowed to be set by staff members"
-msgstr "Ainoastaan virkailijat saavat asettaa"
-
-#: resources/api/reservation.py:169
-msgid "This field cannot have a value with this resource"
-msgstr "Tällä kentällä ei voi olla arvoa tällä resurssilla"
-
-#: resources/api/reservation.py:172
-msgid "This field cannot be changed"
-msgstr "Tätä arvoa ei voi muuttaa"
 
 #: resources/api/reservation.py:274 resources/api/reservation.py:288
 #, python-format
@@ -420,33 +740,9 @@ msgstr "Osallistujamäärä"
 msgid "Host name"
 msgstr "Isäntä"
 
-#: resources/models/reservation.py:64
-msgid "Reserver name"
-msgstr "Varaajan nimi"
-
 #: resources/models/reservation.py:65
 msgid "Reserver ID (business or person)"
 msgstr "Varaajan tunniste (yritys tai henkilö)"
-
-#: resources/models/reservation.py:66
-msgid "Reserver email address"
-msgstr "Varaajan sähköpostiosoite"
-
-#: resources/models/reservation.py:67
-msgid "Reserver phone number"
-msgstr "Varaajan puhelinnumero"
-
-#: resources/models/reservation.py:68
-msgid "Reserver address street"
-msgstr "Varaajan katuosoite"
-
-#: resources/models/reservation.py:69
-msgid "Reserver address zip"
-msgstr "Varaajan postinumero"
-
-#: resources/models/reservation.py:70
-msgid "Reserver address city"
-msgstr "Varaajan kaupunki"
 
 #: resources/models/reservation.py:71
 msgid "Company"
@@ -876,23 +1172,23 @@ msgstr "Lisää toinen"
 msgid "Delete Item"
 msgstr "Poista"
 
-#: respa/settings.py:132
+#: respa/settings.py:131
 msgid "Finnish"
 msgstr "suomi"
 
-#: respa/settings.py:133
+#: respa/settings.py:132
 msgid "English"
 msgstr "englanti"
 
-#: respa/settings.py:134
+#: respa/settings.py:133
 msgid "Swedish"
 msgstr "ruotsi"
 
-#: src/django-helusers/helusers/admin.py:30
+#: src/django-helusers/helusers/admin.py:36
 msgid "Django admin"
 msgstr ""
 
-#: src/django-helusers/helusers/admin.py:31
+#: src/django-helusers/helusers/admin.py:37
 #, python-format
 msgid "%(site_name)s admin"
 msgstr ""
@@ -901,14 +1197,22 @@ msgstr ""
 msgid "Helsinki Users"
 msgstr ""
 
-#: src/django-helusers/helusers/jwt.py:56
-#, fuzzy
-#| msgid "Invalid value"
-msgid "Invalid payload."
-msgstr "Epäkelpo arvo"
-
 #: src/django-helusers/helusers/models.py:37
 msgid "AD Group Mapping"
+msgstr ""
+
+#: src/django-helusers/helusers/oidc.py:49
+#, python-brace-format
+msgid "Not authorized for API scope \"{api_scope}\""
+msgstr ""
+
+#: src/django-helusers/helusers/oidc.py:62
+msgid "Invalid Authorization header. No credentials provided"
+msgstr ""
+
+#: src/django-helusers/helusers/oidc.py:65
+msgid ""
+"Invalid Authorization header. Credentials string should not contain spaces."
 msgstr ""
 
 #: src/django-helusers/helusers/templates/admin/base_site_default.html:3
@@ -919,6 +1223,10 @@ msgstr ""
 msgid "Django administration"
 msgstr ""
 
+#: src/django-helusers/helusers/user_utils.py:62
+msgid "Invalid payload."
+msgstr "Epäkelpo arvo"
+
 #: src/django-munigeo/munigeo/models.py:19
 msgid "Type name of the division (e.g. muni, school_district)"
 msgstr ""
@@ -928,8 +1236,6 @@ msgid "Human-readable name for the division"
 msgstr ""
 
 #: src/django-munigeo/munigeo/models.py:71
-#, fuzzy
-#| msgid "unit identifier"
 msgid "Open Civic Data identifier"
 msgstr "toimipisteen tunniste"
 
@@ -943,9 +1249,34 @@ msgstr ""
 msgid "Forgot Password?"
 msgstr ""
 
+#: templates/allauth/account/password_reset.html:6
+#: templates/allauth/account/password_reset.html:14
+msgid "Password Reset"
+msgstr ""
+
+#: templates/allauth/account/password_reset.html:19
+msgid ""
+"Forgotten your password? Enter your e-mail address below, and we'll send you "
+"an e-mail allowing you to reset it."
+msgstr ""
+
+#: templates/allauth/account/password_reset.html:24
+msgid "Reset My Password"
+msgstr ""
+
+#: templates/allauth/account/password_reset.html:27
+msgid "Please contact us if you have any trouble resetting your password."
+msgstr ""
+
 #: users/models.py:16
 msgid "Favorite resources"
 msgstr "Suosikkiresurssit"
+
+#~ msgid "<h2>Greetings "
+#~ msgstr "<h2>Hei "
+
+#~ msgid "Greetings "
+#~ msgstr "Hei "
 
 #~ msgid "Resource: %(resource)s"
 #~ msgstr "Tila: %(resource)s"
@@ -971,9 +1302,6 @@ msgstr "Suosikkiresurssit"
 #~ msgstr ""
 #~ "Ystävällisin terveisin,\n"
 #~ "Varaamo"
-
-#~ msgid "Your reservation has been cancelled."
-#~ msgstr "Varauksesi on peruttu."
 
 #~ msgid ""
 #~ "\n"
