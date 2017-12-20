@@ -119,9 +119,48 @@ define(["jquery", "backbone", 'moment', "models/BaseModel"],
                 else {
                     return '0,00';
                 }
-            }
+            },
+
+            formatTimeFinnish: function(time) {
+                if(!time)
+                    return '';
+                time = moment(time);
+                return time.format("D.M.YYYY HH:mm");
+            },
+
+            formatStateFinnish: function(state) {
+                switch(state) {
+                    case 'cancelled':
+                        return "Peruutettu";
+                        break;
+                    case 'confirmed':
+                        return "Hyväksytty";
+                        break;
+                    case 'denied':
+                        return "Evätty";
+                        break;
+                    case 'requested':
+                        return "Pyydetty";
+                        break;
+                }
+            },
+
+            formatIsPaidTimeFinnish: function(time) {
+                if(!time)
+                    return '';
+                time = moment(time);
+                return time.format("D.M.YYYY HH:mm");
+            },
+
+            formatKeyReturnedTimeFinnish: function(time) {
+                if(!time)
+                    return '';
+                time = moment(time);
+                return time.format("D.M.YYYY HH:mm");
+            },
 
         });
+
 
         return Model;
 

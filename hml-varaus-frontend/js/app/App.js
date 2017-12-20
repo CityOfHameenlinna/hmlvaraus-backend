@@ -200,6 +200,7 @@ define([
             $.when(App.boatReservationCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new BoatReservationDetailsView({
                     model: App.boatReservationCollection.get(id),
+                    modelId: id,
                     resourceCollection: App.boatResourceCollection,
                     unitCollection: App.unitCollection
                 }));
@@ -207,11 +208,12 @@ define([
         }
 
         App.showBoatReservationEdit = function(id) {
-            $.when(App.boatReservationCollection.deferred).done(function() {
+            $.when(App.boatReservationCollection.deferred, App.unitCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new BoatReservationEditView({
                     model: App.boatReservationCollection.get(id),
                     boatResourceCollection: App.boatResourceCollection,
                     unitCollection: App.unitCollection,
+                    modelId: id,
                     resourceId: id
                 }));
             });
@@ -238,7 +240,7 @@ define([
         }
 
         App.showBoatResourceDetails = function(id) {
-            $.when(App.boatResourceCollection.deferred).done(function() {
+            $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new BoatResourceDetailsView({
                     model: App.boatResourceCollection.get(id),
                     unitCollection: App.unitCollection,
