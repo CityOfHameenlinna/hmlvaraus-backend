@@ -27,6 +27,11 @@
 </div>
 
 <%if(content_type == 'boatReservations' || content_type == 'boatResources'){%>
-	<button class="btn btn-primary" id="pagination-previous">Edellinen</button>
-	<button class="btn btn-primary pull-right" id="pagination-next">Seuraava</button>
+	<div class="pagination-container">
+		<ul class="pagination">
+			<li class="page-item"><span id="pagination-previous" class="page-link" href="#">Edellinen</span></li>
+			<li class="page-item"><span id="pagination-page" class="page-link">{{currentPage}}</span></li>
+			<li class="page-item"><span id="pagination-next" class="page-link" href="#">Seuraava</span></li>
+		</ul>
+	</div>
 <%}%>
