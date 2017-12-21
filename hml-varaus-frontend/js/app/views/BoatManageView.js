@@ -14,6 +14,7 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
                 this.boatReservationCollection = this.options.boatReservationCollection;
                 this.boatResourceCollection = this.options.boatResourceCollection;
                 this.unitCollection = this.options.unitCollection;
+                this.filters = {};
                 this.unitCollection.fetch();
                 this.listenTo(this.unitCollection, 'sync', this.render);
                 this.listenTo(this.boatReservationCollection, 'sync', this.render);
@@ -21,7 +22,7 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
 
                 this.mainRadioChannel.on('resource-filter-changed', function(filters) {
                     me.filters = filters;
-                    me.refreshMap();
+                    me.setupMap();
                 });
 
                 this.hml = undefined;
@@ -107,6 +108,7 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
             },
 
             setupMap: function() {
+                var unitFilter = JSON.parse(localStorage.getItem('boat_resource_filters')).unit_id;
                 this.showChildView('filterRegion', new BoatManageResourceFilterView(this.options));
                 var me = this;
                 this.hml = {
@@ -125,49 +127,33 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
                     shadowSize:  [41, 41]
                 });
 
-                this.map = L.map(this.$('#map')[0], {
-                }).setView(me.hml, 10);
-
-                L.tileLayer.wms('https://kartta.hameenlinna.fi/teklaogcweb/WMS.ashx?', {
-                    layers: 'Opaskartta'
-                }).addTo(me.map);
-
-                this.markerLayer = L.layerGroup().addTo(me.map);
-
-                this.unitCollection.each(function(unit) {
-                    var toolTip = L.tooltip({
-                        permament: true
-                    }, marker);
-
-                    var boatResourceCount = unit.get('resources').length;
-
-                    var toolTipContent = '<div><h4>' + unit.getName() + '</h4><p>Venepaikkoja: ' + boatResourceCount + '</p></div>';
-                    var modelLocation = unit.getLocation();
-                    var marker = L.marker(modelLocation ? modelLocation : me.hml, {icon: me.cMarker}).bindTooltip(toolTipContent, toolTip).openTooltip().addTo(me.markerLayer);
-
-                    marker.on('click', function(e) {
-                        var filters = {
-                            show: true,
-                            unit_id: unit.getId()
-                        };
-                        localStorage.setItem('boat_resource_filters', JSON.stringify(filters));
-                        me.mainRadioChannel.trigger('show-resources');
-                    });
-                });
-            },
-
-            refreshMap: function() {
-                var me = this;
-
-                var units = [];
-                if (this.filters.unit_id) {
-                    units.push(this.unitCollection.get(this.filters.unit_id));
+                if (this.map) {
+                    this.map.removeLayer(this.markerLayer);
+                    this.markerLayer = L.layerGroup().addTo(me.map);
+                }
+                else {
+                    this.map = L.map(this.$('#map')[0], {
+                    }).setView(me.hml, 10);
+                    L.tileLayer.wms('https://kartta.hameenlinna.fi/teklaogcweb/WMS.ashx?', {
+                        layers: 'Opaskartta'
+                    }).addTo(me.map);
+                    this.markerLayer = L.layerGroup().addTo(me.map);
                 }
 
-                this.map.removeLayer(this.markerLayer);
-                this.markerLayer = L.layerGroup().addTo(me.map);
+                if (unitFilter) {
+                    var units = [];
+                    units.push(this.unitCollection.get(unitFilter));
+                    var unitMarkers = $(units);
+                }
+                else {
+                    var unitMarkers = this.unitCollection;
+                }
 
-                $(units).each(function(index, unit) {
+                unitMarkers.each(function(unit, unitHelper) {
+                    if (!unit) {
+                      unit = unitHelper;
+                    }
+
                     var toolTip = L.tooltip({
                         permament: true
                     }, marker);
