@@ -3,12 +3,12 @@
         <div class="col-md-4">
             <h3><strong>Venepaikka</strong></h3>
             <dl class="dl-horizontal align-left">
-                <dt>Nimi</dt>
+                <dt>Venepaikka</dt>
                 <dd>{{resource.getName()}}</dd>
 
                 <dt>Tyyppi</dt>
                 <dd>{{resource.getTypeFinnish()}}</dd>
-                
+
                 <dt>Kohde</dt>
                 <dd><a href="#unit-details/{{unit.getId()}}">{{unit.getName()}}</a></dd>
 
@@ -38,71 +38,49 @@
             </dl>
         </div>
         <div class="col-md-4">
-            <%if(reservation) {%>
-                <h3><strong>Edellinen / nykyinen varaus</strong></h3>
-                <h4><strong>Varaus:</strong></h4>
+            <%if(resource.isReserved()) {%>
+                <h3><strong>Nykyinen varaus</strong></h3>
                 <dl class="dl-horizontal">
+                    <dt>Varaus</dt>
+                    <dd><a href="#boat-reservation-details/{{currentReservation.id}}">{{currentReservation.id}}</a>
+
                     <dt>Alkaa</dt>
-                    <dd>{{reservation.getBeginTimeFinnish()}}</dd>
+                    <dd>{{resource.formatTimeFinnish(currentReservation.reservation__begin)}}</dd>
 
                     <dt>Päättyy</dt>
-                    <dd>{{reservation.getEndTimeFinnish()}}</dd>
+                    <dd>{{resource.formatTimeFinnish(currentReservation.reservation__end)}}</dd>
 
-                    <dt>Paikka</dt>
+                    <dt>Venepaikka</dt>
                     <dd>{{resource.getName()}}</dd>
 
                     <dt>Lisätiedot</dt>
-                    <dd>{{reservation.getDescription()}}</dd>
+                    <dd>{{currentReservation.reservation__comments}}</dd>
 
                     <dt>Tila</dt>
-                    <%if(reservation.isCancelled()) {%>
-                        <dd>{{reservation.getStateFinnish()}} ({{reservation.getStateUpdated()}})</dd>
+                    <%if(currentReservation.reservation__state == 'cancelled') {%>
+                        <dd>{{resource.formatStateFinnish(currentReservation.reservation__state)}} ({{resource.formatTimeFinnish(currentReservation.state_updated_at)}})</dd>
                     <%}else{%>
-                        <dd>{{reservation.getStateFinnish()}}</dd>
+                        <dd>{{resource.formatStateFinnish(currentReservation.reservation__state)}}</dd>
                     <%}%>
 
                     <dt>Maksettu</dt>
-                    <dd>
-                        <label class="switch reservation-is-paid">
-                            <%if(reservation.getIsPaid()) {%>
-                                <input type="checkbox" class="reservation-is-paid" checked>
-                            <%}else{%>
-                                <input type="checkbox" class="reservation-is-paid">
-                            <%}%>
-                            <div class="slider round reservation-is-paid"></div>
-                        </label>
-                        <div>{{reservation.getIsPaidTimeFinnish()}}</div>
-                    </dd>
+                    <%if(currentReservation.is_paid_at) {%>
+                        <dd>{{resource.formatTimeFinnish(currentReservation.is_paid_at)}}</dd>
+                    <%}else{%>
+                        <dd>Ei</dd>
+                    <%}%>
 
                     <%if(resource.getType() == 'dock') {%>
                         <dt>Avain palautettu</dt>
-                        <dd>
-                            <label class="switch reservation-key-returned">
-                                <%if(reservation.getKeyReturned()) {%>
-                                    <input type="checkbox" class="reservation-key-returned" checked>
-                                <%}else{%>
-                                    <input type="checkbox" class="reservation-key-returned">
-                                <%}%>
-                                <div class="slider round reservation-key-returned"></div>
-                            </label>
-                            <div>{{reservation.getKeyReturnedTimeFinnish()}}</div>
-                        </dd>
+                        <%if(currentReservation.key_returned_at) {%>
+                            <dd>{{resource.formatTimeFinnish(currentReservation.key_returned_at)}}</dd>
+                        <%}else{%>
+                            <dd>Ei</dd>
+                        <%}%>
                     <%}%>
-                </dl>
 
-                <h4><strong>Varaaja:</strong></h4>
-                <dl class="dl-horizontal">
-                    <dt>Nimi</dt>
-                    <dd>{{reservation.getReserverName()}}</dd>
-
-                    <dt>Osoite</dt>
-                    <dd>{{reservation.getReserverAddress()}}, {{reservation.getReserverZip()}} {{reservation.getReserverCity()}}</dd>
-
-                    <dt>Puhelinnumero</dt>
-                    <dd>{{reservation.getReserverPhone()}}</dd>
-
-                    <dt>Sähköpostiosoite</dt>
-                    <dd>{{reservation.getReserverEmail()}}</dd>
+                    <dt>Varaaja</dt>
+                    <dd>{{currentReservation.reservation__reserver_name}}</dd>
                 </dl>
             <%}%>
         </div>

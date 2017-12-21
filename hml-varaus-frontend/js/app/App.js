@@ -14,6 +14,7 @@ define([
     'views/BoatManageNewReservationView',
     'views/BoatNewReservationView',
     'views/BoatNewResourceView',
+    'views/BoatNewResourceGroundView',
     'views/BoatReservationDetailsView',
     'views/BoatReservationEditView',
     'views/BoatResourceDetailsView',
@@ -33,7 +34,7 @@ define([
     ],
     function ($, cookie, Backbone, Radio, Marionette, _, Router, LayoutView, PurchaseResultView, BoatManageView,
     BoatReservationListView, BoatResourceListView, BoatManageNewReservationView, BoatNewReservationView, BoatNewResourceView,
-    BoatReservationDetailsView, BoatReservationEditView, BoatResourceDetailsView, BoatResourceEditView,
+    BoatNewResourceGroundView, BoatReservationDetailsView, BoatReservationEditView, BoatResourceDetailsView, BoatResourceEditView,
     UnitEditView, UnitDetailsView, UnitNewView, ContentTableView, RenewalView,
     BoatResourceCollection, BoatReservationCollection, UserCollection, UnitCollection) {
 
@@ -200,6 +201,7 @@ define([
             $.when(App.boatReservationCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new BoatReservationDetailsView({
                     model: App.boatReservationCollection.get(id),
+                    modelId: id,
                     resourceCollection: App.boatResourceCollection,
                     unitCollection: App.unitCollection
                 }));
@@ -207,11 +209,12 @@ define([
         }
 
         App.showBoatReservationEdit = function(id) {
-            $.when(App.boatReservationCollection.deferred).done(function() {
+            $.when(App.boatReservationCollection.deferred, App.unitCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new BoatReservationEditView({
                     model: App.boatReservationCollection.get(id),
                     boatResourceCollection: App.boatResourceCollection,
                     unitCollection: App.unitCollection,
+                    modelId: id,
                     resourceId: id
                 }));
             });
@@ -237,8 +240,18 @@ define([
             });
         }
 
+        App.showBoatResourceGroundNew = function() {
+            $.when(App.boatResourceCollection.deferred, App.unitCollection.deferred).done(function() {
+                App.layoutView.showChildView('contentRegion', new BoatNewResourceGroundView({
+                    boatResourceCollection: App.boatResourceCollection,
+                    boatReservationCollection: App.boatReservationCollection,
+                    unitCollection: App.unitCollection
+                }));
+            });
+        }
+
         App.showBoatResourceDetails = function(id) {
-            $.when(App.boatResourceCollection.deferred).done(function() {
+            $.when(App.boatResourceCollection.deferred, App.boatReservationCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new BoatResourceDetailsView({
                     model: App.boatResourceCollection.get(id),
                     unitCollection: App.unitCollection,

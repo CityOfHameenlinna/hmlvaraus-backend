@@ -2,6 +2,7 @@ define(["jquery", "backbone", "moment", "models/BaseModel"],
     function($, Backbone, moment, BaseModel) {
         // Creates a new Backbone Model class object
         var Model = BaseModel.extend({
+            urlRoot: '/api/hml_reservation/',
             initialize: function() {
 
             },

@@ -2,6 +2,7 @@ from django.contrib.gis.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from resources.models import Reservation
+from hmlvaraus.models.berth import Berth
 import hashlib
 import time
 
@@ -82,6 +83,10 @@ class HMLReservation(models.Model):
             self.reservation.set_state(Reservation.CANCELLED, user)
             self.state_updated_at = timezone.now()
             self.save()
-            resource = self.reservation.resource
-            resource.reservable = True
-            resource.save()
+            if self.berth.type == Berth.GROUND:
+                self.berth.is_disabled = True
+                self.berth.save()
+            else:
+                resource = self.reservation.resource
+                resource.reservable = True
+                resource.save()

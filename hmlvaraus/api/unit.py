@@ -1,7 +1,8 @@
 import django_filters
 import json
 from django.core.exceptions import PermissionDenied
-from rest_framework import viewsets, serializers, filters, permissions
+from rest_framework import viewsets, serializers, filters, permissions, pagination
+from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from munigeo import api as munigeo_api
 from resources.models import Resource, Unit
@@ -59,6 +60,24 @@ class UnitFilter(django_filters.FilterSet):
         model = Unit
         fields = []
 
+class UnitPagination(pagination.PageNumberPagination):
+    page_size = 100
+    page_size_query_param = 'page_size'
+    max_page_size = 5000
+    def get_paginated_response(self, data):
+        next_page = ''
+        previous_page = ''
+        if self.page.has_next():
+            next_page = self.page.next_page_number()
+        if self.page.has_previous():
+            previous_page = self.page.previous_page_number()
+        return Response({
+            'next': next_page,
+            'previous': previous_page,
+            'count': self.page.paginator.count,
+            'results': data
+        })
+
 class StaffWriteOnly(permissions.BasePermission):
      def has_permission(self, request, view):
         return request.method in permissions.SAFE_METHODS or request.user.is_staff
@@ -68,6 +87,7 @@ class UnitViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     serializer_class = UnitSerializer
     permission_classes = [StaffWriteOnly]
     filter_class = UnitFilter
+    pagination_class = UnitPagination
 
     filter_backends = (DjangoFilterBackend,filters.SearchFilter,RelatedOrderingFilter)
     ordering_fields = ('__all__')

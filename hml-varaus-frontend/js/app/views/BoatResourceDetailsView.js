@@ -35,7 +35,7 @@ define( [
                 var variables = {
                     currentUser: this.currentUser,
                     resource: this.model,
-                    reservation: this.reservationModel,
+                    currentReservation: this.model.get('current_reservation'),
                     unit: this.unitModel
                 }
                 var tmpl = _.template(template);

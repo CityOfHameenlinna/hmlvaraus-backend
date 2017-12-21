@@ -6,12 +6,15 @@ define( ['App',
     'jquery',
     'moment',
     'views/BaseView',
+    'models/BoatReservationModel',
+    'models/BoatResourceModel',
+    'models/UnitModel',
     'text!templates/boat_reservation_edit_view.tmpl'],
-    function(App, Backbone, Radio, bootbox, Marionette, $, moment, BaseView, template) {
+    function(App, Backbone, Radio, bootbox, Marionette, $, moment, BaseView, BoatReservationModel, BoatResourceModel, UnitModel, template) {
         return BaseView.extend({
             initialize: function() {
                 this.boatResourceCollection = this.options.boatResourceCollection;
-                this.unitCollection = this.options.unitCollection
+                this.unitCollection = this.options.unitCollection;
                 this.mainRadioChannel = Radio.channel('main');
             },
 
@@ -23,6 +26,22 @@ define( ['App',
             },
 
             render: function() {
+                var me = this;
+                if(!this.model) {
+                  this.model = new BoatReservationModel();
+                  this.model.set('id', this.options.modelId);
+                  this.model.fetch()
+                  .done(function(data) {
+                    me.resourceModel = new BoatResourceModel(me.model.get('berth'));
+                    me._render();
+                  })
+                }
+                else {
+                  me._render();
+                }
+            },
+
+            _render: function() {
                 var me = this;
                 var filteredCollection = this.boatResourceCollection.filter(function(resource) {
                     if(!resource.isDisabled())

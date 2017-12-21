@@ -5,16 +5,17 @@ define( [
     'marionette',
     'jquery',
     'views/BaseView',
+    'models/BoatReservationModel',
+    'models/BoatResourceModel',
+    'models/UnitModel',
     'text!templates/boat_reservation_details_view.tmpl'],
-    function(App, Backbone, bootbox, Marionette, $, BaseView, template) {
+    function(App, Backbone, bootbox, Marionette, $, BaseView, BoatReservationModel, BoatResourceModel, UnitModel, template) {
         return BaseView.extend({
             initialize: function() {
                 this.model = this.options.model;
                 this.currentUser = window.App.userCollection.currentUser;
                 this.resourceCollection = this.options.resourceCollection;
                 this.unitCollection = this.options.unitCollection;
-                this.resourceModel = this.resourceCollection.getByResourceId(this.model.get('berth').resource.id);
-                this.unitModel = this.unitCollection.get(this.resourceModel.getUnitId());
             },
 
             events: {
@@ -25,6 +26,25 @@ define( [
             },
 
             render: function() {
+              var me = this;
+              if(!this.model) {
+                this.model = new BoatReservationModel();
+                this.model.set('id', this.options.modelId);
+                this.model.fetch()
+                .done(function(data) {
+                  me.resourceModel = new BoatResourceModel(me.model.get('berth'));
+                  me.unitModel = new UnitModel(me.resourceModel.get('resource').unit);
+                  me._render();
+                })
+              }
+              else {
+                this.resourceModel = this.resourceCollection.getByResourceId(this.model.get('berth').resource.id);
+                this.unitModel = this.unitCollection.get(this.resourceModel.getUnitId());
+                me._render();
+              }
+            },
+
+            _render: function() {
                 var variables = {
                     currentUser: this.currentUser,
                     reservation: this.model,

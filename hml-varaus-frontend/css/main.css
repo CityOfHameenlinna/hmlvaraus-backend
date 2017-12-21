@@ -327,3 +327,10 @@ dl.dl-horizontal > dd {
 #reservation-countdown-wrapper {
     font-size: 24px;
 }
+
+.pagination-container {
+    text-align: center;
+}
+.page-link:hover {
+    cursor: pointer;
+}

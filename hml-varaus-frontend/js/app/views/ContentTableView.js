@@ -36,7 +36,6 @@ define( [
                 this.currentUser = this.userCollection.currentUser;
 
                 this.collection = this.options.collection;
-                this.collection.fetchFiltered({reset:true});
 
                 this.mainRadioChannel = Radio.channel('main');
                 this.contentType = this.options.contentType;
@@ -138,26 +137,47 @@ define( [
             },
 
             paginationNext: function(e) {
+                var me = this;
                 this.collection.fetchFiltered({
-                  page: this.collection.nextPage,
-                  reset: false,
-                  remove: true,
+                    page: this.collection.nextPage,
+                    reset: false,
+                    remove: true,
+                })
+                .done(function(data){
+                    me.updatePage();
                 });
             },
 
             paginationPrevious: function(e) {
+                var me = this;
                 this.collection.fetchFiltered({
-                  page: this.collection.previousPage,
-                  reset: false,
-                  remove: true,
+                    page: this.collection.previousPage,
+                    reset: false,
+                    remove: true,
+                })
+                .done(function(){
+                    me.updatePage();
                 });
+            },
+
+            updatePage: function() {
+                $('#pagination-page').html(this.collection.page);
             },
 
             render: function() {
                 var me = this;
+                this.collection.fetchFiltered({reset:true})
+                .done(function(){
+                    me._render();
+                });
+            },
+
+            _render: function() {
+                var me = this;
                 var variables = {
                     currentUser: this.currentUser,
-                    content_type: this.contentType
+                    content_type: this.contentType,
+                    currentPage: this.collection.page,
                 }
 
                 var tmpl = _.template(template);

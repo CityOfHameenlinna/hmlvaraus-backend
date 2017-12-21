@@ -23,11 +23,16 @@ class BerthSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer)
     depth_cm = serializers.IntegerField(required=True)
     length_cm = serializers.IntegerField(required=True)
     type = serializers.CharField(required=True)
+    current_reservation = serializers.SerializerMethodField()
     partial = True
 
     class Meta:
         model = Berth
-        fields = ['id', 'width_cm', 'length_cm', 'depth_cm', 'resource', 'type', 'is_disabled', 'price']
+        fields = ['id', 'width_cm', 'length_cm', 'depth_cm', 'resource', 'type', 'is_disabled', 'price', 'current_reservation']
+
+    def get_current_reservation(self, berth):
+        return berth.hml_reservations.filter(reservation__state='confirmed').values('id', 'is_paid', 'reserver_ssn', 'reservation', 'state_updated_at', 'is_paid_at', 'key_returned', 'key_returned_at', 'reservation__reserver_name', 'reservation__begin', 'reservation__end', 'reservation__comments', 'reservation__state',).first()
+
 
     def create(self, validated_data):
         resource_data = validated_data.pop('resource')
@@ -139,6 +144,9 @@ class BerthFilterBackend(filters.BaseFilterBackend):
 
         if 'hide_reserved' in params:
             queryset = queryset.exclude(resource__reservable=False)
+
+        # Don't show disabled ground berths at all
+        queryset = queryset.exclude(is_disabled=True, type=Berth.GROUND)
 
         for name in ('berth_begin', 'berth_end'):
             if name not in params:
