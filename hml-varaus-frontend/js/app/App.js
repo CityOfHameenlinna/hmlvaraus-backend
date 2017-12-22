@@ -14,6 +14,7 @@ define([
     'views/BoatManageNewReservationView',
     'views/BoatNewReservationView',
     'views/BoatNewResourceView',
+    'views/BoatNewResourceGroundView',
     'views/BoatReservationDetailsView',
     'views/BoatReservationEditView',
     'views/BoatResourceDetailsView',
@@ -33,7 +34,7 @@ define([
     ],
     function ($, cookie, Backbone, Radio, Marionette, _, Router, LayoutView, PurchaseResultView, BoatManageView,
     BoatReservationListView, BoatResourceListView, BoatManageNewReservationView, BoatNewReservationView, BoatNewResourceView,
-    BoatReservationDetailsView, BoatReservationEditView, BoatResourceDetailsView, BoatResourceEditView,
+    BoatNewResourceGroundView, BoatReservationDetailsView, BoatReservationEditView, BoatResourceDetailsView, BoatResourceEditView,
     UnitEditView, UnitDetailsView, UnitNewView, ContentTableView, RenewalView,
     BoatResourceCollection, BoatReservationCollection, UserCollection, UnitCollection) {
 
@@ -232,6 +233,16 @@ define([
         App.showBoatResourceNew = function() {
             $.when(App.boatResourceCollection.deferred, App.unitCollection.deferred).done(function() {
                 App.layoutView.showChildView('contentRegion', new BoatNewResourceView({
+                    boatResourceCollection: App.boatResourceCollection,
+                    boatReservationCollection: App.boatReservationCollection,
+                    unitCollection: App.unitCollection
+                }));
+            });
+        }
+
+        App.showBoatResourceGroundNew = function() {
+            $.when(App.boatResourceCollection.deferred, App.unitCollection.deferred).done(function() {
+                App.layoutView.showChildView('contentRegion', new BoatNewResourceGroundView({
                     boatResourceCollection: App.boatResourceCollection,
                     boatReservationCollection: App.boatReservationCollection,
                     unitCollection: App.unitCollection

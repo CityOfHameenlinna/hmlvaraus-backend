@@ -6,6 +6,7 @@ define(['backbone', 'marionette'], function(Backbone, Marionette) {
             "boat-resources": "showBoatResourceList",
             "boat-resource-details/:id": "showBoatResourceDetails",
             "boat-resource-new": "showBoatResourceNew",
+            "boat-resource-ground-new": "showBoatResourceGroundNew",
             "boat-resource-edit/:id": "showBoatResourceEdit",
             "boat-reservations": "showBoatReservationList",
             "boat-reservation-details/:id": "showBoatReservationDetails",

@@ -21,7 +21,7 @@ def check_reservability():
     from hmlvaraus.models.hml_reservation import HMLReservation
     from resources.models.reservation import Reservation
     from hmlvaraus.models.berth import Berth
-    unavailable_berths = Berth.objects.filter(resource__reservable=False).exclude(type=Berth.DOCK)
+    unavailable_berths = Berth.objects.filter(resource__reservable=False).exclude(type__in=[Berth.DOCK, Berth.GROUND])
 
     for berth in unavailable_berths:
         if not HMLReservation.objects.filter(berth=berth, reservation__end__gte=timezone.now(), reservation__state=Reservation.CONFIRMED).exists():
@@ -37,7 +37,10 @@ def cancel_failed_reservation(purchase_id):
         user = AnonymousUser()
         purchase.hml_reservation.cancel_reservation(user)
         purchase.set_finished()
-
+        berth = purchase.hml_reservation.berth
+        if berth.type == Berth.GROUND and not berth.is_disabled:
+            berth.is_disabled = True
+            berth.save()
 
 @app.task
 def cancel_failed_reservations():
@@ -52,6 +55,10 @@ def cancel_failed_reservations():
             send_cancel_email(purchase.hml_reservation)
         if purchase.hml_reservation.reservation.reserver_phone_number:
             send_cancel_sms(purchase.hml_reservation)
+        berth = purchase.hml_reservation.berth
+        if berth.type == Berth.GROUND and not berth.is_disabled:
+            berth.is_disabled = True
+            berth.save()
 
 @app.task
 def check_key_returned():
@@ -80,6 +87,10 @@ def check_ended_reservations():
     reservations = HMLReservation.objects.filter(reservation__end__range=(now_minus_day, timezone.now()), child=None)
 
     for reservation in reservations:
+        berth = reservation.berth
+        if berth.type == Berth.GROUND:
+            berth.is_disabled = True
+            berth.save()
         sent = False
         if reservation.end_notification_sent_at:
             continue

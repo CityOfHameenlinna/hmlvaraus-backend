@@ -27,3 +27,10 @@ class Berth(models.Model):
 
     def get_name_and_unit(self):
         return "%s / %s" % (self.resource.name, self.resource.unit.name)
+
+class GroundBerthPrice(models.Model):
+    price = models.DecimalField(max_digits=6, decimal_places=2, default=0.00)
+    created = models.DateTimeField(_(u'created'), auto_now_add=True)
+
+    def __str__(self):
+        return "%s" % str(self.price)

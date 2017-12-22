@@ -11,6 +11,9 @@
 
 		<%if(content_type == 'boatResources' && currentUser){%>
 			<a href="#boat-resource-new" class="pull-right new-object-button">Uusi venepaikka</a>
+			<a href="#boat-resource-ground-new" class="pull-right new-object-button">Luo uusi polettipaikka</a>
+		<%}else if(content_type == 'boatResources' && !currentUser){%>
+			<a href="#boat-resource-ground-new" class="pull-right new-object-button">Varaa polettipaikka</a>
 		<%}else if(content_type == 'units' && currentUser){%>
 			<a href="#unit-new" class="pull-right new-object-button">Uusi kohde</a>
 		<%}%>

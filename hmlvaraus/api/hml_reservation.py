@@ -18,13 +18,15 @@ from hmlvaraus.models.purchase import Purchase
 from resources.api.base import TranslatedModelSerializer, register_view
 from hmlvaraus.utils.utils import RelatedOrderingFilter
 from django.utils.translation import ugettext_lazy as _
-from hmlvaraus.models.berth import Berth
-from resources.models.resource import Resource
+from hmlvaraus.models.berth import Berth, GroundBerthPrice
+from resources.models.resource import Resource, ResourceType
+from resources.models.unit import Unit
 from paytrailpayments.payments import *
 from rest_framework.views import APIView
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from datetime import timedelta
+from django.db.models import Q
 
 LOG = logging.getLogger(__name__)
 
@@ -57,7 +59,7 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
         reservation_data = validated_data.pop('reservation')
         if not reservation_data.get('begin') or not reservation_data.get('end'):
             reservation_data['begin'] = timezone.now()
-            reservation_data['end'] = timezone.now() + timedelta(years=1)
+            reservation_data['end'] = timezone.now() + timedelta(days=365)
         reservation = Reservation.objects.create(**reservation_data)
         resource = reservation_data['resource']
         resource.reservable = False
@@ -132,6 +134,83 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
         if not value.endswith(check_char):
             raise serializers.ValidationError(_('Social security number not valid'))
         return value
+
+class HMLReservationGroundBerthSerializer(HMLReservationSerializer):
+    reservation = serializers.DictField(required=True)
+    berth = serializers.DictField(required=True)
+
+    def validate(self, data):
+        request_user = self.context['request'].user
+        if data['berth']['type'] != Berth.GROUND and self.context['request'].method == 'POST' and Reservation.objects.filter(resource__id=data['reservation']['resource'].id, state=Reservation.CONFIRMED).exists():
+            raise serializers.ValidationError(_('Resource is already reserved and scheduled for renewal'))
+
+        if data['berth']['type'] != Berth.GROUND and request_user.is_staff and data.get('reservation'):
+            two_minutes_ago = timezone.now() - timedelta(minutes=2)
+            reservation_data = data.get('reservation')
+            resource = reservation_data['resource']
+            if resource.berth.reserving and resource.berth.reserving > two_minutes_ago:
+                raise serializers.ValidationError(_('Someone is reserving the berth at the moment'))
+
+        return data
+
+    def to_representation(self, instance):
+        serializer = HMLReservationSerializer(instance, context=self.context)
+        return serializer.data;
+
+    def create(self, validated_data):
+        request_user = self.context['request'].user
+        reservation_data = validated_data.pop('reservation')
+        if not reservation_data.get('begin') or not reservation_data.get('end'):
+            reservation_data['begin'] = timezone.now()
+            reservation_data['end'] = timezone.now() + timedelta(days=365)
+
+        berth_dict = validated_data.pop('berth')
+        berth = None
+
+        if not berth_dict.get('id'):
+            if berth_dict.get('type') != Berth.GROUND:
+                raise serializers.ValidationError(_('Only ground type berths can be created with reservation'))
+            if request_user.is_staff:
+                berth = self.create_berth(berth_dict)
+            else:
+                berth = self.create_berth({
+                    "price": GroundBerthPrice.objects.latest('id').price,
+                    "type":"ground",
+                    "resource":{
+                        "name":"Numeroimaton",
+                        "name_fi":"Numeroimaton",
+                        "unit": Unit.objects.get(name__icontains='poletti'),
+                        "reservable": True
+                    },
+                    "length_cm":0,
+                    "width_cm":0,
+                    "depth_cm":0
+                })
+
+        reservation_data['resource'] = berth.resource
+        reservation = Reservation.objects.create(**reservation_data)
+        resource = reservation.resource
+        resource.reservable = False
+        resource.save()
+        hmlReservation = HMLReservation.objects.create(reservation=reservation, berth=berth, **validated_data)
+        return hmlReservation
+
+    def create_berth(self, berth):
+        resource_data = berth.pop('resource')
+
+        if not berth.get('price'):
+            berth['price'] = GroundBerthPrice.objects.latest('id').price
+
+        if not resource_data.get('unit_id') and not resource_data.get('unit'):
+            resource_data['unit'] = Unit.objects.get(name__icontains='poletti')
+
+        if not resource_data.get('type_id' and not resource_data.get('type')):
+            resource_data['type'] = ResourceType.objects.get(Q(name__icontains='vene') | Q(name__icontains='boat'))
+
+        resource = Resource.objects.create(**resource_data)
+        new_berth = Berth.objects.create(resource=resource, **berth)
+
+        return new_berth
 
 class PurchaseSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer):
     hml_reservation = HMLReservationSerializer(read_only=True)
@@ -223,6 +302,12 @@ class HMLReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     ordering_fields = ('__all__')
     pagination_class = HMLReservationPagination
 
+    def get_serializer_class(self):
+        if self.request.method == 'POST' and self.request.data.get('berth').get('type') == Berth.GROUND and not self.request.data.get('berth').get('id'):
+            return HMLReservationGroundBerthSerializer
+        else:
+            return HMLReservationSerializer
+
     def perform_create(self, serializer):
         serializer.save()
 
@@ -236,9 +321,13 @@ class HMLReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
             hml_reservation.state_updated_at = timezone.now()
             hml_reservation.save()
             if data['state'] == reservation.CANCELLED:
-                resource = reservation.resource
-                resource.reservable = True
-                resource.save()
+                if hml_reservation.berth.type == Berth.GROUND:
+                    hml_reservation.berth.is_disabled = True
+                    hml_reservation.berth.save()
+                else:
+                    resource = reservation.resource
+                    resource.reservable = True
+                    resource.save()
         return serializer.save()
 
 class PurchaseView(APIView):
@@ -248,18 +337,23 @@ class PurchaseView(APIView):
             PermissionDenied(_('This API is only for non-authenticated users'))
         if not settings.PAYTRAIL_MERCHANT_ID or not settings.PAYTRAIL_MERCHANT_SECRET:
             raise ImproperlyConfigured(_('Paytrail credentials are incorrect or missing'))
-        code = request.data.pop('code')
-        berth = Berth.objects.get(pk=request.data['berth']['id'])
-
-        if code != hashlib.sha1(str(berth.reserving).encode('utf-8')).hexdigest():
-            raise ValidationError(_('Invalid meta data'))
 
         reservation = request.data['reservation']
         reservation['begin'] = timezone.now()
         reservation['end'] = timezone.now() + timedelta(days=365)
         request.data['reservation'] = reservation
 
-        serializer = HMLReservationSerializer(data=request.data, context={'request': request})
+        if request.data.get('berth').get('type') != Berth.GROUND:
+            code = request.data.pop('code')
+            berth = Berth.objects.get(pk=request.data['berth']['id'])
+
+            if code != hashlib.sha1(str(berth.reserving).encode('utf-8')).hexdigest():
+                raise ValidationError(_('Invalid meta data'))
+
+            serializer = HMLReservationSerializer(data=request.data, context={'request': request})
+        else:
+            serializer = HMLReservationGroundBerthSerializer(data=request.data, context={'request': request})
+
         if serializer.is_valid():
             reservation = serializer.save()
             url = request.build_absolute_uri()
