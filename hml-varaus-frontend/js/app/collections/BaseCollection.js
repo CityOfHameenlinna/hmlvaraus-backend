@@ -19,6 +19,9 @@ define(["jquery","backbone"],
                 options.traditional = true;
             }
 
+            if(!options.data)
+                options.data = {};
+
             this.isFiltered = true;
 
             if (options.page) {
