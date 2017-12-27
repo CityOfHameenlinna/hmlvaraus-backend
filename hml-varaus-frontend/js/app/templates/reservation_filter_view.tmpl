@@ -7,7 +7,10 @@
         <div class="col-md-4">
             <div class="form-group">
                 <label for="filter-search">Haku</label>
-                <input name="search" type="text" class="form-control filter-input" id="filter-search" placeholder="Etsi" value="{{filters.search}}">
+                <div class="input-group">
+                  <input name="search" type="text" type="text" class="form-control filter-input" placeholder="Etsi" value="{{filters.search}}">
+                  <span class="btn input-group-addon" id="filter-search">Hae</span>
+                </div>
             </div>
             <div class="checkbox">
                 <label>
@@ -107,4 +110,3 @@
 <%}%>
 </a>
 <button class="btn btn-primary" id="filter-clear">Tyhjennä suodattimet</button>
-<button class="btn btn-primary" id="filter-search">Hae</button>

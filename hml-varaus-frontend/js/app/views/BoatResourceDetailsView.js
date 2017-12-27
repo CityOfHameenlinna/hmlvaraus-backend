@@ -32,6 +32,7 @@ define( [
             },
 
             render: function() {
+                var me = this;
                 var variables = {
                     currentUser: this.currentUser,
                     resource: this.model,
@@ -40,6 +41,10 @@ define( [
                 }
                 var tmpl = _.template(template);
                 this.$el.html(tmpl(variables));
+
+                setTimeout(function() {
+                    me.setupMap();
+                }, 10);
             },
 
             newReservation: function() {
@@ -144,6 +149,36 @@ define( [
                         target.prop('checked', false);
                     });
                 }
-            }
+            },
+
+            setupMap: function() {
+                var me = this;
+                var hml = {
+                    lng: 24.4590,
+                    lat: 60.9929
+                }
+
+                var cMarker = L.icon({
+                    iconUrl:       '/static/img/marker-icon.png',
+                    iconRetinaUrl: '/static/img/marker-icon-2x.png',
+                    shadowUrl:     '/static/img/marker-shadow.png',
+                    iconSize:    [25, 41],
+                    iconAnchor:  [12, 41],
+                    popupAnchor: [1, -34],
+                    tooltipAnchor: [16, -28],
+                    shadowSize:  [41, 41]
+                });
+
+                var modelLocation = this.unitModel.getLocation();
+
+                var map = L.map(this.$('#map')[0], {
+                }).setView(modelLocation ? modelLocation : hml, 15);
+
+                L.tileLayer.wms('https://kartta.hameenlinna.fi/teklaogcweb/WMS.ashx?', {
+                    layers: 'Opaskartta'
+                }).addTo(map);
+
+                var marker = L.marker(modelLocation ? modelLocation : hml, {icon: cMarker}).addTo(map);
+            },
         });
     });

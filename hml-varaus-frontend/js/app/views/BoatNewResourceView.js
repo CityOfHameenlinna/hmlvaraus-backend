@@ -74,19 +74,19 @@ define( ['App',
 
                     if(length.val() < 0 || length.val() > 10) {
                         length.addClass('validation-error');
-                        width.next('span.error').find('p').text('Valitse arvo väliltä 0-10');
+                        length.next('span.error').find('p').text('Pituus tulisi olla 0 tai suurempi');
                         isValid = false;
                     }
 
                     if(width.val() < 0 || width.val() > 10) {
                         width.addClass('validation-error');
-                        width.next('span.error').find('p').text('Valitse arvo väliltä 0-10');
+                        width.next('span.error').find('p').text('Leveys tulisi olla 0 tai suurempi');
                         isValid = false;
                     }
 
                     if(depth.val() < 0 ||depth.val() > 10) {
                         depth.addClass('validation-error');
-                        width.next('span.error').find('p').text('Valitse arvo väliltä 0-10');
+                        depth.next('span.error').find('p').text('Syväys tulisi olla 0 tai suurempi');
                         isValid = false;
                     }
                 }
