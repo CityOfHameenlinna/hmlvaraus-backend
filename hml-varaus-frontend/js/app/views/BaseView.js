@@ -73,6 +73,8 @@ define( ['App',
             },
 
             showRequestErrors: function(errors) {
+                var userCollection = window.App.userCollection;
+                var currentUser = this.userCollection.currentUser;
                 var errorArray = [];
                 for (var key in errors) {
                     if (errors.hasOwnProperty(key)) {
@@ -98,7 +100,8 @@ define( ['App',
                     }
                 }
                 var variables = {
-                    errorArray: errorArray
+                    errorArray: errorArray,
+                    currentUser: currentUser
                 }
                 var tmpl = _.template(error_tmpl);
                 var html = tmpl(variables);

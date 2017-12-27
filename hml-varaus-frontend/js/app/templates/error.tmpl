@@ -3,16 +3,20 @@
 	<table class="table table-responsive">
 		<thead>
 			<tr>
-				<th>Kohde</th>
-				<th>Kenttä</th>
+				<%if(currentUser.is_superuser){%>
+					<th>Kohde</th>
+					<th>Kenttä</th>
+				<%}%>
 				<th>Syy</th>
 			</tr>
 		</thead>
 		<tbody>
 			<%errorArray.forEach(function(error) {%>
 				<tr>
-					<td>{{error.obj}}</td>
-					<td>{{error.field}}</td>
+					<%if(currentUser.is_superuser){%>
+						<td>{{error.obj}}</td>
+						<td>{{error.field}}</td>
+					<%}%>
 					<td>{{error.err}}</td>
 				</tr>
 			<%})%>

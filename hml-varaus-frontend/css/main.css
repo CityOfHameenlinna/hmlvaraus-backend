@@ -145,7 +145,7 @@ body {
 }
 
 .manage-view-container>div>div {
-    border: 1px solid rgba(0, 0, 0, .1);
+    border: 2px solid #e0d6b9;
     cursor: pointer;
 }
 
@@ -249,7 +249,7 @@ nav.navbar-default {
 }
 
 .manage-view-header {
-    border-bottom: 1px solid rgba(0, 0, 0, .1);
+    border-bottom: 2px solid #e0d6b9;
     padding: 10px;
     text-transform: uppercase;
 }
@@ -267,6 +267,9 @@ nav.navbar-default {
     font-weight: bold;
     text-decoration: none;
     border: 0;
+}
+.new-object-button.pull-right {
+  margin-left: 10px;
 }
 .new-object-button.reserve {
   height: 21px;
@@ -305,7 +308,7 @@ dl.dl-horizontal > dd {
 
 #map {
     height: 600px;
-    border: 1px solid rgba(0, 0, 0, .1);
+    border: 2px solid #e0d6b9;
 }
 
 .filter-container-map {
