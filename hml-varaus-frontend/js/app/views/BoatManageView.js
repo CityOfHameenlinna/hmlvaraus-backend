@@ -127,13 +127,18 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
                     shadowSize:  [41, 41]
                 });
 
+                var options = {
+                    maxZoom: 16,
+                    minZoom: 9,
+                    scrollWheelZoom: false
+                };
+
                 if (this.map) {
                     this.map.removeLayer(this.markerLayer);
                     this.markerLayer = L.layerGroup().addTo(me.map);
                 }
                 else {
-                    this.map = L.map(this.$('#map')[0], {
-                    }).setView(me.hml, 10);
+                    this.map = L.map(this.$('#map')[0], options).setView(me.hml, 10);
                     L.tileLayer.wms('https://kartta.hameenlinna.fi/teklaogcweb/WMS.ashx?', {
                         layers: 'Opaskartta'
                     }).addTo(me.map);
@@ -158,9 +163,10 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
                         permament: true
                     }, marker);
 
-                    var boatResourceCount = unit.get('resources').length;
+                    var boatResourceCount = '<p>Venepaikkoja: ' + unit.getResourcesCount() + '</p>';
+                    var boatResourceReservableCount = '<p>Vapaana: ' + unit.getResourcesReservableCount() + '</p>';
 
-                    var toolTipContent = '<div><h4>' + unit.getName() + '</h4><p>Venepaikkoja: ' + boatResourceCount + '</p></div>';
+                    var toolTipContent = '<div><h4>' + unit.getName() + '</h4>' + boatResourceCount + boatResourceReservableCount + '</div>';
                     var modelLocation = unit.getLocation();
                     var marker = L.marker(modelLocation ? modelLocation : me.hml, {icon: me.cMarker}).bindTooltip(toolTipContent, toolTip).openTooltip().addTo(me.markerLayer);
 

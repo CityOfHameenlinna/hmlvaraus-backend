@@ -23,9 +23,13 @@ class UnitSerializer(UnitSerializer):
     name = serializers.CharField(required=True)
     resources = SimpleResourceSerializer(read_only=True, many=True)
     resources_count = serializers.SerializerMethodField()
+    resources_reservable_count = serializers.SerializerMethodField()
 
     def get_resources_count(self, obj):
         return obj.resources.count()
+
+    def get_resources_reservable_count(self, obj):
+        return obj.resources.filter(reservable=True).count()
 
     def validate(self, data):
         request_user = self.context['request'].user

@@ -30,7 +30,12 @@ define( ['App', 'backbone', 'marionette', 'jquery', 'models/Model', 'text!templa
                 this.$el.html(tmpl(variables));
 
                 this.$('.main-nav-item.active').removeClass('active');
-                this.$('a[href="' + location.hash + '"]').closest('.main-nav-item').addClass('active');
+                if (location.hash == '') {
+                  this.$('#nav-main').addClass('active');
+                }
+                else {
+                  this.$('a[href="' + location.hash + '"]').closest('.main-nav-item').addClass('active');
+                }
             }
         });
     });

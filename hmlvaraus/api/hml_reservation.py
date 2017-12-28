@@ -35,11 +35,15 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
     is_paid = serializers.BooleanField(required=False)
     reserver_ssn = serializers.CharField(required=False)
     berth = BerthSerializer(required=True)
+    has_ended = serializers.SerializerMethodField()
     partial = True
 
     class Meta:
         model = HMLReservation
-        fields = ['id', 'berth', 'is_paid', 'reserver_ssn', 'reservation', 'state_updated_at', 'is_paid_at', 'key_returned', 'key_returned_at']
+        fields = ['id', 'berth', 'is_paid', 'reserver_ssn', 'reservation', 'state_updated_at', 'is_paid_at', 'key_returned', 'key_returned_at', 'has_ended']
+
+    def get_has_ended(self, obj):
+        return obj.reservation.end < timezone.now()
 
     def validate(self, data):
         request_user = self.context['request'].user
