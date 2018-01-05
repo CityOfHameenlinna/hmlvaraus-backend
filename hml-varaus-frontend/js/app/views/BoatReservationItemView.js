@@ -83,7 +83,6 @@ define( ['App', 'backbone', 'marionette', 'jquery', 'bootbox', 'views/BaseView',
                 }
                 var tmpl = _.template(template);
                 this.$el.html(tmpl(variables));
-                console.log(this.model);
 
                 if(!this.model.getKeyReturned() && this.model.getHasEnded())
                     this.$('td').closest('tr').addClass('danger');

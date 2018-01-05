@@ -27,6 +27,7 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from datetime import timedelta
 from django.db.models import Q
+from rest_framework.exceptions import ParseError
 
 LOG = logging.getLogger(__name__)
 
@@ -427,6 +428,30 @@ class PurchaseView(APIView):
             if purchase.report_is_seen():
                 raise PermissionDenied(_('Youre not allowed to see this purchase'))
             serializer = PurchaseSerializer(purchase, context={'request': request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            if not request.user.is_authenticated() or not request.user.is_staff:
+                raise PermissionDenied(_('This API is only for authenticated users'))
+
+            if 'start' not in self.request.GET or 'end' not in self.request.GET:
+                raise ParseError(_('Invalid parameters provided'))
+
+            start = self.request.GET.get('start')
+            end = self.request.GET.get('end')
+            show_failed = self.request.GET.get('show_failed')
+            if show_failed == 'true':
+                show_failed = True
+            else:
+                show_failed = False
+
+            purchases = Purchase.objects.filter(purchase_process_started__gte=start, purchase_process_started__lte=end)
+
+            if not show_failed:
+                purchases = purchases.exclude(purchase_process_success__isnull=True)
+
+            purchases = purchases.order_by('-purchase_process_started')
+            serializer = PurchaseSerializer(purchases, many=True, context={'request': request})
+
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         return Response({}, status=status.HTTP_404_NOT_FOUND)

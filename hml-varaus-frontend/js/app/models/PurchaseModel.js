@@ -18,6 +18,37 @@ define(["jquery", "backbone", "models/BaseModel", 'moment'],
                 return this.get('product_name');
             },
 
+            getStartDateFinnish: function() {
+                var beginIsoString = this.get('purchase_process_started');
+                return moment(beginIsoString).format('D.M.YYYY HH:mm');
+            },
+
+            getSuccessDateFinnish: function() {
+                var isoString = this.get('purchase_process_success');
+                if(!isoString)
+                    return false;
+                return moment(isoString).format('D.M.YYYY HH:mm');
+            },
+
+            getFailureDateFinnish: function() {
+                var isoString = this.get('purchase_process_failure');
+                if(!isoString)
+                    return false;
+                return moment(isoString).format('D.M.YYYY HH:mm');
+            },
+
+            getStateWithDateFinnish: function() {
+                if(this.getSuccessDateFinnish()) {
+                    return 'Onnistunut (' + this.getSuccessDateFinnish() + ')';
+                }
+                else if(this.getFailureDateFinnish()) {
+                    return 'Epäonnistunut (' + this.getFailureDateFinnish() + ')';
+                }
+                else {
+                    return 'Maksuprosessi kesken';
+                }
+            },
+
             getReservationStart: function() {
                 var beginIsoString = this.get('hml_reservation').reservation.begin;
                 return moment(beginIsoString).format('D.M.YYYY HH:mm');
@@ -50,6 +81,10 @@ define(["jquery", "backbone", "models/BaseModel", 'moment'],
 
             getReserverPhone: function() {
                 return this.get('reserver_phone_number');
+            },
+
+            getPrice: function() {
+                return this.get('price_vat');
             },
 
             isSuccess: function() {

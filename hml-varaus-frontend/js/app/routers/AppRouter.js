@@ -19,7 +19,8 @@ define(['backbone', 'marionette'], function(Backbone, Marionette) {
             "unit-new": "showUnitNew",
             "unit-edit/:id": "showUnitEdit",
             "purchase/:id": "showPurchaseResult",
-            "renewal/:id": "showReservationRenewal"
+            "renewal/:id": "showReservationRenewal",
+            "payment-report": "showPaymentReport"
        }
    });
 });

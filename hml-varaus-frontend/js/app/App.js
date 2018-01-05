@@ -24,6 +24,8 @@ define([
     'views/UnitNewView',
     'views/ContentTableView',
     'views/RenewalView',
+    'views/PaymentReportView',
+    'collections/PaymentCollection',
     'collections/BoatResourceCollection',
     'collections/BoatReservationCollection',
     'collections/UserCollection',
@@ -35,7 +37,7 @@ define([
     function ($, cookie, Backbone, Radio, Marionette, _, Router, LayoutView, PurchaseResultView, BoatManageView,
     BoatReservationListView, BoatResourceListView, BoatManageNewReservationView, BoatNewReservationView, BoatNewResourceView,
     BoatNewResourceGroundView, BoatReservationDetailsView, BoatReservationEditView, BoatResourceDetailsView, BoatResourceEditView,
-    UnitEditView, UnitDetailsView, UnitNewView, ContentTableView, RenewalView,
+    UnitEditView, UnitDetailsView, UnitNewView, ContentTableView, RenewalView, PaymentReportView, PaymentCollection,
     BoatResourceCollection, BoatReservationCollection, UserCollection, UnitCollection) {
 
         var App = new Marionette.Application({
@@ -61,6 +63,7 @@ define([
                 this.boatReservationCollection = new BoatReservationCollection();
                 this.unitCollection = new UnitCollection();
                 this.userCollection = new UserCollection();
+                this.paymentCollection = new PaymentCollection();
 
                 this.mainRadioChannel = Radio.channel('main');
 
@@ -152,6 +155,12 @@ define([
 
         App.showTest = function() {
             App.layoutView.showChildView('contentRegion', new WelcomeView());
+        }
+
+        App.showPaymentReport = function() {
+            App.layoutView.showChildView('contentRegion', new PaymentReportView({
+                paymentCollection: App.paymentCollection
+            }));
         }
 
         App.showBoatManage = function() {

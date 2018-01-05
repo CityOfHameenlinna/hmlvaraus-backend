@@ -1,0 +1,80 @@
+<div id="payment-report-filter-container">
+    <div class="filter-container">
+        <label for="filter-start-date">Alkuaika</label>
+        <div  name="start" class="input-group date filter-date" id="filter-start-date-datepicker">
+            <input name="filter-start-date" id="filter-start-date" type="text" class="form-control datepicker-input" />
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+        </div>
+        <span class="error"><p class="text-danger"></p></span>
+    </div>
+
+    <div class="filter-container">
+        <label for="filter-end-date">Loppuaika</label>
+        <div name="end" class="input-group date filter-date" id="filter-end-date-datepicker">
+            <input name="filter-end-date" id="filter-end-date" type="text" class="form-control datepicker-input" />
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+        </div>
+        <span class="error"><p class="text-danger"></p></span>
+    </div>
+
+    <button type="button" class="btn btn-link" id="filter-previous-day">Edellinen vuorokausi</button>
+
+    <button type="button" class="btn btn-link" id="filter-next-day">Seuraava vuorokausi</button>
+
+    <div class="checkbox">
+        <label>
+            <%if(filters.showFailed) {%>
+                <input checked name="showFailed" type="checkbox" class="filter-input checkbox"> Näytä myös epäonnistuneet maksut
+            <%}else{%>
+                <input name="showFailed" type="checkbox" class="filter-input checkbox"> Näytä myös epäonnistuneet maksut
+            <%}%>
+        </label>
+    </div>
+</div>
+
+<div id="payment-report-content-container">
+    <div class="table-responsive">
+        <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Päivämäärä</th>
+                        <th>Tila</th>
+                        <th>Maksajan nimi</th>
+                        <th>Maksajan sähköpostiosoite</th>
+                        <th>Maksajan puhelinnumero</th>
+                        <th>Venepaikka</th>
+                        <th>Summa</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <%collection.forEach(function(model) {%>
+                        <tr class="measurement-row">
+                            <td>{{model.getStartDateFinnish()}}</td>
+                            <td>{{model.getStateWithDateFinnish()}}
+                            <td>{{model.getReserverName()}}</td>
+                            <td>{{model.getReserverEmail()}}</td>
+                            <td>{{model.getReserverPhone()}}</td>
+                            <td>{{model.getProductName()}}</td>
+                            <td>{{String(model.getPrice()).replace('.', ',')}}</td>
+                        </tr>
+                    <%})%>
+                    	<tr>
+                    		<td></td>
+                    		<td></td>
+                    		<td></td>
+                    		<td></td>
+                    		<td></td>
+                    		<td></td>
+                    		<td><strong>{{collection.getSumFinnish()}}</strong></td>
+                    	</tr>
+                </tbody>
+
+        </table>
+    </div>
+    <div id="spinner-container"></div>
+</div>

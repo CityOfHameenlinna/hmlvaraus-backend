@@ -1,5 +1,5 @@
-define( ['App', 'backbone', 'marionette', 'jquery', 'models/Model', 'text!templates/layout_view.tmpl'],
-    function(App, Backbone, Marionette, $, Model, template) {
+define( ['App', 'backbone', 'marionette', 'jquery', 'text!templates/layout_view.tmpl'],
+    function(App, Backbone, Marionette, $, template) {
         return Marionette.View.extend({
         	template: template,
             className: '',
