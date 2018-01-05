@@ -2,6 +2,32 @@
 @import 'bootstrap-datetimepicker.css';
 @import 'leaflet.css';
 
+
+body.error-page {
+  padding: 20px;
+  background-color: #e0d6b9;
+}
+
+body.error-page #header-logo {
+  background: url(../img/hml-logot.png) 0 0 no-repeat transparent!important;
+  overflow: hidden;
+  background-position: 0 -88px!important;
+  height: 49px;
+  width: 283px;
+  clear: left;
+}
+
+.error-container #logo-container {
+  background-color: #FFFFFF;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.error-text-container {
+  font-size: 18px;
+  margin-top: 20px;
+}
+
 #payment-report-filter-container .filter-container {
   max-width: 300px;
 }
