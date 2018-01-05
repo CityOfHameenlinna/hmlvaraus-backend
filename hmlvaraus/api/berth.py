@@ -219,7 +219,7 @@ class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
         else:
             #Only fetch berth if nobody has been reserving it for two minutes
             two_minutes_ago = timezone.now() - timedelta(minutes=2)
-            return qs.filter(Q(reserving__lte=two_minutes_ago) | Q(reserving__isnull=True)).distinct()
+            return qs.filter(Q(reserving__lte=two_minutes_ago) | Q(reserving__isnull=True)).exclude(Q(type=Berth.GROUND) | Q(is_disabled=True)).distinct()
 
     def destroy(self, request, *args, **kwargs):
         try:

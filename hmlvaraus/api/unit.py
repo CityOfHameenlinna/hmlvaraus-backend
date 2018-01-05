@@ -6,11 +6,13 @@ from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from munigeo import api as munigeo_api
 from resources.models import Resource, Unit
+from hmlvaraus.models.berth import Berth
 from resources.api.unit import UnitSerializer
 from django.contrib.gis.geos import GEOSGeometry
 from resources.api.base import register_view
 from hmlvaraus.utils.utils import RelatedOrderingFilter
 from resources.api.base import TranslatedModelSerializer
+from django.db.models import Q
 
 class SimpleResourceSerializer(TranslatedModelSerializer):
     name = serializers.StringRelatedField(many=True)
@@ -29,7 +31,7 @@ class UnitSerializer(UnitSerializer):
         return obj.resources.count()
 
     def get_resources_reservable_count(self, obj):
-        return obj.resources.filter(reservable=True).count()
+        return obj.resources.filter(reservable=True).exclude(Q(berth__type=Berth.GROUND) | Q(berth__is_disabled=True)).count()
 
     def validate(self, data):
         request_user = self.context['request'].user

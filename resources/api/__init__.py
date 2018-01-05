@@ -5,10 +5,6 @@ from .reservation import ReservationViewSet
 #from .unit import UnitViewSet
 from .search import TypeaheadViewSet
 from .equipment import EquipmentViewSet
-from hmlvaraus.api.berth import BerthViewSet
-from hmlvaraus.api.unit import UnitViewSet
-from hmlvaraus.api.user import UserViewSet
-from hmlvaraus.api.hml_reservation import HMLReservationViewSet
 
 from rest_framework import routers
 

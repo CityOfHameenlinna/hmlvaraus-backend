@@ -1,13 +1,24 @@
-from respa.urls import *
 from hmlvaraus import admin
-from hmlvaraus.api.hml_reservation import PurchaseView, RenewalView
+from django.conf.urls import include, url
+from rest_framework.routers import DefaultRouter
+from hmlvaraus.api.hml_reservation import PurchaseView, RenewalView, HMLReservationViewSet
+from hmlvaraus.api.berth import BerthViewSet
+from hmlvaraus.api.unit import UnitViewSet
+from hmlvaraus.api.user import UserViewSet
+from hmlvaraus.views.spa import IndexView
+from hmlvaraus.api.importer import ImporterView
 
-urlpatterns += [
+router = DefaultRouter()
+router.register(r'hml_reservation', HMLReservationViewSet)
+router.register(r'berth', BerthViewSet)
+router.register(r'unit', UnitViewSet)
+router.register(r'user', UserViewSet)
+
+urlpatterns = [
     url(r'^sysadmin/', include(admin.site.urls)),
     url(r'^$', IndexView.as_view()),
     url(r'^api/purchase/', PurchaseView.as_view()),
-    url(r'^api/purchase/success/(?P<purchasecode>[0-9a-f]{40})/$', PurchaseView.as_view()),
-    url(r'^api/purchase/failure/', PurchaseView.as_view()),
-    url(r'^api/purchase/notification/', PurchaseView.as_view()),
     url(r'^api/renewal/', RenewalView.as_view()),
+    url(r'^importer/', ImporterView.as_view()),
+    url(r'^api/', include(router.urls))
 ]

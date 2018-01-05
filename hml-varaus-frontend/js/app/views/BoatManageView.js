@@ -1,12 +1,12 @@
 define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 'text!templates/boat_manage_view.tmpl', 'views/BoatManageResourceFilterView'],
     function(App, Backbone, Radio, Marionette, $, moment, template, BoatManageResourceFilterView) {
         return Marionette.View.extend({
-          regions: {
-              filterRegion: {
-                  el: '#filter-container',
-                  replaceElement: true
-              }
-          },
+            regions: {
+                filterRegion: {
+                    el: '#filter-container',
+                    replaceElement: true
+                }
+            },
             initialize: function() {
                 var me = this;
                 this.userCollection = window.App.userCollection;
@@ -67,26 +67,24 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
 
             createManageData: function() {
                 var me = this;
-                resourcesList = [];
-                freeResourcesList = [];
-                currentFutureReservationsList = [];
+                resourcesCount = 0;
+                freeResourcesCount = 0;
+                currentFutureReservationsCount = 0;
 
                 this.unitCollection.each(function(unit) {
                     var resources = unit.get('resources');
                     $(resources).each(function(index) {
-                        if (this.reservable) {
-                            freeResourcesList.push(this);
+                        if (!this.reservable) {
+                            currentFutureReservationsCount++
                         }
-                        else if (!this.reservable) {
-                            currentFutureReservationsList.push(this);
-                        }
-                        resourcesList.push(this);
                     });
+                    resourcesCount += unit.getResourcesCount()
+                    freeResourcesCount += unit.getResourcesReservableCount()
                 });
                 var data = {
-                    boat_resources: resourcesList.length,
-                    current_or_future_reservations: currentFutureReservationsList.length,
-                    free_boat_resources: freeResourcesList.length
+                    boat_resources: resourcesCount,
+                    current_or_future_reservations: currentFutureReservationsCount,
+                    free_boat_resources: freeResourcesCount
                 }
 
                 return data;
@@ -108,6 +106,8 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
             },
 
             setupMap: function() {
+                if(!localStorage.getItem('boat_resource_filters'))
+                    localStorage.setItem('boat_resource_filters', JSON.stringify({}));
                 var unitFilter = JSON.parse(localStorage.getItem('boat_resource_filters')).unit_id;
                 this.showChildView('filterRegion', new BoatManageResourceFilterView(this.options));
                 var me = this;
@@ -158,6 +158,9 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
                     if (!unit) {
                       unit = unitHelper;
                     }
+
+                    if(unit.getName().toLowerCase().indexOf('poletti') > -1)
+                        return;
 
                     var toolTip = L.tooltip({
                         permament: true

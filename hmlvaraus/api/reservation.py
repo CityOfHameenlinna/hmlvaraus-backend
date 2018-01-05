@@ -24,11 +24,7 @@ class ReservationSerializer(ReservationSerializer):
 
     class Meta:
         model = Reservation
-        fields = ['url', 'id', 'resource', 'user', 'begin', 'end', 'comments', 'is_own', 'state',
-                  'need_manual_confirmation', 'staff_event', 'access_code'] + list(RESERVATION_EXTRA_FIELDS)
-
-    # def validate(self, data):
-    #     return data
+        fields = ['id', 'resource', 'user', 'begin', 'end', 'is_own', 'state'] + list(RESERVATION_EXTRA_FIELDS)
 
     def validate(self, data):
         reservation = self.instance
@@ -40,8 +36,8 @@ class ReservationSerializer(ReservationSerializer):
         except KeyError:
             resource = reservation.resource
 
-       # if not resource.can_make_reservations(request_user):
-        #    raise PermissionDenied()
+        if not resource.can_make_reservations(request_user):
+            raise PermissionDenied()
 
         if data['end'] < timezone.now():
             raise ValidationError(_('You cannot make a reservation in the past'))

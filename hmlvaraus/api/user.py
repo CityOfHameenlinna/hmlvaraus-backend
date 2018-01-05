@@ -18,7 +18,7 @@ class UserSerializer(RespaUserSerializer):
         fields = [
             'last_login', 'username', 'email', 'date_joined',
             'first_name', 'last_name', 'uuid', 'department_name',
-            'is_staff', 'is_superuser', 'display_name', 'ical_feed_url', 'staff_perms', 'favorite_resources'
+            'is_staff', 'is_superuser', 'display_name', 'staff_perms', 'favorite_resources'
         ]
         model = get_user_model()
 

@@ -48,8 +48,6 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
 
     def validate(self, data):
         request_user = self.context['request'].user
-        if self.context['request'].method == 'POST' and Reservation.objects.filter(resource__id=data['reservation']['resource'].id, state=Reservation.CONFIRMED).exists():
-            raise serializers.ValidationError(_('Resource is already reserved and scheduled for renewal'))
 
         if request_user.is_staff and data.get('reservation'):
             two_minutes_ago = timezone.now() - timedelta(minutes=2)
@@ -61,10 +59,28 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
         return data
 
     def create(self, validated_data):
-        reservation_data = validated_data.pop('reservation')
+        request_user = self.context['request'].user
+        request_reservation_data = validated_data.pop('reservation')
+        reservation_data = {}
+
+        if not request_user.is_staff:
+            reservation_data['begin'] = request_reservation_data.get('begin')
+            reservation_data['end'] = request_reservation_data.get('end')
+            reservation_data['reserver_name'] = request_reservation_data.get('reserver_name', '')
+            reservation_data['reserver_email_address'] = request_reservation_data.get('reserver_email_address', '')
+            reservation_data['reserver_phone_number'] = request_reservation_data.get('reserver_phone_number', '')
+            reservation_data['reserver_address_street'] = request_reservation_data.get('reserver_address_street', '')
+            reservation_data['reserver_address_zip'] = request_reservation_data.get('reserver_address_zip', '')
+            reservation_data['reserver_address_city'] = request_reservation_data.get('reserver_address_city', '')
+            reservation_data['state'] = Reservation.CONFIRMED
+            reservation_data['resource'] = request_reservation_data.get('resource')
+        else:
+            reservation_data = request_reservation_data
+
         if not reservation_data.get('begin') or not reservation_data.get('end'):
             reservation_data['begin'] = timezone.now()
             reservation_data['end'] = timezone.now() + timedelta(days=365)
+
         reservation = Reservation.objects.create(**reservation_data)
         resource = reservation_data['resource']
         resource.reservable = False
@@ -146,8 +162,6 @@ class HMLReservationGroundBerthSerializer(HMLReservationSerializer):
 
     def validate(self, data):
         request_user = self.context['request'].user
-        if data['berth']['type'] != Berth.GROUND and self.context['request'].method == 'POST' and Reservation.objects.filter(resource__id=data['reservation']['resource'].id, state=Reservation.CONFIRMED).exists():
-            raise serializers.ValidationError(_('Resource is already reserved and scheduled for renewal'))
 
         if data['berth']['type'] != Berth.GROUND and request_user.is_staff and data.get('reservation'):
             two_minutes_ago = timezone.now() - timedelta(minutes=2)
@@ -164,7 +178,23 @@ class HMLReservationGroundBerthSerializer(HMLReservationSerializer):
 
     def create(self, validated_data):
         request_user = self.context['request'].user
-        reservation_data = validated_data.pop('reservation')
+        request_reservation_data = validated_data.pop('reservation')
+
+        reservation_data = {}
+
+        if not request_user.is_staff:
+            reservation_data['begin'] = request_reservation_data.get('begin')
+            reservation_data['end'] = request_reservation_data.get('end')
+            reservation_data['reserver_name'] = request_reservation_data.get('reserver_name', '')
+            reservation_data['reserver_email_address'] = request_reservation_data.get('reserver_email_address', '')
+            reservation_data['reserver_phone_number'] = request_reservation_data.get('reserver_phone_number', '')
+            reservation_data['reserver_address_street'] = request_reservation_data.get('reserver_address_street', '')
+            reservation_data['reserver_address_zip'] = request_reservation_data.get('reserver_address_zip', '')
+            reservation_data['reserver_address_city'] = request_reservation_data.get('reserver_address_city', '')
+            reservation_data['state'] = Reservation.CONFIRMED
+        else:
+            reservation_data = request_reservation_data
+
         if not reservation_data.get('begin') or not reservation_data.get('end'):
             reservation_data['begin'] = timezone.now()
             reservation_data['end'] = timezone.now() + timedelta(days=365)
@@ -308,10 +338,12 @@ class HMLReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     pagination_class = HMLReservationPagination
 
     def get_serializer_class(self):
-        if self.request.method == 'POST' and self.request.data.get('berth').get('type') == Berth.GROUND and not self.request.data.get('berth').get('id'):
-            return HMLReservationGroundBerthSerializer
-        else:
-            return HMLReservationSerializer
+        if self.request.method == 'POST' and self.request.data.get('berth'):
+            if self.request.data.get('berth').get('type') == Berth.GROUND and not self.request.data.get('berth').get('id'):
+                return HMLReservationGroundBerthSerializer
+            else:
+                return HMLReservationSerializer
+        return HMLReservationSerializer
 
     def perform_create(self, serializer):
         serializer.save()
@@ -383,11 +415,10 @@ class PurchaseView(APIView):
             raise ValidationError(_('Invalid payment data'))
 
     def get(self, request, format=None):
-        if not settings.PAYTRAIL_MERCHANT_ID or not settings.PAYTRAIL_MERCHANT_SECRET:
-            raise ImproperlyConfigured(_('Paytrail credentials are incorrect or missing'))
-        client = PaytrailAPIClient(merchant_id=settings.PAYTRAIL_MERCHANT_ID, merchant_secret=settings.PAYTRAIL_MERCHANT_SECRET)
-
         if request.GET.get('success', None):
+            if not settings.PAYTRAIL_MERCHANT_ID or not settings.PAYTRAIL_MERCHANT_SECRET:
+                raise ImproperlyConfigured(_('Paytrail credentials are incorrect or missing'))
+            client = PaytrailAPIClient(merchant_id=settings.PAYTRAIL_MERCHANT_ID, merchant_secret=settings.PAYTRAIL_MERCHANT_SECRET)
             if not client.validate_callback_data(request.GET):
                 raise ValidationError(_('Checksum failed. Invalid payment.'))
             purchase_code = request.GET.get('success', None)
@@ -401,6 +432,9 @@ class PurchaseView(APIView):
             purchase.set_success()
             return HttpResponseRedirect('/#purchase/' + purchase_code)
         elif request.GET.get('failure', None):
+            if not settings.PAYTRAIL_MERCHANT_ID or not settings.PAYTRAIL_MERCHANT_SECRET:
+                raise ImproperlyConfigured(_('Paytrail credentials are incorrect or missing'))
+            client = PaytrailAPIClient(merchant_id=settings.PAYTRAIL_MERCHANT_ID, merchant_secret=settings.PAYTRAIL_MERCHANT_SECRET)
             if not client.validate_callback_data(request.GET):
                 raise ValidationError(_('Checksum failed. Invalid payment.'))
             purchase_code = request.GET.get('failure', None)
@@ -415,6 +449,9 @@ class PurchaseView(APIView):
             purchase.hml_reservation.cancel_reservation(self.request.user)
             return HttpResponseRedirect('/#purchase/' + purchase_code)
         elif request.GET.get('notification', None):
+            if not settings.PAYTRAIL_MERCHANT_ID or not settings.PAYTRAIL_MERCHANT_SECRET:
+                raise ImproperlyConfigured(_('Paytrail credentials are incorrect or missing'))
+            client = PaytrailAPIClient(merchant_id=settings.PAYTRAIL_MERCHANT_ID, merchant_secret=settings.PAYTRAIL_MERCHANT_SECRET)
             if not client.validate_callback_data(request.GET):
                 raise ValidationError(_('Checksum failed. Invalid payment.'))
             purchase_code = request.GET.get('notification', None)
@@ -423,6 +460,9 @@ class PurchaseView(APIView):
             purchase.set_notification()
             return Response({}, status=status.HTTP_200_OK)
         elif request.GET.get('code', None):
+            if not settings.PAYTRAIL_MERCHANT_ID or not settings.PAYTRAIL_MERCHANT_SECRET:
+                raise ImproperlyConfigured(_('Paytrail credentials are incorrect or missing'))
+            client = PaytrailAPIClient(merchant_id=settings.PAYTRAIL_MERCHANT_ID, merchant_secret=settings.PAYTRAIL_MERCHANT_SECRET)
             purchase_code = request.GET.get('code', None)
             purchase = Purchase.objects.get(purchase_code=purchase_code)
             if purchase.report_is_seen():

@@ -4,6 +4,7 @@
           <select name="unit_id" class="form-control filter-input" id="filter-resource-unit">
               <option value="">Kaikki kohteet</option>
               <% unit_collection.each(function(unit) {%>
+                  <%if(unit.getName().toLowerCase().indexOf('poletti') > -1) return;%>
                   <%if(filters.unit_id == unit.getId()) {%>
                       <option value="{{unit.getId()}}" selected>{{unit.getName()}}</option>
                   <%} else {%>
