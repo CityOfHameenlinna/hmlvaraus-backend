@@ -9,10 +9,16 @@ define( ['App',
         return Marionette.View.extend({
             checkRequired: function(e) {
                 var isValid = true;
+                var re = new RegExp('^[0-9-+ ]+$');
                 if(e) {
                     if($(e.currentTarget).val() == '') {
                         $(e.currentTarget).addClass('required-error');
                         $(e.currentTarget).next('span.error').find('p').text('Tämä kenttä vaaditaan');
+                        isValid = false;
+                    }
+                    else if ($(e.currentTarget).attr('type') == 'tel' && re.test($(e.currentTarget).val()) == false) {
+                        $(e.currentTarget).addClass('required-error');
+                        $(e.currentTarget).next('span.error').find('p').text('Kentän arvo on väärää formaattia');
                         isValid = false;
                     }
                     else {
@@ -26,6 +32,11 @@ define( ['App',
                         if($(this).val() == '') {
                             $(this).addClass('required-error');
                             $(this).next('span.error').find('p').text('Tämä kenttä vaaditaan');
+                            isValid = false;
+                        }
+                        else if($(this).attr('type') == 'tel' && re.test($(this).val()) == false) {
+                            $(this).addClass('required-error');
+                            $(this).next('span.error').find('p').text('Kentän arvo on väärää formaattia');
                             isValid = false;
                         }
                         else {

@@ -7,11 +7,20 @@ from hmlvaraus.api.resource import ResourceSerializer
 
 from django.core.exceptions import PermissionDenied, ValidationError as DjangoValidationError
 from rest_framework.exceptions import ValidationError
-from django.utils import timezone
+from django.utils import timezone, six
+import re
+
+
+class PhoneNumberField(serializers.CharField):
+    def run_validation(self, data):
+        if isinstance(data, str):
+            if not re.match('^[0-9-+ ]+$', data):
+                raise ValidationError(dict(comments=('Phone numbers must be correct format.')))
+        return super(PhoneNumberField, self).run_validation(data)
 
 class ReservationSerializer(ReservationSerializer):
-
     reserver_name = serializers.CharField(required=True)
+    reserver_phone_number = PhoneNumberField(required=True)
 
     class Meta:
         model = Reservation
