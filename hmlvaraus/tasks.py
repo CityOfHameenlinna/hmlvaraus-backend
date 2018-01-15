@@ -32,6 +32,7 @@ def check_reservability():
 @app.task
 def cancel_failed_reservation(purchase_id):
     from hmlvaraus.models.purchase import Purchase
+    from hmlvaraus.models.berth import Berth
     purchase = Purchase.objects.get(pk=purchase_id)
     if not purchase.is_success() and not purchase.is_finished():
         user = AnonymousUser()
@@ -45,6 +46,7 @@ def cancel_failed_reservation(purchase_id):
 @app.task
 def cancel_failed_reservations():
     from hmlvaraus.models.purchase import Purchase
+    from hmlvaraus.models.berth import Berth
     three_days_ago = timezone.now() - timedelta(days=3)
     failed_purchases = Purchase.objects.filter(created_at__lte=three_days_ago, purchase_process_notified__isnull=True, finished__isnull=True, hml_reservation__is_paid=False)
     user = AnonymousUser()
@@ -83,6 +85,7 @@ def check_key_returned():
 @app.task
 def check_ended_reservations():
     from hmlvaraus.models.hml_reservation import HMLReservation
+    from hmlvaraus.models.berth import Berth
     now_minus_day = timezone.now() - timedelta(hours=24)
     reservations = HMLReservation.objects.filter(reservation__end__range=(now_minus_day, timezone.now()), child=None)
 
