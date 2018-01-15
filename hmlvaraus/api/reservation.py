@@ -105,7 +105,6 @@ class ReservationSerializer(ReservationSerializer):
 
         # Show the comments field and the user object only for staff
         if not resource.is_admin(user):
-            del data['comments']
             del data['user']
 
         return data
