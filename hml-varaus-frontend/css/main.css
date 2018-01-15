@@ -114,7 +114,14 @@ input:checked + .slider:before {
     padding-right: 10%;
 }
 
-@media screen and (min-width: 0px) and (max-width: 758px) {
+@media screen and (min-width: 0px) and (max-width: 1112px) {
+
+    .hide-in-tablet {
+        display:none !important;
+    }
+}
+
+@media screen and (min-width: 0px) and (max-width: 900px) {
 
     #filter-previous-day {
       padding-left: 13px;
@@ -305,13 +312,22 @@ nav.navbar-default {
     font-weight: bold;
     text-decoration: none;
     border: 0;
-}
-.new-object-button.pull-right {
-  margin-left: 10px;
+    border-radius: 0;
 }
 .new-object-button.reserve {
   height: 21px;
   line-height: 21px;
+}
+
+.btn.btn-primary, .new-object-button {
+    margin: 4px !important;
+}
+@media screen and (min-width: 0px) and (max-width: 642px) {
+
+    .btn.btn-primary, .new-object-button {
+        width: 96%;
+        float: none !important;
+    }
 }
 
 #filter-clear {
@@ -511,4 +527,7 @@ dl.dl-horizontal > dd {
 @keyframes sk-circleFadeDelay {
   0%, 39%, 100% { opacity: 0; }
   40% { opacity: 1; }
+}
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+    vertical-align: text-bottom;
 }

@@ -41,12 +41,12 @@
         <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>Päivämäärä</th>
+                        <th class="hide-in-mobile">Päivämäärä</th>
                         <th>Tila</th>
                         <th>Maksajan nimi</th>
-                        <th>Maksajan sähköpostiosoite</th>
-                        <th>Maksajan puhelinnumero</th>
-                        <th>Venepaikka</th>
+                        <th class="hide-in-mobile">Maksajan sähköpostiosoite</th>
+                        <th class="hide-in-mobile hide-in-tablet">Maksajan puhelinnumero</th>
+                        <th class="hide-in-mobile">Venepaikka</th>
                         <th>Summa</th>
 
                     </tr>
@@ -54,22 +54,22 @@
                 <tbody>
                     <%collection.forEach(function(model) {%>
                         <tr class="measurement-row">
-                            <td>{{model.getStartDateFinnish()}}</td>
+                            <td class="hide-in-mobile">{{model.getStartDateFinnish()}}</td>
                             <td>{{model.getStateWithDateFinnish()}}
                             <td>{{model.getReserverName()}}</td>
-                            <td>{{model.getReserverEmail()}}</td>
-                            <td>{{model.getReserverPhone()}}</td>
-                            <td>{{model.getProductName()}}</td>
+                            <td class="hide-in-mobile">{{model.getReserverEmail()}}</td>
+                            <td class="hide-in-mobile hide-in-tablet">{{model.getReserverPhone()}}</td>
+                            <td class="hide-in-mobile">{{model.getProductName()}}</td>
                             <td>{{String(model.getPrice()).replace('.', ',')}}</td>
                         </tr>
                     <%})%>
                     	<tr>
+                    		<td class="hide-in-mobile"></td>
                     		<td></td>
                     		<td></td>
-                    		<td></td>
-                    		<td></td>
-                    		<td></td>
-                    		<td></td>
+                    		<td class="hide-in-mobile"></td>
+                    		<td class="hide-in-mobile hide-in-tablet"></td>
+                    		<td class="hide-in-mobile"></td>
                     		<td><strong>{{collection.getSumFinnish()}}</strong></td>
                     	</tr>
                 </tbody>

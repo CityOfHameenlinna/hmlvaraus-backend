@@ -1,11 +1,11 @@
 <%if(currentUser){%>
-	<td>{{model.getBeginTimeFinnish()}}</td>
-	<td>{{model.getEndTimeFinnish()}}</td>
+	<td class="hide-in-mobile hide-in-tablet">{{model.getBeginTimeFinnish()}}</td>
+	<td class="hide-in-mobile hide-in-tablet">{{model.getEndTimeFinnish()}}</td>
 	<td>{{unit_model.getName()}}</td>
 	<td>{{resource_model.getName()}}</td>
 	<td>{{model.getReserverName()}}</td>
-	<td>{{model.getStateFinnish()}}</td>
-	<td class="reservation-is-paid">
+	<td class="hide-in-mobile">{{model.getStateFinnish()}}</td>
+	<td class="reservation-is-paid hide-in-mobile hide-in-tablet">
 		<label class="switch reservation-is-paid">
 		<%if(model.getIsPaid()) {%>
 			<input type="checkbox" class="reservation-is-paid" checked>
