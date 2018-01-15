@@ -37,7 +37,7 @@
                 </dd>
             </dl>
 
-            <%if(resource.isReserved()) {%>
+            <%if(resource.isReserved() && currentReservation) {%>
                 <h4><strong>Nykyinen varaus</strong></h4>
                 <dl class="dl-horizontal">
                     <dt>Varaus</dt>
