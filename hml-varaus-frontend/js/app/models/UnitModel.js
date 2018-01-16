@@ -27,6 +27,10 @@ define(["jquery", "backbone", "models/BaseModel"],
                 return this.get('resources_reservable_count');
             },
 
+            getReservationCount: function() {
+                return this.get('reservation_count');
+            },
+
             getId: function() {
                 return this.get('id');
             },

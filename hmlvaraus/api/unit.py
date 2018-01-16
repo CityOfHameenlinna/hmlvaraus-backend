@@ -5,13 +5,15 @@ from rest_framework import viewsets, serializers, filters, permissions, paginati
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from munigeo import api as munigeo_api
-from resources.models import Resource, Unit
+from resources.models import Resource, Unit, Reservation
 from hmlvaraus.models.berth import Berth
+from hmlvaraus.models.hml_reservation import HMLReservation
 from resources.api.unit import UnitSerializer
 from django.contrib.gis.geos import GEOSGeometry
 from resources.api.base import register_view
 from hmlvaraus.utils.utils import RelatedOrderingFilter
 from resources.api.base import TranslatedModelSerializer
+from django.utils import timezone
 from django.db.models import Q
 
 class SimpleResourceSerializer(TranslatedModelSerializer):
@@ -26,12 +28,16 @@ class UnitSerializer(UnitSerializer):
     resources = SimpleResourceSerializer(read_only=True, many=True)
     resources_count = serializers.SerializerMethodField()
     resources_reservable_count = serializers.SerializerMethodField()
+    reservation_count = serializers.SerializerMethodField()
 
     def get_resources_count(self, obj):
         return obj.resources.count()
 
     def get_resources_reservable_count(self, obj):
         return obj.resources.filter(reservable=True).exclude(Q(berth__type=Berth.GROUND) | Q(berth__is_disabled=True)).count()
+
+    def get_reservation_count(self, obj):
+        return HMLReservation.objects.filter(berth__resource__in=obj.resources.all(), reservation__begin__lte=timezone.now(), reservation__end__gte=timezone.now(), reservation__state=Reservation.CONFIRMED).count()
 
     def validate(self, data):
         request_user = self.context['request'].user

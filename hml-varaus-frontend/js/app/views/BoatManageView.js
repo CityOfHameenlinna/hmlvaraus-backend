@@ -69,21 +69,16 @@ define( ['App', 'backbone', 'backbone-radio', 'marionette', 'jquery', 'moment', 
                 var me = this;
                 resourcesCount = 0;
                 freeResourcesCount = 0;
-                currentFutureReservationsCount = 0;
+                currentReservationsCount = 0;
 
                 this.unitCollection.each(function(unit) {
-                    var resources = unit.get('resources');
-                    $(resources).each(function(index) {
-                        if (!this.reservable) {
-                            currentFutureReservationsCount++
-                        }
-                    });
-                    resourcesCount += unit.getResourcesCount()
-                    freeResourcesCount += unit.getResourcesReservableCount()
+                    resourcesCount += unit.getResourcesCount();
+                    freeResourcesCount += unit.getResourcesReservableCount();
+                    currentReservationsCount += unit.getReservationCount();
                 });
                 var data = {
                     boat_resources: resourcesCount,
-                    current_or_future_reservations: currentFutureReservationsCount,
+                    current_reservations: currentReservationsCount,
                     free_boat_resources: freeResourcesCount
                 }
 
