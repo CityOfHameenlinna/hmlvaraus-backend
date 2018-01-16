@@ -16,9 +16,22 @@ define( ['App',
             },
 
             render: function() {
+                var me = this;
+                $.get('/api/ground_berth_price/')
+                .done(function(data) {
+                    me.price = data.price;
+                    me._render();
+                })
+                .fail(function(result) {
+                    me.showRequestErrors(result.responseJSON);
+                });
+            },
+
+            _render: function() {
                 var variables = {
                     unit_collection: this.unitCollection,
                     currentUser: this.currentUser,
+                    price: this.price
                 }
 
                 var tmpl = _.template(template);

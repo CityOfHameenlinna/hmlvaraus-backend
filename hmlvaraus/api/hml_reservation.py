@@ -208,8 +208,13 @@ class HMLReservationGroundBerthSerializer(HMLReservationSerializer):
             if request_user.is_staff:
                 berth = self.create_berth(berth_dict)
             else:
+                ground_berth_price = 30.00
+                try:
+                    ground_berth_price = GroundBerthPrice.objects.latest('id').price
+                except:
+                    pass
                 berth = self.create_berth({
-                    "price": GroundBerthPrice.objects.latest('id').price,
+                    "price": ground_berth_price,
                     "type":"ground",
                     "resource":{
                         "name":"Numeroimaton",
@@ -234,7 +239,12 @@ class HMLReservationGroundBerthSerializer(HMLReservationSerializer):
         resource_data = berth.pop('resource')
 
         if not berth.get('price'):
-            berth['price'] = GroundBerthPrice.objects.latest('id').price
+            ground_berth_price = 30.00
+            try:
+                ground_berth_price = GroundBerthPrice.objects.latest('id').price
+            except:
+                pass
+            berth['price'] = ground_berth_price
 
         if not resource_data.get('unit_id') and not resource_data.get('unit'):
             resource_data['unit'] = Unit.objects.get(name__icontains='poletti')

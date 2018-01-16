@@ -8,7 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from munigeo import api as munigeo_api
 from resources.models import Reservation, Resource, Unit
 from hmlvaraus.api.resource import ResourceSerializer
-from hmlvaraus.models.berth import Berth
+from hmlvaraus.models.berth import Berth, GroundBerthPrice
 from hmlvaraus.models.hml_reservation import HMLReservation
 from resources.api.base import TranslatedModelSerializer, register_view
 from hmlvaraus.utils.utils import RelatedOrderingFilter
@@ -16,6 +16,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from datetime import timedelta
 from django.db.models import Q
+from rest_framework.views import APIView
 import six
 
 
@@ -197,6 +198,17 @@ class BerthPagination(pagination.PageNumberPagination):
 class StaffWriteOnly(permissions.BasePermission):
      def has_permission(self, request, view):
         return request.method in permissions.SAFE_METHODS or request.user.is_staff
+
+class GroundBerthPriceView(APIView):
+    permission_classes = (permissions.AllowAny,)
+    def get(self, request, format=None):
+        ground_berth_price = 30.00
+        try:
+            ground_berth_price = GroundBerthPrice.objects.latest('id').price
+        except:
+            pass
+
+        return Response({'price': ground_berth_price}, status=status.HTTP_200_OK)
 
 class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     queryset = Berth.objects.all().select_related('resource', 'resource__unit').prefetch_related('resource', 'resource__unit')
