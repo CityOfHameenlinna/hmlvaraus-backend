@@ -76,7 +76,15 @@
                             <span class="error"><p class="text-danger"></p></span>
                         </div>
 
-              <button id="resource-submit" type="submit" class="btn btn-default submit-button">Lisää polettipaikka</button>
+
+
+                <button id="resource-submit" type="submit" class="btn btn-default submit-button">
+                    <%if(currentUser) {%>
+                        Lisää polettipaikka
+                    <%}else{%>
+                        Maksa varaus
+                    <%}%>
+                </button>
             </form>
         </div>
     </div>

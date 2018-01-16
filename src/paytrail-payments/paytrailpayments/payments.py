@@ -114,7 +114,7 @@ class BasePaytrailPayment(object):
     # to back up order information like customer address, product information etc.
     # Order description is only visible through Merchant's Panel."
     self.description = description
-    # Locale affects on default language and how amounts are shown on payment method selection page. 
+    # Locale affects on default language and how amounts are shown on payment method selection page.
     # Available cultures are "fi_FI", "sv_SE" and "en_US". The default locale is always "fi_FI".
     self.locale = locale
     # Currency. Only EUR is accepted for Finnish banks and credit cards.
@@ -165,6 +165,7 @@ class PaytrailPaymentExtended(BasePaytrailPayment):
     super(PaytrailPaymentExtended, self).__init__(**kwargs)
     self.contact = contact
     self.is_vat_included = is_vat_included
+    self._products = []
 
   def add_product(self, product):
     if len(self._products) >= 500:
