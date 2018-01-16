@@ -14,7 +14,8 @@ define( ['App', 'backbone', 'marionette', 'jquery', 'bootbox', 'views/BaseView',
 
             events: {
                 'click td': 'viewReservation',
-                'click input.reservation-is-paid': 'changeIsPaid'
+                'click input.reservation-is-paid': 'changeIsPaid',
+                'click input.reservation-key-returned': 'changeKeyReturned'
             },
 
             changeIsPaid: function(e) {
@@ -65,8 +66,60 @@ define( ['App', 'backbone', 'marionette', 'jquery', 'bootbox', 'views/BaseView',
                 }
             },
 
+            changeKeyReturned: function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                var me = this;
+                var target = $(e.currentTarget);
+
+                console.log('foo');
+                
+                if(!target.prop('checked')) {
+                    bootbox.confirm({
+                        message: 'Olet merkkaamassa avaimen palautetuksi. Oletko varma?',
+                        buttons: {
+                            confirm: {
+                                label: 'Merkkaa',
+                                className: 'btn-danger'
+                            },
+                            cancel: {
+                                label: 'Älä merkkaa',
+                                className: 'btn-default'
+                            }
+                        },
+                        callback: function (result) {
+                            if(result) {
+                                me.model.set('is_paid', true).saveKeyReturned(false)
+                                .done(function() {
+                                    target.prop('checked', false);
+                                })
+                                .fail(function() {
+                                    target.prop('checked', true);
+                                    me.showRequestErrors();
+                                });
+                            }
+                            else {
+                                target.prop('checked', true);
+                            }
+                        }
+                    });
+                }
+                else {
+                    this.model.set('is_paid', true).saveKeyReturned(true)
+                    .done(function() {
+                        target.prop('checked', true);
+                    })
+                    .fail(function() {
+                        target.prop('checked', false);
+                        me.showRequestErrors();
+                    });
+                }
+            },
+
             viewReservation: function(e) {
                 if($(e.target).hasClass('reservation-is-paid'))
+                    return;
+                else if($(e.target).hasClass('reservation-key-returned'))
                     return;
                 window.App.router.navigate('boat-reservation-details/' + this.model.getId(), {trigger: true});
             },
@@ -84,8 +137,10 @@ define( ['App', 'backbone', 'marionette', 'jquery', 'bootbox', 'views/BaseView',
                 var tmpl = _.template(template);
                 this.$el.html(tmpl(variables));
 
-                if(!this.model.getKeyReturned() && this.model.getHasEnded())
+                if (!this.model.getKeyReturned() && this.model.getHasEnded()
+                || !this.model.getKeyReturned() && this.model.isCancelled()) {
                     this.$('td').closest('tr').addClass('danger');
+                }
             }
         });
     });

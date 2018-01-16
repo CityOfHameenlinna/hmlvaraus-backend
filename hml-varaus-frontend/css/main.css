@@ -315,8 +315,11 @@ nav.navbar-default {
     border-radius: 0;
 }
 .new-object-button.reserve {
-  height: 21px;
-  line-height: 21px;
+    height: 21px;
+    line-height: 21px;
+}
+.unclickable {
+    cursor: default;
 }
 
 .btn.btn-primary, .new-object-button {
@@ -529,5 +532,5 @@ dl.dl-horizontal > dd {
   40% { opacity: 1; }
 }
 .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
-    vertical-align: text-bottom;
+    vertical-align: top;
 }
