@@ -22,6 +22,6 @@ urlpatterns = [
     url(r'^api/purchase/', PurchaseView.as_view()),
     url(r'^api/renewal/', RenewalView.as_view()),
     url(r'^api/ground_berth_price/', GroundBerthPriceView.as_view()),
-    url(r'^importer/', ImporterView.as_view()),
+    url(r'^api/importer/', ImporterView.as_view()),
     url(r'^api/', include(router.urls))
 ]
