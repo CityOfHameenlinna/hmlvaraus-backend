@@ -414,12 +414,27 @@ class PurchaseView(APIView):
             payment.add_product(product)
             client = PaytrailAPIClient(merchant_id=settings.PAYTRAIL_MERCHANT_ID, merchant_secret=settings.PAYTRAIL_MERCHANT_SECRET)
 
-            response = client.initialize_payment(payment)
+            query_string = PaytrailArguments(
+                merchant_auth_hash=settings.PAYTRAIL_MERCHANT_SECRET, 
+                merchant_id=settings.PAYTRAIL_MERCHANT_ID, 
+                url_success=url + '?success=' + purchase_code,
+                url_cancel=url + '?failure=' + purchase_code,
+                order_number=purchase.pk,
+                params_in='MERCHANT_ID,URL_SUCCESS,URL_CANCEL,ORDER_NUMBER,PARAMS_IN,PARAMS_OUT,AMOUNT',
+                params_out='PAYMENT_ID,TIMESTAMP,STATUS',
+                amount=product.get_data()['price'],
+            )
 
-            if response.url:
-                return Response({'redirect': response.url}, status=status.HTTP_200_OK)
-            else:
-                raise ValidationError(_('Invalid payment data'))
+            return Response({'query_string': query_string.get_data()}, status=status.HTTP_200_OK)
+
+
+            # response = client.initialize_payment(payment)
+
+
+            # if response.url:
+            #     return Response({'redirect': response.url}, status=status.HTTP_200_OK)
+            # else:
+            #     raise ValidationError(_('Invalid payment data'))
         else:
             LOG.info(serializer.errors)
             raise ValidationError(_('Invalid payment data'))
