@@ -430,35 +430,37 @@ class PurchaseView(APIView):
                     urlset=url_set
                     )
             payment.add_product(product)
-            # client = PaytrailAPIClient(merchant_id=settings.PAYTRAIL_MERCHANT_ID, merchant_secret=settings.PAYTRAIL_MERCHANT_SECRET)
 
             query_string = PaytrailArguments(
                 merchant_auth_hash=settings.PAYTRAIL_MERCHANT_SECRET, 
                 merchant_id=settings.PAYTRAIL_MERCHANT_ID, 
                 url_success=url + '?success=' + purchase_code,
                 url_cancel=url + '?failure=' + purchase_code,
+                url_notify=url + '?notification=' + purchase_code,
                 order_number=payment.get_data()['orderNumber'],
-                params_in='MERCHANT_ID, \
-                    URL_SUCCESS, \
-                    URL_CANCEL, \
-                    ORDER_NUMBER, \
-                    PARAMS_IN, \
-                    PARAMS_OUT, \
-                    ITEM_TITLE[0], \
-                    ITEM_ID[0], \
-                    ITEM_QUANTITY[0], \
-                    ITEM_UNIT_PRICE[0], \
-                    ITEM_VAT_PERCENT[0], \
-                    ITEM_DISCOUNT_PERCENT[0], \
-                    ITEM_TYPE[0], \
-                    REFERENCE_NUMBER, \
-                    PAYER_PERSON_PHONE, \
-                    PAYER_PERSON_EMAIL, \
-                    PAYER_PERSON_FIRSTNAME, \
-                    PAYER_PERSON_LASTNAME, \
-                    PAYER_PERSON_ADDR_STREET, \
-                    PAYER_PERSON_ADDR_POSTAL_CODE, \
-                    PAYER_PERSON_ADDR_TOWN', 
+                params_in=(
+                    'MERCHANT_ID,'
+                    'URL_SUCCESS,'
+                    'URL_CANCEL,'
+                    'URL_NOTIFY,'
+                    'ORDER_NUMBER,'
+                    'PARAMS_IN,'
+                    'PARAMS_OUT,'
+                    'ITEM_TITLE[0],'
+                    'ITEM_ID[0],'
+                    'ITEM_QUANTITY[0],'
+                    'ITEM_UNIT_PRICE[0],'
+                    'ITEM_VAT_PERCENT[0],'
+                    'ITEM_DISCOUNT_PERCENT[0],'
+                    'ITEM_TYPE[0],'
+                    'PAYER_PERSON_PHONE,'
+                    'PAYER_PERSON_EMAIL,'
+                    'PAYER_PERSON_FIRSTNAME,'
+                    'PAYER_PERSON_LASTNAME,'
+                    'PAYER_PERSON_ADDR_STREET,'
+                    'PAYER_PERSON_ADDR_POSTAL_CODE,'
+                    'PAYER_PERSON_ADDR_TOWN'
+                    ),
                 params_out='PAYMENT_ID,TIMESTAMP,STATUS',
                 item_title=product.get_data()['title'],
                 item_id=product.get_data()['code'],
@@ -467,7 +469,6 @@ class PurchaseView(APIView):
                 item_vat_percent=product.get_data()['vat'],
                 item_discount_percent=product.get_data()['discount'],
                 item_type=product.get_data()['type'],
-                reference_number=payment.get_data()['referenceNumber'],
                 payer_person_phone=contact.get_data()['mobile'],
                 payer_person_email=contact.get_data()['email'],
                 payer_person_firstname=contact.get_data()['firstName'],
@@ -478,15 +479,6 @@ class PurchaseView(APIView):
             )
 
             return Response({'query_string': query_string.get_data()}, status=status.HTTP_200_OK)
-
-
-            # response = client.initialize_payment(payment)
-
-
-            # if response.url:
-            #     return Response({'redirect': response.url}, status=status.HTTP_200_OK)
-            # else:
-            #     raise ValidationError(_('Invalid payment data'))
         else:
             LOG.info(serializer.errors)
             raise ValidationError(_('Invalid payment data'))
@@ -659,14 +651,54 @@ class RenewalView(APIView):
                 product_name=product.get_data()['title'])
         payment = PaytrailPaymentExtended(order_number=purchase.pk, contact=contact, urlset=url_set)
         payment.add_product(product)
-        client = PaytrailAPIClient(merchant_id=settings.PAYTRAIL_MERCHANT_ID, merchant_secret=settings.PAYTRAIL_MERCHANT_SECRET)
+        query_string = PaytrailArguments(
+            merchant_auth_hash=settings.PAYTRAIL_MERCHANT_SECRET, 
+            merchant_id=settings.PAYTRAIL_MERCHANT_ID, 
+            url_success=url + '?success=' + purchase_code,
+            url_cancel=url + '?failure=' + purchase_code,
+            url_notify=url + '?notification=' + purchase_code,
+            order_number=payment.get_data()['orderNumber'],
+            params_in=(
+                'MERCHANT_ID,'
+                'URL_SUCCESS,'
+                'URL_CANCEL,'
+                'URL_NOTIFY,'
+                'ORDER_NUMBER,'
+                'PARAMS_IN,'
+                'PARAMS_OUT,'
+                'ITEM_TITLE[0],'
+                'ITEM_ID[0],'
+                'ITEM_QUANTITY[0],'
+                'ITEM_UNIT_PRICE[0],'
+                'ITEM_VAT_PERCENT[0],'
+                'ITEM_DISCOUNT_PERCENT[0],'
+                'ITEM_TYPE[0],'
+                'PAYER_PERSON_PHONE,'
+                'PAYER_PERSON_EMAIL,'
+                'PAYER_PERSON_FIRSTNAME,'
+                'PAYER_PERSON_LASTNAME,'
+                'PAYER_PERSON_ADDR_STREET,'
+                'PAYER_PERSON_ADDR_POSTAL_CODE,'
+                'PAYER_PERSON_ADDR_TOWN'
+                ),
+            params_out='PAYMENT_ID,TIMESTAMP,STATUS',
+            item_title=product.get_data()['title'],
+            item_id=product.get_data()['code'],
+            item_quantity=product.get_data()['amount'],
+            item_unit_price=product.get_data()['price'],
+            item_vat_percent=product.get_data()['vat'],
+            item_discount_percent=product.get_data()['discount'],
+            item_type=product.get_data()['type'],
+            payer_person_phone=contact.get_data()['mobile'],
+            payer_person_email=contact.get_data()['email'],
+            payer_person_firstname=contact.get_data()['firstName'],
+            payer_parson_lastname=contact.get_data()['lastName'],
+            payer_person_addr_street=contact.get_data()['address']['street'],
+            payer_person_add_postal_code=contact.get_data()['address']['postalCode'],
+            payer_person_addr_town=contact.get_data()['address']['postalOffice'],
+        )
 
-        response = client.initialize_payment(payment)
-
-        if response.url:
-            return Response({'redirect': response.url}, status=status.HTTP_200_OK)
-        else:
-            raise ValidationError(_('Invalid payment data'))
+        return Response({'query_string': query_string.get_data()}, status=status.HTTP_200_OK)
 
     def get(self, request, format=None):
         if request.GET.get('code', None):

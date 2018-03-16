@@ -25,3 +25,5 @@ static/
 /src/django*
 /src/pip*
 *.pyc
+/varaus-frontend/
+.vscode/

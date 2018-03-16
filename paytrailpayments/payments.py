@@ -131,7 +131,7 @@ class BasePaytrailPayment(object):
 
   def get_data(self):
     return {
-      'orderNumber': self.service + '|' + self.product + '|' + str(self.product_type) + '|' + str(self.order_number),
+      'orderNumber': self.service + '-' + self.product + '-' + str(self.product_type) + '-' + str(self.order_number),
       'referenceNumber': self.reference_number,
       'currency': self.currency,
       'locale': self.locale,
@@ -201,6 +201,7 @@ class PaytrailArguments(object):
       'MERCHANT_ID': self.merchant_id,
       'URL_SUCCESS': self.url_success,
       'URL_CANCEL': self.url_cancel,
+      'URL_NOTIFY': self.url_notify,
       'ORDER_NUMBER': self.order_number,
       'PARAMS_IN': self.params_in,
       'PARAMS_OUT': self.params_out,
@@ -211,7 +212,6 @@ class PaytrailArguments(object):
       'ITEM_VAT_PERCENT[0]': self.item_vat_percent,
       'ITEM_DISCOUNT_PERCENT[0]': self.item_discount_percent,
       'ITEM_TYPE[0]': self.item_type,
-      'REFERENCE_NUMBER': self.item_type,
       'PAYER_PERSON_PHONE': self.payer_person_phone,
       'PAYER_PERSON_EMAIL': self.payer_person_email,
       'PAYER_PERSON_FIRSTNAME': self.payer_person_firstname,
@@ -224,6 +224,7 @@ class PaytrailArguments(object):
       data['MERCHANT_ID'] + '|' + \
       data['URL_SUCCESS'] + '|' + \
       data['URL_CANCEL'] + '|' + \
+      data['URL_NOTIFY'] + '|' + \
       str(data['ORDER_NUMBER']) + '|' + \
       data['PARAMS_IN'] + '|' + \
       data['PARAMS_OUT'] + '|' + \
@@ -234,7 +235,6 @@ class PaytrailArguments(object):
       str(data['ITEM_VAT_PERCENT[0]']) + '|' + \
       str(data['ITEM_DISCOUNT_PERCENT[0]']) + '|' + \
       str(data['ITEM_TYPE[0]']) + '|' + \
-      str(data['REFERENCE_NUMBER']) + '|' + \
       data['PAYER_PERSON_PHONE'] + '|' + \
       data['PAYER_PERSON_EMAIL'] + '|' + \
       data['PAYER_PERSON_FIRSTNAME'] + '|' + \
@@ -281,14 +281,14 @@ class PaytrailAPIClient(object):
   def validate_callback_data(self, data):
     try:
       # Validate success callback
-      str_to_check = '%(ORDER_NUMBER)s|%(TIMESTAMP)s|%(PAID)s|%(METHOD)s' % data
+      str_to_check = '%(PAYMENT_ID)s|%(TIMESTAMP)s|%(STATUS)s' % data
       str_to_check += '|%s' % self.merchant_secret
       checksum = md5(str_to_check.encode('utf-8')).hexdigest().upper()
       return checksum == data['RETURN_AUTHCODE']
     except KeyError:
       try:
         # Validate failure callback
-        str_to_check = '%(ORDER_NUMBER)s|%(TIMESTAMP)s' % data
+        str_to_check = '%(PAYMENT_ID)s|%(TIMESTAMP)s|%(STATUS)s' % data
         str_to_check += '|%s' % self.merchant_secret
         checksum = md5(str_to_check.encode('utf-8')).hexdigest().upper()
         return checksum == data['RETURN_AUTHCODE']
