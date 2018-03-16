@@ -27,3 +27,4 @@ static/
 *.pyc
 /varaus-frontend/
 .vscode/
+varaus-frontend-built/
