@@ -409,20 +409,72 @@ class PurchaseView(APIView):
             contact = PaytrailContact(**reservation.get_payment_contact_data())
             product = PaytrailProduct(**reservation.get_payment_product_data())
             url_set = PaytrailUrlset(success_url=url + '?success=' + purchase_code, failure_url=url + '?failure=' + purchase_code, notification_url=url + '?notification=' + purchase_code)
-            purchase = Purchase.objects.create(hml_reservation=reservation, purchase_code=purchase_code, reserver_name=reservation.reservation.reserver_name, reserver_email_address=reservation.reservation.reserver_email_address, reserver_phone_number=reservation.reservation.reserver_phone_number, reserver_address_street=reservation.reservation.reserver_address_street, reserver_address_zip=reservation.reservation.reserver_address_zip, reserver_address_city=reservation.reservation.reserver_address_city, vat_percent=product.get_data()['vat'], price_vat=product.get_data()['price'], product_name=product.get_data()['title'])
-            payment = PaytrailPaymentExtended(order_number=purchase.pk, contact=contact, urlset=url_set)
+            purchase = Purchase.objects.create(hml_reservation=reservation, 
+                    purchase_code=purchase_code, 
+                    reserver_name=reservation.reservation.reserver_name, 
+                    reserver_email_address=reservation.reservation.reserver_email_address, 
+                    reserver_phone_number=reservation.reservation.reserver_phone_number, 
+                    reserver_address_street=reservation.reservation.reserver_address_street, 
+                    reserver_address_zip=reservation.reservation.reserver_address_zip, 
+                    reserver_address_city=reservation.reservation.reserver_address_city, 
+                    vat_percent=product.get_data()['vat'], 
+                    price_vat=product.get_data()['price'], 
+                    product_name=product.get_data()['title']
+                    )
+            payment = PaytrailPaymentExtended(
+                    service='VARAUS',
+                    product='VENEPAIKKA',
+                    product_type=product.get_data()['type'],
+                    order_number=purchase.pk, 
+                    contact=contact, 
+                    urlset=url_set
+                    )
             payment.add_product(product)
-            client = PaytrailAPIClient(merchant_id=settings.PAYTRAIL_MERCHANT_ID, merchant_secret=settings.PAYTRAIL_MERCHANT_SECRET)
+            # client = PaytrailAPIClient(merchant_id=settings.PAYTRAIL_MERCHANT_ID, merchant_secret=settings.PAYTRAIL_MERCHANT_SECRET)
 
             query_string = PaytrailArguments(
                 merchant_auth_hash=settings.PAYTRAIL_MERCHANT_SECRET, 
                 merchant_id=settings.PAYTRAIL_MERCHANT_ID, 
                 url_success=url + '?success=' + purchase_code,
                 url_cancel=url + '?failure=' + purchase_code,
-                order_number=purchase.pk,
-                params_in='MERCHANT_ID,URL_SUCCESS,URL_CANCEL,ORDER_NUMBER,PARAMS_IN,PARAMS_OUT,AMOUNT',
+                order_number=payment.get_data()['orderNumber'],
+                params_in='MERCHANT_ID, \
+                    URL_SUCCESS, \
+                    URL_CANCEL, \
+                    ORDER_NUMBER, \
+                    PARAMS_IN, \
+                    PARAMS_OUT, \
+                    ITEM_TITLE[0], \
+                    ITEM_ID[0], \
+                    ITEM_QUANTITY[0], \
+                    ITEM_UNIT_PRICE[0], \
+                    ITEM_VAT_PERCENT[0], \
+                    ITEM_DISCOUNT_PERCENT[0], \
+                    ITEM_TYPE[0], \
+                    REFERENCE_NUMBER, \
+                    PAYER_PERSON_PHONE, \
+                    PAYER_PERSON_EMAIL, \
+                    PAYER_PERSON_FIRSTNAME, \
+                    PAYER_PERSON_LASTNAME, \
+                    PAYER_PERSON_ADDR_STREET, \
+                    PAYER_PERSON_ADDR_POSTAL_CODE, \
+                    PAYER_PERSON_ADDR_TOWN', 
                 params_out='PAYMENT_ID,TIMESTAMP,STATUS',
-                amount=product.get_data()['price'],
+                item_title=product.get_data()['title'],
+                item_id=product.get_data()['code'],
+                item_quantity=product.get_data()['amount'],
+                item_unit_price=product.get_data()['price'],
+                item_vat_percent=product.get_data()['vat'],
+                item_discount_percent=product.get_data()['discount'],
+                item_type=product.get_data()['type'],
+                reference_number=payment.get_data()['referenceNumber'],
+                payer_person_phone=contact.get_data()['mobile'],
+                payer_person_email=contact.get_data()['email'],
+                payer_person_firstname=contact.get_data()['firstName'],
+                payer_parson_lastname=contact.get_data()['lastName'],
+                payer_person_addr_street=contact.get_data()['address']['street'],
+                payer_person_add_postal_code=contact.get_data()['address']['postalCode'],
+                payer_person_addr_town=contact.get_data()['address']['postalOffice'],
             )
 
             return Response({'query_string': query_string.get_data()}, status=status.HTTP_200_OK)
@@ -594,7 +646,17 @@ class RenewalView(APIView):
         contact = PaytrailContact(**new_hml_reservation.get_payment_contact_data())
         product = PaytrailProduct(**new_hml_reservation.get_payment_product_data())
         url_set = PaytrailUrlset(success_url=url + '?success=' + purchase_code, failure_url=url + '?failure=' + purchase_code, notification_url=url + '?notification=' + purchase_code)
-        purchase = Purchase.objects.create(hml_reservation=new_hml_reservation, purchase_code=purchase_code, reserver_name=new_hml_reservation.reservation.reserver_name, reserver_email_address=new_hml_reservation.reservation.reserver_email_address, reserver_phone_number=new_hml_reservation.reservation.reserver_phone_number, reserver_address_street=new_hml_reservation.reservation.reserver_address_street, reserver_address_zip=new_hml_reservation.reservation.reserver_address_zip, reserver_address_city=new_hml_reservation.reservation.reserver_address_city, vat_percent=product.get_data()['vat'], price_vat=product.get_data()['price'], product_name=product.get_data()['title'])
+        purchase = Purchase.objects.create(hml_reservation=new_hml_reservation, 
+                purchase_code=purchase_code, 
+                reserver_name=new_hml_reservation.reservation.reserver_name, 
+                reserver_email_address=new_hml_reservation.reservation.reserver_email_address, 
+                reserver_phone_number=new_hml_reservation.reservation.reserver_phone_number, 
+                reserver_address_street=new_hml_reservation.reservation.reserver_address_street, 
+                reserver_address_zip=new_hml_reservation.reservation.reserver_address_zip, 
+                reserver_address_city=new_hml_reservation.reservation.reserver_address_city, 
+                vat_percent=product.get_data()['vat'], 
+                price_vat=product.get_data()['price'], 
+                product_name=product.get_data()['title'])
         payment = PaytrailPaymentExtended(order_number=purchase.pk, contact=contact, urlset=url_set)
         payment.add_product(product)
         client = PaytrailAPIClient(merchant_id=settings.PAYTRAIL_MERCHANT_ID, merchant_secret=settings.PAYTRAIL_MERCHANT_SECRET)

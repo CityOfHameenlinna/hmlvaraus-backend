@@ -106,7 +106,7 @@ class BasePaytrailPayment(object):
   default_locale = 'fi_FI'
   default_currency = 'EUR'
 
-  def __init__(self, order_number, urlset, description='', locale=default_locale, currency=default_currency, reference_number=''):
+  def __init__(self, order_number, urlset, description='', locale=default_locale, currency=default_currency, reference_number='', service='', product='',  product_type=''):
     self.urlset = urlset
     # "Order number is used to identify one transaction from another in web shop software."
     self.order_number = order_number
@@ -125,9 +125,13 @@ class BasePaytrailPayment(object):
     # http://docs.paytrail.com/en/index-all.html
     self.reference_number = reference_number
 
+    self.service = service
+    self.product = product
+    self.product_type = product_type
+
   def get_data(self):
     return {
-      'orderNumber': self.order_number,
+      'orderNumber': self.service + '|' + self.product + '|' + str(self.product_type) + '|' + str(self.order_number),
       'referenceNumber': self.reference_number,
       'currency': self.currency,
       'locale': self.locale,
@@ -200,7 +204,21 @@ class PaytrailArguments(object):
       'ORDER_NUMBER': self.order_number,
       'PARAMS_IN': self.params_in,
       'PARAMS_OUT': self.params_out,
-      'AMOUNT': self.amount,
+      'ITEM_TITLE[0]': self.item_title,
+      'ITEM_ID[0]': self.item_id,
+      'ITEM_QUANTITY[0]': self.item_quantity,
+      'ITEM_UNIT_PRICE[0]': self.item_unit_price,
+      'ITEM_VAT_PERCENT[0]': self.item_vat_percent,
+      'ITEM_DISCOUNT_PERCENT[0]': self.item_discount_percent,
+      'ITEM_TYPE[0]': self.item_type,
+      'REFERENCE_NUMBER': self.item_type,
+      'PAYER_PERSON_PHONE': self.payer_person_phone,
+      'PAYER_PERSON_EMAIL': self.payer_person_email,
+      'PAYER_PERSON_FIRSTNAME': self.payer_person_firstname,
+      'PAYER_PERSON_LASTNAME': self.payer_parson_lastname,
+      'PAYER_PERSON_ADDR_STREET': self.payer_person_addr_street,
+      'PAYER_PERSON_ADDR_POSTAL_CODE': self.payer_person_add_postal_code,
+      'PAYER_PERSON_ADDR_TOWN': self.payer_person_addr_town,
     }
     auth_code = data['MERCHANT_AUTH_HASH'] + '|' + \
       data['MERCHANT_ID'] + '|' + \
@@ -209,7 +227,21 @@ class PaytrailArguments(object):
       str(data['ORDER_NUMBER']) + '|' + \
       data['PARAMS_IN'] + '|' + \
       data['PARAMS_OUT'] + '|' + \
-      str(data['AMOUNT'])
+      data['ITEM_TITLE[0]'] + '|' + \
+      str(data['ITEM_ID[0]']) + '|' + \
+      str(data['ITEM_QUANTITY[0]']) + '|' + \
+      str(data['ITEM_UNIT_PRICE[0]']) + '|' + \
+      str(data['ITEM_VAT_PERCENT[0]']) + '|' + \
+      str(data['ITEM_DISCOUNT_PERCENT[0]']) + '|' + \
+      str(data['ITEM_TYPE[0]']) + '|' + \
+      str(data['REFERENCE_NUMBER']) + '|' + \
+      data['PAYER_PERSON_PHONE'] + '|' + \
+      data['PAYER_PERSON_EMAIL'] + '|' + \
+      data['PAYER_PERSON_FIRSTNAME'] + '|' + \
+      data['PAYER_PERSON_LASTNAME'] + '|' + \
+      data['PAYER_PERSON_ADDR_STREET'] + '|' + \
+      data['PAYER_PERSON_ADDR_POSTAL_CODE'] + '|' + \
+      data['PAYER_PERSON_ADDR_TOWN']
 
     auth_hash = hashlib.sha256()
     auth_hash.update(auth_code.encode())
