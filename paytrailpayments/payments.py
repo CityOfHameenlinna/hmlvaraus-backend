@@ -1,8 +1,8 @@
 
 import json
 import requests
-from hashlib import md5
-
+from hashlib import sha256
+import re
 
 class PaytrailException(Exception):
   def __init__(self, message=None, code=None, data=None):
@@ -195,6 +195,10 @@ class PaytrailArguments(object):
   def __init__(self, **kwargs):
     self.__dict__.update(kwargs)
 
+
+  def remove_special_chars(self, text):
+    return re.sub('[^A-Za-z0-9- "\',()\[\]{}*\/+\-_,.:&!?@#$£=*;~]+', '_', text)
+
   def get_data(self):
     data = {
       'MERCHANT_AUTH_HASH': self.merchant_auth_hash,
@@ -205,7 +209,7 @@ class PaytrailArguments(object):
       'ORDER_NUMBER': self.order_number,
       'PARAMS_IN': self.params_in,
       'PARAMS_OUT': self.params_out,
-      'ITEM_TITLE[0]': self.item_title,
+      'ITEM_TITLE[0]': self.remove_special_chars(self.item_title),
       'ITEM_ID[0]': self.item_id,
       'ITEM_QUANTITY[0]': self.item_quantity,
       'ITEM_UNIT_PRICE[0]': self.item_unit_price,
@@ -214,8 +218,8 @@ class PaytrailArguments(object):
       'ITEM_TYPE[0]': self.item_type,
       'PAYER_PERSON_PHONE': self.payer_person_phone,
       'PAYER_PERSON_EMAIL': self.payer_person_email,
-      'PAYER_PERSON_FIRSTNAME': self.payer_person_firstname,
-      'PAYER_PERSON_LASTNAME': self.payer_parson_lastname,
+      'PAYER_PERSON_FIRSTNAME': self.remove_special_chars(self.payer_person_firstname),
+      'PAYER_PERSON_LASTNAME': self.remove_special_chars(self.payer_parson_lastname),
       'PAYER_PERSON_ADDR_STREET': self.payer_person_addr_street,
       'PAYER_PERSON_ADDR_POSTAL_CODE': self.payer_person_add_postal_code,
       'PAYER_PERSON_ADDR_TOWN': self.payer_person_addr_town,
@@ -243,7 +247,7 @@ class PaytrailArguments(object):
       data['PAYER_PERSON_ADDR_POSTAL_CODE'] + '|' + \
       data['PAYER_PERSON_ADDR_TOWN']
 
-    auth_hash = hashlib.sha256()
+    auth_hash = sha256()
     auth_hash.update(auth_code.encode())
     data['AUTHCODE'] = auth_hash.hexdigest().upper()
     query_string = urllib.parse.urlencode(data, doseq=True)
@@ -283,14 +287,14 @@ class PaytrailAPIClient(object):
       # Validate success callback
       str_to_check = '%(PAYMENT_ID)s|%(TIMESTAMP)s|%(STATUS)s' % data
       str_to_check += '|%s' % self.merchant_secret
-      checksum = md5(str_to_check.encode('utf-8')).hexdigest().upper()
+      checksum = sha256(str_to_check.encode('utf-8')).hexdigest().upper()
       return checksum == data['RETURN_AUTHCODE']
     except KeyError:
       try:
         # Validate failure callback
         str_to_check = '%(PAYMENT_ID)s|%(TIMESTAMP)s|%(STATUS)s' % data
         str_to_check += '|%s' % self.merchant_secret
-        checksum = md5(str_to_check.encode('utf-8')).hexdigest().upper()
+        checksum = sha256(str_to_check.encode('utf-8')).hexdigest().upper()
         return checksum == data['RETURN_AUTHCODE']
       except KeyError:
         return False
