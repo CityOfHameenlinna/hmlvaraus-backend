@@ -6,7 +6,7 @@
 #
 -e git+https://github.com/City-of-Helsinki/django-helusers.git#egg=django-helusers
 -e git+https://github.com/City-of-Helsinki/munigeo#egg=django-munigeo
--e ./src/paytrail-payments
+
 arrow==0.9.0
 babel==2.3.4              # via delorean
 click==6.6                # via pip-tools

@@ -579,7 +579,7 @@ class PurchaseView(APIView):
             berth = Berth.objects.get(resource_id=body.get('resource', None))
             if not berth.reserving or (time - berth.reserving).total_seconds() > 59:
                 berth.reserving = time
-                berth.save();
+                berth.save()
             else:
                 return Response(None, status=status.HTTP_404_NOT_FOUND)
             return Response({'code': hashlib.sha1(str(berth.reserving).encode('utf-8')).hexdigest()}, status=status.HTTP_200_OK)
