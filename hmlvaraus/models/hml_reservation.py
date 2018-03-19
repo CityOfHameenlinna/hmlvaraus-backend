@@ -68,6 +68,15 @@ class HMLReservation(models.Model):
         }
 
     def get_payment_product_data(self):
+        berth_type = ''
+        if self.berth.type == 'dock':
+            berth_type = 'LAITURI'
+        elif self.berth.type == 'ground':
+            berth_type = 'POLETTI'
+        elif self.berth.type == 'number':
+            berth_type = 'NUMERO'
+        else:
+            raise Exception('Invalid or no berth type defined in %s' % s)
         return {
             'title': self.berth.resource.name + ' (' + self.berth.resource.unit.name + ')',
             'product_id': self.berth.id,
@@ -76,6 +85,7 @@ class HMLReservation(models.Model):
             'vat': 24,
             'discount': 0,
             'type': 1,
+            'berth_type': berth_type,
         }
 
     def cancel_reservation(self, user):

@@ -424,7 +424,7 @@ class PurchaseView(APIView):
             payment = PaytrailPaymentExtended(
                     service='VARAUS',
                     product='VENEPAIKKA',
-                    product_type=product.get_data()['type'],
+                    product_type=product.get_data()['berth_type'],
                     order_number=purchase.pk, 
                     contact=contact, 
                     urlset=url_set
@@ -649,7 +649,14 @@ class RenewalView(APIView):
                 vat_percent=product.get_data()['vat'], 
                 price_vat=product.get_data()['price'], 
                 product_name=product.get_data()['title'])
-        payment = PaytrailPaymentExtended(order_number=purchase.pk, contact=contact, urlset=url_set)
+        payment = PaytrailPaymentExtended(
+                    service='VARAUS',
+                    product='VENEPAIKKA',
+                    product_type=product.get_data()['berth_type'],
+                    order_number=purchase.pk, 
+                    contact=contact, 
+                    urlset=url_set
+                    )
         payment.add_product(product)
         query_string = PaytrailArguments(
             merchant_auth_hash=settings.PAYTRAIL_MERCHANT_SECRET, 

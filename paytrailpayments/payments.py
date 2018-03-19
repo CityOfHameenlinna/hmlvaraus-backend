@@ -78,7 +78,7 @@ class PaytrailProduct(object):
   TYPE_POSTAL = 2
   TYPE_HANDLING = 3
 
-  def __init__(self, title, product_id, price, vat, amount=1, discount=0, type=TYPE_NORMAL):
+  def __init__(self, title, product_id, price, vat, amount=1, discount=0, type=TYPE_NORMAL, berth_type=''):
     self.title = title
     self.product_id = product_id
     self.amount = amount
@@ -86,6 +86,7 @@ class PaytrailProduct(object):
     self.vat = vat
     self.discount = discount
     self.type = type
+    self.berth_type = berth_type
 
   def get_data(self):
     return {
@@ -96,6 +97,7 @@ class PaytrailProduct(object):
       'vat': self.vat,
       'discount': self.discount,
       'type': self.type,
+      'berth_type': self.berth_type,
     }
 
 
@@ -131,7 +133,7 @@ class BasePaytrailPayment(object):
 
   def get_data(self):
     return {
-      'orderNumber': self.service + '-' + self.product + '-' + str(self.product_type) + '-' + str(self.order_number),
+      'orderNumber': self.service + ';' + self.product + ';' + str(self.product_type) + ';' + str(self.order_number),
       'referenceNumber': self.reference_number,
       'currency': self.currency,
       'locale': self.locale,
