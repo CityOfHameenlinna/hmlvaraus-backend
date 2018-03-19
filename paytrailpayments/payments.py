@@ -133,7 +133,7 @@ class BasePaytrailPayment(object):
 
   def get_data(self):
     return {
-      'orderNumber': self.service + ';' + self.product + ';' + str(self.product_type) + ';' + str(self.order_number),
+      'orderNumber': self.service + '+' + self.product + '+' + str(self.product_type) + '+' + str(self.order_number),
       'referenceNumber': self.reference_number,
       'currency': self.currency,
       'locale': self.locale,
