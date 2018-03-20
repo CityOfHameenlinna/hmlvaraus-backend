@@ -174,7 +174,7 @@ class HMLReservationGroundBerthSerializer(HMLReservationSerializer):
 
     def to_representation(self, instance):
         serializer = HMLReservationSerializer(instance, context=self.context)
-        return serializer.data;
+        return serializer.data
 
     def create(self, validated_data):
         request_user = self.context['request'].user
@@ -446,6 +446,7 @@ class PurchaseView(APIView):
                     'ORDER_NUMBER,'
                     'PARAMS_IN,'
                     'PARAMS_OUT,'
+                    'PAYMENT_METHODS,'
                     'ITEM_TITLE[0],'
                     'ITEM_ID[0],'
                     'ITEM_QUANTITY[0],'
@@ -462,6 +463,7 @@ class PurchaseView(APIView):
                     'PAYER_PERSON_ADDR_TOWN'
                     ),
                 params_out='PAYMENT_ID,TIMESTAMP,STATUS',
+                payment_methods='1,2,3,5,6,10,50,51,52,61',
                 item_title=product.get_data()['title'],
                 item_id=product.get_data()['code'],
                 item_quantity=product.get_data()['amount'],
@@ -673,6 +675,7 @@ class RenewalView(APIView):
                 'ORDER_NUMBER,'
                 'PARAMS_IN,'
                 'PARAMS_OUT,'
+                'PAYMENT_METHODS,'
                 'ITEM_TITLE[0],'
                 'ITEM_ID[0],'
                 'ITEM_QUANTITY[0],'
@@ -689,6 +692,7 @@ class RenewalView(APIView):
                 'PAYER_PERSON_ADDR_TOWN'
                 ),
             params_out='PAYMENT_ID,TIMESTAMP,STATUS',
+            payment_methods='1,2,3,5,6,10,50,51,52,61',
             item_title=product.get_data()['title'],
             item_id=product.get_data()['code'],
             item_quantity=product.get_data()['amount'],

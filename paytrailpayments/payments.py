@@ -211,6 +211,7 @@ class PaytrailArguments(object):
       'ORDER_NUMBER': self.order_number,
       'PARAMS_IN': self.params_in,
       'PARAMS_OUT': self.params_out,
+      'PAYMENT_METHODS': self.payment_methods,
       'ITEM_TITLE[0]': self.remove_special_chars(self.item_title),
       'ITEM_ID[0]': self.item_id,
       'ITEM_QUANTITY[0]': self.item_quantity,
@@ -226,6 +227,7 @@ class PaytrailArguments(object):
       'PAYER_PERSON_ADDR_POSTAL_CODE': self.payer_person_add_postal_code,
       'PAYER_PERSON_ADDR_TOWN': self.payer_person_addr_town,
     }
+
     auth_code = data['MERCHANT_AUTH_HASH'] + '|' + \
       data['MERCHANT_ID'] + '|' + \
       data['URL_SUCCESS'] + '|' + \
@@ -234,6 +236,7 @@ class PaytrailArguments(object):
       str(data['ORDER_NUMBER']) + '|' + \
       data['PARAMS_IN'] + '|' + \
       data['PARAMS_OUT'] + '|' + \
+      str(data['PAYMENT_METHODS']) + '|' + \
       data['ITEM_TITLE[0]'] + '|' + \
       str(data['ITEM_ID[0]']) + '|' + \
       str(data['ITEM_QUANTITY[0]']) + '|' + \
