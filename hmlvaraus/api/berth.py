@@ -31,7 +31,7 @@ class BerthSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer)
 
     class Meta:
         model = Berth
-        fields = ['id', 'width_cm', 'length_cm', 'depth_cm', 'resource', 'type', 'is_disabled', 'price', 'current_reservation']
+        fields = ['id', 'width_cm', 'length_cm', 'depth_cm', 'resource', 'type', 'is_disabled', 'price', 'current_reservation', 'is_deleted']
 
     def get_current_reservation(self, berth):
         return berth.hml_reservations.filter(reservation__state='confirmed').values('id', 'is_paid', 'reserver_ssn', 'reservation', 'state_updated_at', 'is_paid_at', 'key_returned', 'key_returned_at', 'reservation__reserver_name', 'reservation__begin', 'reservation__end', 'reservation__comments', 'reservation__state',).first()
@@ -211,7 +211,7 @@ class GroundBerthPriceView(APIView):
         return Response({'price': ground_berth_price}, status=status.HTTP_200_OK)
 
 class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
-    queryset = Berth.objects.all().select_related('resource', 'resource__unit').prefetch_related('resource', 'resource__unit')
+    queryset = Berth.objects.filter(is_deleted=False).select_related('resource', 'resource__unit').prefetch_related('resource', 'resource__unit')
     serializer_class = BerthSerializer
     lookup_field = 'id'
 
@@ -225,7 +225,7 @@ class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        qs = Berth.objects.all().select_related('resource', 'resource__unit');
+        qs = Berth.objects.filter(is_deleted=False).select_related('resource', 'resource__unit');
         if user.is_staff:
             return qs
         else:
@@ -234,18 +234,12 @@ class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
             return qs.filter(Q(reserving__lte=two_minutes_ago) | Q(reserving__isnull=True)).exclude(Q(type=Berth.GROUND) | Q(is_disabled=True)).distinct()
 
     def destroy(self, request, *args, **kwargs):
-        try:
-            berth = self.get_object();
-            resource_id = berth.resource.id
-            resource = Resource.objects.get(pk=resource_id).delete()
-            try:
-                Reservation.objects.get(resource=resource).delete()
-            except:
-                pass
-            berth.delete()
-        except:
-            return Response(status=status.HTTP_404_NOT_FOUND, data=_('Boat resource cannot be found'))
+        berth = self.get_object()
+        berth.is_deleted = True
+        berth.save()
 
-        return Response(status=status.HTTP_204_NO_CONTENT, data=_('Boat resource successfully created'))
+        Reservation.objects.filter(~Q(state=Reservation.CANCELLED), hml_reservation__berth=berth).update(state=Reservation.CANCELLED)
+
+        return Response(status=status.HTTP_204_NO_CONTENT, data=_('Boat resource successfully deleted'))
 
 register_view(BerthViewSet, 'berth')

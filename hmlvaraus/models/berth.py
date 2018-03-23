@@ -21,6 +21,7 @@ class Berth(models.Model):
     type = models.CharField(choices=TYPE_CHOICES, verbose_name=_('Berth type'), default=DOCK, max_length=20)
     is_disabled = models.BooleanField(default=False)
     reserving = models.DateTimeField(verbose_name=_('Reserving'), blank=True, null=True)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return "%s" % self.resource.name

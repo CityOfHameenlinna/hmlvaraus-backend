@@ -8,7 +8,7 @@ from django.contrib.auth.models import AnonymousUser
 from hmlvaraus import tasks
 
 class Purchase(ModifiableModel):
-    hml_reservation = models.OneToOneField(HMLReservation, verbose_name=_('HMLReservation'), db_index=True, on_delete=models.CASCADE)
+    hml_reservation = models.OneToOneField(HMLReservation, verbose_name=_('HMLReservation'), db_index=True, on_delete=models.SET_NULL)
     purchase_code = models.CharField(verbose_name=_('Purchase code'), max_length=40)
     reserver_name = models.CharField(verbose_name=_('Reserver name'), max_length=100, blank=True)
     reserver_email_address = models.EmailField(verbose_name=_('Reserver email address'), blank=True)

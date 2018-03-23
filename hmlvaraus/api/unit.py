@@ -1,7 +1,7 @@
 import django_filters
 import json
 from django.core.exceptions import PermissionDenied
-from rest_framework import viewsets, serializers, filters, permissions, pagination
+from rest_framework import viewsets, serializers, filters, permissions, pagination, status
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from munigeo import api as munigeo_api
@@ -15,6 +15,7 @@ from hmlvaraus.utils.utils import RelatedOrderingFilter
 from resources.api.base import TranslatedModelSerializer
 from django.utils import timezone
 from django.db.models import Q
+from django.utils.translation import ugettext_lazy as _
 
 class SimpleResourceSerializer(TranslatedModelSerializer):
     name = serializers.StringRelatedField(many=True)
@@ -29,12 +30,16 @@ class UnitSerializer(UnitSerializer):
     resources_count = serializers.SerializerMethodField()
     resources_reservable_count = serializers.SerializerMethodField()
     reservation_count = serializers.SerializerMethodField()
+    is_deleted = serializers.SerializerMethodField()
+
+    def get_is_deleted(self, obj):
+        return obj.resources.exclude(Q(berth__is_deleted=True)).count() == 0 and obj.resources.count() > 0
 
     def get_resources_count(self, obj):
-        return obj.resources.count()
+        return obj.resources.exclude(Q(berth__is_deleted=True)).count()
 
     def get_resources_reservable_count(self, obj):
-        return obj.resources.filter(reservable=True).exclude(Q(berth__type=Berth.GROUND) | Q(berth__is_disabled=True)).count()
+        return obj.resources.filter(reservable=True).exclude(Q(berth__type=Berth.GROUND) | Q(berth__is_disabled=True) | Q(berth__is_deleted=True)).count()
 
     def get_reservation_count(self, obj):
         return HMLReservation.objects.filter(berth__resource__in=obj.resources.all(), reservation__begin__lte=timezone.now(), reservation__end__gte=timezone.now(), reservation__state=Reservation.CONFIRMED).count()
@@ -108,5 +113,12 @@ class UnitViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save()
 
+    def destroy(self, request, *args, **kwargs):
+        unit = self.get_object()
+        berths = Berth.objects.filter(resource__unit=unit)
+        Reservation.objects.filter(~Q(state=Reservation.CANCELLED), hml_reservation__berth__in=berths).update(state=Reservation.CANCELLED)
+        berths.update(is_deleted=True)
+
+        return Response(status=status.HTTP_204_NO_CONTENT, data=_('Unit successfully deleted'))
 
 register_view(UnitViewSet, 'unit')
