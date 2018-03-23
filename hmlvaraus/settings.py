@@ -17,6 +17,8 @@ INSTALLED_APPS += [
     'paytrailpayments'
 ]
 
+REGISTRATION_OPEN = False
+ACCOUNT_ADAPTER = 'hmlvaraus.account_adapter.NoNewUsersAccountAdapter'
 
 DEBUG = False
 
