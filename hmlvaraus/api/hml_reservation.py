@@ -392,7 +392,7 @@ class PurchaseView(APIView):
 
         if request.data.get('berth').get('type') != Berth.GROUND:
             code = request.data.pop('code')
-            berth = Berth.objects.get(pk=request.data['berth']['id'])
+            berth = Berth.objects.get(pk=request.data['berth']['id'], is_deleted=False)
 
             if code != hashlib.sha1(str(berth.reserving).encode('utf-8')).hexdigest():
                 raise ValidationError(_('Invalid meta data'))
@@ -578,7 +578,7 @@ class PurchaseView(APIView):
 
         if body.get('resource', None):
             time = timezone.now()
-            berth = Berth.objects.get(resource_id=body.get('resource', None))
+            berth = Berth.objects.get(resource_id=body.get('resource', None), is_deleted=False)
             if not berth.reserving or (time - berth.reserving).total_seconds() > 59:
                 berth.reserving = time
                 berth.save()
