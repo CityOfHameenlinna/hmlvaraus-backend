@@ -107,6 +107,18 @@ def check_ended_reservations():
             reservation.end_notification_sent_at = timezone.now()
             reservation.save()
 
+#This task is run manually once after initial deployment
+@app.task
+def send_initial_renewal_notification(reservation_id):
+    from hmlvaraus.models.hml_reservation import HMLReservation
+    reservation = HMLReservation.objects.get(pk=reservation_id)
+    sent = False
+    if not reservation.renewal_code:
+        reservation.set_renewal_code()
+    if reservation.reservation.reserver_email_address:
+        send_renewal_email(reservation)
+    if reservation.reservation.reserver_phone_number:
+        send_renewal_sms(reservation)
 
 @app.task
 def check_and_handle_reservation_renewals():
@@ -173,7 +185,7 @@ def send_confirmation(reservation_id):
         send_confirmation_sms(reservation)
 
 
-def send_renewal_email(reservation, notification_type):
+def send_renewal_email(reservation, notification_type=None):
     full_name = reservation.reservation.reserver_name
     recipients = [reservation.reservation.reserver_email_address]
     end_date = reservation.reservation.end
@@ -187,7 +199,7 @@ def send_renewal_email(reservation, notification_type):
         topic = _('Your berth reservation will end in a month. Renew your reservation now!')
     elif notification_type == 'week':
         topic = _('Your berth reservation will end in a week. Renew your reservation now!')
-    elif notification_type == 'day':
+    else:
         topic = _('Your berth reservation will end. Renew your reservation now!')
 
     send_mail(
