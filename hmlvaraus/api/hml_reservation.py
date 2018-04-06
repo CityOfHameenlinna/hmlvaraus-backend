@@ -37,14 +37,22 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
     reserver_ssn = serializers.CharField(required=False)
     berth = BerthSerializer(required=True)
     has_ended = serializers.SerializerMethodField()
+    is_renewed = serializers.SerializerMethodField()
+    has_started = serializers.SerializerMethodField()
     partial = True
 
     class Meta:
         model = HMLReservation
-        fields = ['id', 'berth', 'is_paid', 'reserver_ssn', 'reservation', 'state_updated_at', 'is_paid_at', 'key_returned', 'key_returned_at', 'has_ended']
+        fields = ['id', 'berth', 'is_paid', 'reserver_ssn', 'reservation', 'state_updated_at', 'is_paid_at', 'key_returned', 'key_returned_at', 'has_ended', 'is_renewed', 'has_started']
+
+    def get_has_started(self, obj):
+        return obj.reservation.begin > timezone.now()
 
     def get_has_ended(self, obj):
         return obj.reservation.end < timezone.now()
+
+    def get_is_renewed(self, obj):
+        return obj.child.exists()
 
     def validate(self, data):
         request_user = self.context['request'].user
@@ -591,125 +599,175 @@ class PurchaseView(APIView):
 class RenewalView(APIView):
     permission_classes = (permissions.AllowAny,)
     def post(self, request, format=None):
-        code = request.data.pop('code')
+        if(request.data.get('code')):
+            code = request.data.pop('code')
 
-        if not code:
-            raise ValidationError(_('Invalid renewal code'))
+            if not code:
+                raise ValidationError(_('Invalid renewal code'))
 
-        old_hml_reservation = HMLReservation.objects.get(renewal_code=code)
+            old_hml_reservation = HMLReservation.objects.get(renewal_code=code)
 
-        if not old_hml_reservation:
-            raise ValidationError(_('Invalid renewal code'))
+            if not old_hml_reservation:
+                raise ValidationError(_('Invalid renewal code'))
 
-        old_reservation = old_hml_reservation.reservation
+            old_reservation = old_hml_reservation.reservation
 
-        new_start = old_reservation.end
-        new_end = new_start + timedelta(days=365)
-        parent_id = old_hml_reservation.pk
-        old_reservation.pk = None
-        old_hml_reservation.pk = None
-        new_reservation = old_reservation
-        new_hml_reservation = old_hml_reservation
+            new_start = old_reservation.end
+            new_end = new_start + timedelta(days=365)
+            parent_id = old_hml_reservation.pk
+            old_reservation.pk = None
+            old_hml_reservation.pk = None
+            new_reservation = old_reservation
+            new_hml_reservation = old_hml_reservation
 
-        new_reservation.begin = new_start
-        new_reservation.end = new_end
+            new_reservation.begin = new_start
+            new_reservation.end = new_end
 
-        if request.data.get('reserver_email_address'):
-            new_reservation.reserver_email_address = request.data.get('reserver_email_address')
-        if request.data.get('reserver_phone_number'):
-            new_reservation.reserver_phone_number = request.data.get('reserver_phone_number')
-        if request.data.get('reserver_address_street'):
-            new_reservation.reserver_address_street = request.data.get('reserver_address_street')
-        if request.data.get('reserver_address_zip'):
-            new_reservation.reserver_address_zip = request.data.get('reserver_address_zip')
-        if request.data.get('reserver_address_city'):
-            new_reservation.reserver_address_city = request.data.get('reserver_address_city')
+            if request.data.get('reserver_email_address'):
+                new_reservation.reserver_email_address = request.data.get('reserver_email_address')
+            if request.data.get('reserver_phone_number'):
+                new_reservation.reserver_phone_number = request.data.get('reserver_phone_number')
+            if request.data.get('reserver_address_street'):
+                new_reservation.reserver_address_street = request.data.get('reserver_address_street')
+            if request.data.get('reserver_address_zip'):
+                new_reservation.reserver_address_zip = request.data.get('reserver_address_zip')
+            if request.data.get('reserver_address_city'):
+                new_reservation.reserver_address_city = request.data.get('reserver_address_city')
 
-        new_reservation.save()
+            new_reservation.save()
 
-        new_hml_reservation.reservation = new_reservation
-        new_hml_reservation.parent_id = parent_id
-        new_hml_reservation.renewal_notification_day_sent_at = None
-        new_hml_reservation.renewal_notification_week_sent_at = None
-        new_hml_reservation.renewal_notification_month_sent_at = None
-        new_hml_reservation.save()
-        location = '//%s' % '/api/purchase/'
-        url = request.build_absolute_uri(location)
-        purchase_code = hashlib.sha1(str(new_hml_reservation.reservation.created_at).encode('utf-8') + str(new_hml_reservation.pk).encode('utf-8')).hexdigest()
+            new_hml_reservation.reservation = new_reservation
+            new_hml_reservation.parent_id = parent_id
+            new_hml_reservation.renewal_notification_day_sent_at = None
+            new_hml_reservation.renewal_notification_week_sent_at = None
+            new_hml_reservation.renewal_notification_month_sent_at = None
+            new_hml_reservation.save()
+            location = '//%s' % '/api/purchase/'
+            url = request.build_absolute_uri(location)
+            purchase_code = hashlib.sha1(str(new_hml_reservation.reservation.created_at).encode('utf-8') + str(new_hml_reservation.pk).encode('utf-8')).hexdigest()
 
-        contact = PaytrailContact(**new_hml_reservation.get_payment_contact_data())
-        product = PaytrailProduct(**new_hml_reservation.get_payment_product_data())
-        url_set = PaytrailUrlset(success_url=url + '?success=' + purchase_code, failure_url=url + '?failure=' + purchase_code, notification_url=url + '?notification=' + purchase_code)
-        purchase = Purchase.objects.create(hml_reservation=new_hml_reservation, 
-                purchase_code=purchase_code, 
-                reserver_name=new_hml_reservation.reservation.reserver_name, 
-                reserver_email_address=new_hml_reservation.reservation.reserver_email_address, 
-                reserver_phone_number=new_hml_reservation.reservation.reserver_phone_number, 
-                reserver_address_street=new_hml_reservation.reservation.reserver_address_street, 
-                reserver_address_zip=new_hml_reservation.reservation.reserver_address_zip, 
-                reserver_address_city=new_hml_reservation.reservation.reserver_address_city, 
-                vat_percent=product.get_data()['vat'], 
-                price_vat=product.get_data()['price'], 
-                product_name=product.get_data()['title'])
-        payment = PaytrailPaymentExtended(
-                    service='VARAUS',
-                    product='VENEPAIKKA',
-                    product_type=product.get_data()['berth_type'],
-                    order_number=purchase.pk, 
-                    contact=contact, 
-                    urlset=url_set
-                    )
-        payment.add_product(product)
-        query_string = PaytrailArguments(
-            merchant_auth_hash=settings.PAYTRAIL_MERCHANT_SECRET, 
-            merchant_id=settings.PAYTRAIL_MERCHANT_ID, 
-            url_success=url + '?success=' + purchase_code,
-            url_cancel=url + '?failure=' + purchase_code,
-            url_notify=url + '?notification=' + purchase_code,
-            order_number=payment.get_data()['orderNumber'],
-            params_in=(
-                'MERCHANT_ID,'
-                'URL_SUCCESS,'
-                'URL_CANCEL,'
-                'URL_NOTIFY,'
-                'ORDER_NUMBER,'
-                'PARAMS_IN,'
-                'PARAMS_OUT,'
-                'PAYMENT_METHODS,'
-                'ITEM_TITLE[0],'
-                'ITEM_ID[0],'
-                'ITEM_QUANTITY[0],'
-                'ITEM_UNIT_PRICE[0],'
-                'ITEM_VAT_PERCENT[0],'
-                'ITEM_DISCOUNT_PERCENT[0],'
-                'ITEM_TYPE[0],'
-                'PAYER_PERSON_PHONE,'
-                'PAYER_PERSON_EMAIL,'
-                'PAYER_PERSON_FIRSTNAME,'
-                'PAYER_PERSON_LASTNAME,'
-                'PAYER_PERSON_ADDR_STREET,'
-                'PAYER_PERSON_ADDR_POSTAL_CODE,'
-                'PAYER_PERSON_ADDR_TOWN'
-                ),
-            params_out='PAYMENT_ID,TIMESTAMP,STATUS',
-            payment_methods='1,2,3,5,6,10,50,51,52,61',
-            item_title=product.get_data()['title'],
-            item_id=product.get_data()['code'],
-            item_quantity=product.get_data()['amount'],
-            item_unit_price=product.get_data()['price'],
-            item_vat_percent=product.get_data()['vat'],
-            item_discount_percent=product.get_data()['discount'],
-            item_type=product.get_data()['type'],
-            payer_person_phone=contact.get_data()['mobile'],
-            payer_person_email=contact.get_data()['email'],
-            payer_person_firstname=contact.get_data()['firstName'],
-            payer_parson_lastname=contact.get_data()['lastName'],
-            payer_person_addr_street=contact.get_data()['address']['street'],
-            payer_person_add_postal_code=contact.get_data()['address']['postalCode'],
-            payer_person_addr_town=contact.get_data()['address']['postalOffice'],
-        )
+            contact = PaytrailContact(**new_hml_reservation.get_payment_contact_data())
+            product = PaytrailProduct(**new_hml_reservation.get_payment_product_data())
+            url_set = PaytrailUrlset(success_url=url + '?success=' + purchase_code, failure_url=url + '?failure=' + purchase_code, notification_url=url + '?notification=' + purchase_code)
+            purchase = Purchase.objects.create(hml_reservation=new_hml_reservation, 
+                    purchase_code=purchase_code, 
+                    reserver_name=new_hml_reservation.reservation.reserver_name, 
+                    reserver_email_address=new_hml_reservation.reservation.reserver_email_address, 
+                    reserver_phone_number=new_hml_reservation.reservation.reserver_phone_number, 
+                    reserver_address_street=new_hml_reservation.reservation.reserver_address_street, 
+                    reserver_address_zip=new_hml_reservation.reservation.reserver_address_zip, 
+                    reserver_address_city=new_hml_reservation.reservation.reserver_address_city, 
+                    vat_percent=product.get_data()['vat'], 
+                    price_vat=product.get_data()['price'], 
+                    product_name=product.get_data()['title'])
+            payment = PaytrailPaymentExtended(
+                        service='VARAUS',
+                        product='VENEPAIKKA',
+                        product_type=product.get_data()['berth_type'],
+                        order_number=purchase.pk, 
+                        contact=contact, 
+                        urlset=url_set
+                        )
+            payment.add_product(product)
+            query_string = PaytrailArguments(
+                merchant_auth_hash=settings.PAYTRAIL_MERCHANT_SECRET, 
+                merchant_id=settings.PAYTRAIL_MERCHANT_ID, 
+                url_success=url + '?success=' + purchase_code,
+                url_cancel=url + '?failure=' + purchase_code,
+                url_notify=url + '?notification=' + purchase_code,
+                order_number=payment.get_data()['orderNumber'],
+                params_in=(
+                    'MERCHANT_ID,'
+                    'URL_SUCCESS,'
+                    'URL_CANCEL,'
+                    'URL_NOTIFY,'
+                    'ORDER_NUMBER,'
+                    'PARAMS_IN,'
+                    'PARAMS_OUT,'
+                    'PAYMENT_METHODS,'
+                    'ITEM_TITLE[0],'
+                    'ITEM_ID[0],'
+                    'ITEM_QUANTITY[0],'
+                    'ITEM_UNIT_PRICE[0],'
+                    'ITEM_VAT_PERCENT[0],'
+                    'ITEM_DISCOUNT_PERCENT[0],'
+                    'ITEM_TYPE[0],'
+                    'PAYER_PERSON_PHONE,'
+                    'PAYER_PERSON_EMAIL,'
+                    'PAYER_PERSON_FIRSTNAME,'
+                    'PAYER_PERSON_LASTNAME,'
+                    'PAYER_PERSON_ADDR_STREET,'
+                    'PAYER_PERSON_ADDR_POSTAL_CODE,'
+                    'PAYER_PERSON_ADDR_TOWN'
+                    ),
+                params_out='PAYMENT_ID,TIMESTAMP,STATUS',
+                payment_methods='1,2,3,5,6,10,50,51,52,61',
+                item_title=product.get_data()['title'],
+                item_id=product.get_data()['code'],
+                item_quantity=product.get_data()['amount'],
+                item_unit_price=product.get_data()['price'],
+                item_vat_percent=product.get_data()['vat'],
+                item_discount_percent=product.get_data()['discount'],
+                item_type=product.get_data()['type'],
+                payer_person_phone=contact.get_data()['mobile'],
+                payer_person_email=contact.get_data()['email'],
+                payer_person_firstname=contact.get_data()['firstName'],
+                payer_parson_lastname=contact.get_data()['lastName'],
+                payer_person_addr_street=contact.get_data()['address']['street'],
+                payer_person_add_postal_code=contact.get_data()['address']['postalCode'],
+                payer_person_addr_town=contact.get_data()['address']['postalOffice'],
+            )
 
-        return Response({'query_string': query_string.get_data()}, status=status.HTTP_200_OK)
+            return Response({'query_string': query_string.get_data()}, status=status.HTTP_200_OK)
+        elif request.data.get('reservation_id'):
+            if not request.user.is_authenticated() or not request.user.is_staff:
+                raise PermissionDenied(_('This API is only for authenticated users'))
+
+            old_hml_reservation = HMLReservation.objects.get(pk=request.data.get('reservation_id'), child=None, reservation__state=Reservation.CONFIRMED, reservation__end__gte=timezone.now())
+
+            if not old_hml_reservation:
+                raise ValidationError(_('Invalid reservation id'))
+
+            old_reservation = old_hml_reservation.reservation
+
+            new_start = old_reservation.end
+            new_end = new_start + timedelta(days=365)
+            parent_id = old_hml_reservation.pk
+            old_reservation.pk = None
+            old_hml_reservation.pk = None
+            new_reservation = old_reservation
+            new_hml_reservation = old_hml_reservation
+
+            new_reservation.begin = new_start
+            new_reservation.end = new_end
+
+            if request.data.get('reserver_email_address'):
+                new_reservation.reserver_email_address = request.data.get('reserver_email_address')
+            if request.data.get('reserver_phone_number'):
+                new_reservation.reserver_phone_number = request.data.get('reserver_phone_number')
+            if request.data.get('reserver_address_street'):
+                new_reservation.reserver_address_street = request.data.get('reserver_address_street')
+            if request.data.get('reserver_address_zip'):
+                new_reservation.reserver_address_zip = request.data.get('reserver_address_zip')
+            if request.data.get('reserver_address_city'):
+                new_reservation.reserver_address_city = request.data.get('reserver_address_city')
+
+            new_reservation.save()
+
+            new_hml_reservation.reservation = new_reservation
+            new_hml_reservation.parent_id = parent_id
+            new_hml_reservation.renewal_notification_day_sent_at = None
+            new_hml_reservation.renewal_notification_week_sent_at = None
+            new_hml_reservation.renewal_notification_month_sent_at = None
+            new_hml_reservation.is_paid_at = None
+            new_hml_reservation.is_paid = False
+            new_hml_reservation.renewal_code = None
+            new_hml_reservation.end_notification_sent_at = None
+            new_hml_reservation.key_return_notification_sent_at = None
+            new_hml_reservation.save()
+
+            serializer = HMLReservationSerializer(new_hml_reservation, context={'request': request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
     def get(self, request, format=None):
         if request.GET.get('code', None):
