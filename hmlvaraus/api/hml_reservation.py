@@ -143,9 +143,6 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
         key_returned = validated_data.get('key_returned')
         if key_returned != None:
             if key_returned:
-                resource = instance.reservation.resource
-                resource.reservable = True
-                resource.save()
                 instance.key_returned_at = timezone.now()
                 instance.key_returned = True
             else:
@@ -660,6 +657,11 @@ class RenewalView(APIView):
             new_hml_reservation.renewal_notification_day_sent_at = None
             new_hml_reservation.renewal_notification_week_sent_at = None
             new_hml_reservation.renewal_notification_month_sent_at = None
+            new_hml_reservation.is_paid_at = None
+            new_hml_reservation.is_paid = False
+            new_hml_reservation.renewal_code = None
+            new_hml_reservation.end_notification_sent_at = None
+            new_hml_reservation.key_return_notification_sent_at = None
             new_hml_reservation.save()
             location = '//%s' % '/api/purchase/'
             url = request.build_absolute_uri(location)
@@ -796,7 +798,7 @@ class RenewalView(APIView):
     def get(self, request, format=None):
         if request.GET.get('code', None):
             code = request.GET.get('code', None)
-            reservation = HMLReservation.objects.get(renewal_code=code)
+            reservation = HMLReservation.objects.get(Q(child=None) | ~Q(child__reservation__state=Reservation.CONFIRMED), reservation__state=Reservation.CONFIRMED, renewal_code=code)
             if reservation.reservation.end < timezone.now():
                 return Response(None, status=status.HTTP_404_NOT_FOUND)
             serializer = HMLReservationSerializer(reservation, context={'request': request})

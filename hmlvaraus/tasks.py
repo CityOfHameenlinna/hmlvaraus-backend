@@ -21,9 +21,11 @@ def check_reservability():
     from hmlvaraus.models.hml_reservation import HMLReservation
     from resources.models.reservation import Reservation
     from hmlvaraus.models.berth import Berth
-    unavailable_berths = Berth.objects.filter(resource__reservable=False, is_deleted=False).exclude(type__in=[Berth.DOCK, Berth.GROUND])
+    unavailable_berths = Berth.objects.filter(resource__reservable=False, is_deleted=False).exclude(type__in=[Berth.GROUND])
 
     for berth in unavailable_berths:
+        if berth.type == Berth.DOCK and berth.hml_reservations.filter(reservation__state=Reservation.CONFIRMED, key_returned=False).exists():
+            continue
         if not HMLReservation.objects.filter(berth=berth, reservation__end__gte=timezone.now(), reservation__state=Reservation.CONFIRMED).exists():
             resource = berth.resource
             resource.reservable = True

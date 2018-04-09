@@ -138,9 +138,9 @@ class BerthFilterBackend(filters.BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         params = request.query_params
         times = {}
-        filter_type = '';
+        filter_type = ''
         if 'date_filter_type' in params:
-            filter_type = params['date_filter_type'];
+            filter_type = params['date_filter_type']
 
         if 'hide_disabled' in params:
             queryset = queryset.exclude(is_disabled=True)
