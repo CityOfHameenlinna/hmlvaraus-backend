@@ -635,7 +635,7 @@ class RenewalView(APIView):
             new_reservation.begin = new_start
             new_reservation.end = new_end
 
-            overlaps_existing = HMLReservation.objects.filter(reservation__begin__lt=new_end, reservation__end__gt=new_start, berth=new_reservation.berth, reservation__state=Reservation.CONFIRMED).exists()
+            overlaps_existing = HMLReservation.objects.filter(reservation__begin__lt=new_end, reservation__end__gt=new_start, berth=new_hml_reservation.berth, reservation__state=Reservation.CONFIRMED).exists()
             if overlaps_existing:
                 raise serializers.ValidationError(_('New reservation overlaps existing reservation'))
 
@@ -762,7 +762,7 @@ class RenewalView(APIView):
             new_reservation.begin = new_start
             new_reservation.end = new_end
 
-            overlaps_existing = HMLReservation.objects.filter(reservation__begin__lt=new_end, reservation__end__gt=new_start, berth=new_reservation.berth, reservation__state=Reservation.CONFIRMED).exists()
+            overlaps_existing = HMLReservation.objects.filter(reservation__begin__lt=new_end, reservation__end__gt=new_start, berth=new_hml_reservation.berth, reservation__state=Reservation.CONFIRMED).exists()
             if overlaps_existing:
                 raise serializers.ValidationError(_('New reservation overlaps existing reservation'))
 
