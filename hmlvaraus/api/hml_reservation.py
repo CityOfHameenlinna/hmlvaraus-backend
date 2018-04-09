@@ -40,11 +40,12 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
     has_ended = serializers.SerializerMethodField()
     is_renewed = serializers.SerializerMethodField()
     has_started = serializers.SerializerMethodField()
+    resend_renewal = serializers.BooleanField(required=False)
     partial = True
 
     class Meta:
         model = HMLReservation
-        fields = ['id', 'berth', 'is_paid', 'reserver_ssn', 'reservation', 'state_updated_at', 'is_paid_at', 'key_returned', 'key_returned_at', 'has_ended', 'is_renewed', 'has_started']
+        fields = ['id', 'berth', 'is_paid', 'reserver_ssn', 'reservation', 'state_updated_at', 'is_paid_at', 'key_returned', 'key_returned_at', 'has_ended', 'is_renewed', 'has_started', 'resend_renewal']
 
     def get_has_started(self, obj):
         return obj.reservation.begin > timezone.now()
@@ -58,18 +59,24 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
     def validate(self, data):
         request_user = self.context['request'].user
         reservation_data = data.get('reservation')
-        resource = reservation_data.get('resource')
+        hml_reservation_id = self.context['request'].data.get('id')
 
-        if reservation_data != None and resource != None:
-            overlaps_existing = HMLReservation.objects.filter(reservation__begin__lte=reservation_data.get('end'), reservation__end__gte=reservation_data.get('begin'), berth=resource.berth, reservation__state=Reservation.CONFIRMED).exists()
+        if reservation_data != None:
+            resource = reservation_data.get('resource')
+            if resource:
+                overlaps_existing = False
+                if hml_reservation_id:
+                    overlaps_existing = HMLReservation.objects.filter(reservation__begin__lt=reservation_data.get('end'), reservation__end__gt=reservation_data.get('begin'), berth=resource.berth, reservation__state=Reservation.CONFIRMED).exclude(pk=hml_reservation_id).exists()
+                else:
+                    overlaps_existing = HMLReservation.objects.filter(reservation__begin__lt=reservation_data.get('end'), reservation__end__gt=reservation_data.get('begin'), berth=resource.berth, reservation__state=Reservation.CONFIRMED).exists()
 
-            if overlaps_existing:
-                raise serializers.ValidationError(_('New reservation overlaps existing reservation'))
+                if overlaps_existing:
+                    raise serializers.ValidationError(_('New reservation overlaps existing reservation'))
 
-            if request_user.is_staff:
-                two_minutes_ago = timezone.now() - timedelta(minutes=2)
-                if resource.berth.reserving and resource.berth.reserving > two_minutes_ago:
-                    raise serializers.ValidationError(_('Someone is reserving the berth at the moment'))
+                if request_user.is_staff:
+                    two_minutes_ago = timezone.now() - timedelta(minutes=2)
+                    if resource.berth.reserving and resource.berth.reserving > two_minutes_ago:
+                        raise serializers.ValidationError(_('Someone is reserving the berth at the moment'))
 
         return data
 
@@ -145,13 +152,17 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
                 instance.key_returned_at = None
                 instance.key_returned = False
 
+        resend_renewal = validated_data.get('resend_renewal')
+        if resend_renewal:
+            tasks.send_initial_renewal_notification.delay(instance.pk)
+
         instance.save()
 
         return instance
 
     def to_representation(self, instance):
         data = super(HMLReservationSerializer, self).to_representation(instance)
-        return data;
+        return data
 
     def validate_reserver_ssn(self, value):
         number_array = re.findall(r'\d+', value[:-1])
