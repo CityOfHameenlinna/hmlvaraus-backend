@@ -28,6 +28,7 @@ from django.http import HttpResponseRedirect
 from datetime import timedelta
 from django.db.models import Q
 from rest_framework.exceptions import ParseError
+from hmlvaraus import tasks
 
 LOG = logging.getLogger(__name__)
 
@@ -56,13 +57,19 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
 
     def validate(self, data):
         request_user = self.context['request'].user
+        reservation_data = data.get('reservation')
+        resource = reservation_data.get('resource')
 
-        if request_user.is_staff and data.get('reservation'):
-            two_minutes_ago = timezone.now() - timedelta(minutes=2)
-            reservation_data = data.get('reservation')
-            resource = reservation_data['resource']
-            if resource.berth.reserving and resource.berth.reserving > two_minutes_ago:
-                raise serializers.ValidationError(_('Someone is reserving the berth at the moment'))
+        if reservation_data != None and resource != None:
+            overlaps_existing = HMLReservation.objects.filter(reservation__begin__lte=reservation_data.get('end'), reservation__end__gte=reservation_data.get('begin'), berth=resource.berth, reservation__state=Reservation.CONFIRMED).exists()
+
+            if overlaps_existing:
+                raise serializers.ValidationError(_('New reservation overlaps existing reservation'))
+
+            if request_user.is_staff:
+                two_minutes_ago = timezone.now() - timedelta(minutes=2)
+                if resource.berth.reserving and resource.berth.reserving > two_minutes_ago:
+                    raise serializers.ValidationError(_('Someone is reserving the berth at the moment'))
 
         return data
 
@@ -84,10 +91,6 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
             reservation_data['resource'] = request_reservation_data.get('resource')
         else:
             reservation_data = request_reservation_data
-
-        if not reservation_data.get('begin') or not reservation_data.get('end'):
-            reservation_data['begin'] = timezone.now()
-            reservation_data['end'] = timezone.now() + timedelta(days=365)
 
         reservation = Reservation.objects.create(**reservation_data)
         resource = reservation_data['resource']
@@ -346,7 +349,7 @@ class HMLReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
     queryset = HMLReservation.objects.all().select_related('reservation', 'reservation__user', 'reservation__resource', 'reservation__resource__unit')
     serializer_class = HMLReservationSerializer
     lookup_field = 'id'
-    permission_classes = [StaffWriteOnly]
+    permission_classes = [StaffWriteOnly, permissions.IsAuthenticated]
     filter_class = HMLReservationFilter
 
     filter_backends = (DjangoFilterBackend,filters.SearchFilter,RelatedOrderingFilter,HMLReservationFilterBackend)
@@ -364,7 +367,8 @@ class HMLReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
         return HMLReservationSerializer
 
     def perform_create(self, serializer):
-        serializer.save()
+        hml_reservation = serializer.save()
+        tasks.send_confirmation.delay(hml_reservation.pk)
 
     def perform_update(self, serializer):
         data = self.request._data
