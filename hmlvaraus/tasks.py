@@ -194,15 +194,42 @@ def send_renewal_email(reservation, notification_type=None):
     end_date_finnish = str(end_date.day) + '.' + str(end_date.month) + '.' + str(end_date.year)
     code = reservation.renewal_code
     renewal_link = 'https://varaukset.hameenlinna.fi/#renewal/' + code
-    body_html = _('<h2>Greetings %(full_name)s,</h2><br><br>Your berth reservation will end %(end_date_finnish)s. You can renew your reservation from the link eblow. If you don\'t renew your reservation before it ends the berth will be unlocked for everyone to reserve.<br><br>Renew your berth reservation <a href="%(renewal_link)s"> here</a>') % {'full_name': full_name, 'end_date_finnish': end_date_finnish, 'renewal_link': renewal_link}
-    body_plain = _('Greetings %(full_name)s\n\nYour berth reservation will end %(end_date_finnish)s. You can renew your reservation from the link below. If you don\'t renew your reservation before it ends the berth will be unlocked for everyone to reserve. \n\nRenew your berth reservation here: %(renewal_link)s') % {'full_name': full_name, 'end_date_finnish': end_date_finnish, 'renewal_link': renewal_link}
+    if settings.DEBUG:
+        renewal_link = 'https://varaukset.haltudemo.fi/#renewal/' + code
+
+    #body_html = _('<h2>Greetings %(full_name)s,</h2><br><br>Your berth reservation will end %(end_date_finnish)s. You can renew your reservation from the link eblow. If you don\'t renew your reservation before it ends the berth will be unlocked for everyone to reserve.<br><br>Renew your berth reservation <a href="%(renewal_link)s"> here</a>') % {'full_name': full_name, 'end_date_finnish': end_date_finnish, 'renewal_link': renewal_link}
+    #body_plain = _('Greetings %(full_name)s\n\nYour berth reservation will end %(end_date_finnish)s. You can renew your reservation from the link below. If you don\'t renew your reservation before it ends the berth will be unlocked for everyone to reserve. \n\nRenew your berth reservation here: %(renewal_link)s') % {'full_name': full_name, 'end_date_finnish': end_date_finnish, 'renewal_link': renewal_link}
+    
+    #if notification_type == 'month':
+    #    topic = _('Your berth reservation will end in a month. Renew your reservation now!')
+    #elif notification_type == 'week':
+    #    topic = _('Your berth reservation will end in a week. Renew your reservation now!')
+    #else:
+    #    topic = _('Your berth reservation will end. Renew your reservation now!')
+
+    topic = 'Venepaikkavarauksesi päättyy. Uusi varauksesi nyt!'
 
     if notification_type == 'month':
-        topic = _('Your berth reservation will end in a month. Renew your reservation now!')
+        topic = 'Venepaikkavarauksesi päättyy kuukauden päästä. Uusi varauksesi nyt!'
     elif notification_type == 'week':
-        topic = _('Your berth reservation will end in a week. Renew your reservation now!')
-    else:
-        topic = _('Your berth reservation will end. Renew your reservation now!')
+        topic = 'Venepaikkavarauksesi päättyy viikon päästä. Uusi varauksesi nyt!'
+    elif notification_type == 'day':
+        topic = 'Venepaikkavarauksesi päättyy tänään. Uusi varauksesi nyt!'
+    
+
+    body_plain = '''Hei {0},\n\n
+    Venepaikkavarauksesi päättyy {1}. 
+    Voit uusia venepaikkavarauksesi alla olevasta linkistä tai asioimalla sellaisessa palvelupisteessä, josta löytyy kassapalvelut. 
+    Palvelupisteiden yhteystiedot löydät osoitteesta www.hameenlinna.fi/Asiointi/Palvelupisteet/. 
+    Mikäli et uusi varaustasi ennen sen päättymistä, venepaikka vapautuu järjestelmään avoimesti varattavaksi.\n\n
+    Uusi varauksesi osoitteesta: {2}'''.format(full_name, end_date_finnish, renewal_link)
+    
+    body_html = '''<p>Hei {0},</p>
+    <p>Venepaikkavarauksesi päättyy {1}. 
+    Voit uusia venepaikkavarauksesi alla olevasta linkistä tai asioimalla sellaisessa palvelupisteessä, josta löytyy kassapalvelut. 
+    Palvelupisteiden yhteystiedot löydät osoitteesta www.hameenlinna.fi/Asiointi/Palvelupisteet/. 
+    Mikäli et uusi varaustasi ennen sen päättymistä, venepaikka vapautuu järjestelmään avoimesti varattavaksi.</p>
+    <p>Uusi venepaikkavarauksesi <a href="{2}">tästä</a>.</p>'''.format(full_name, end_date_finnish, renewal_link)
 
     send_mail(
         topic,
@@ -220,10 +247,18 @@ def send_renewal_sms(reservation):
     end_date_finnish = str(end_date.day) + '.' + str(end_date.month) + '.' + str(end_date.year)
     code = reservation.renewal_code
     renewal_link = 'https://varaukset.hameenlinna.fi/#renewal/' + code
+    if settings.DEBUG:
+        renewal_link = 'https://varaukset.haltudemo.fi/#renewal/' + code
     phone_number = str(reservation.reservation.reserver_phone_number)
     if phone_number[0] == '0':
         phone_number = '+358' + phone_number[1:]
-    body_plain = _('Greetings %(full_name)s\n\nYour berth reservation will end %(end_date_finnish)s. You can renew your reservation from the link below. If you don\'t renew your reservation before it ends the berth will be unlocked for everyone to reserve. \n\nRenew your berth reservation here: %(renewal_link)s') % {'full_name': full_name, 'end_date_finnish': end_date_finnish, 'renewal_link': renewal_link}
+    #body_plain = _('Greetings %(full_name)s\n\nYour berth reservation will end %(end_date_finnish)s. You can renew your reservation from the link below. If you don\'t renew your reservation before it ends the berth will be unlocked for everyone to reserve. \n\nRenew your berth reservation here: %(renewal_link)s') % {'full_name': full_name, 'end_date_finnish': end_date_finnish, 'renewal_link': renewal_link}
+    body_plain = '''Hei {0},\n\n
+    Venepaikkavarauksesi päättyy {1}. 
+    Voit uusia venepaikkavarauksesi alla olevasta linkistä tai asioimalla sellaisessa palvelupisteessä, josta löytyy kassapalvelut. 
+    Palvelupisteiden yhteystiedot löydät osoitteesta www.hameenlinna.fi/Asiointi/Palvelupisteet/. 
+    Mikäli et uusi varaustasi ennen sen päättymistä, venepaikka vapautuu järjestelmään avoimesti varattavaksi.\n\n
+    Uusi varauksesi osoitteesta: {2}'''.format(full_name, end_date_finnish, renewal_link)
     send_sms(phone_number, body_plain)
 
 
@@ -233,9 +268,24 @@ def send_end_email(reservation):
     end_date = reservation.reservation.end
     end_date_finnish = str(end_date.day) + '.' + str(end_date.month) + '.' + str(end_date.year)
 
-    body_html = _('<h2>Greetings %(full_name)s,</h2><br><br>Your berth reservation has ended %(end_date_finnish)s. The berth is now available for anyone to reserve. Thank you for your reservation. Remember to return the key if you were given one.') % {'full_name': full_name, 'end_date_finnish': end_date_finnish}
-    body_plain = _('Greetings %(full_name)s\n\nYour berth reservation has ended %(end_date_finnish)s. The berth is now available for anyone to reserve. Thank you for your reservation. Remember to return the key if you were given one.') % {'full_name': full_name, 'end_date_finnish': end_date_finnish}
-    topic = _('Your berth reservation has ended')
+    #body_html = _('<h2>Greetings %(full_name)s,</h2><br><br>Your berth reservation has ended %(end_date_finnish)s. The berth is now available for anyone to reserve. Thank you for your reservation. Remember to return the key if you were given one.') % {'full_name': full_name, 'end_date_finnish': end_date_finnish}
+    #body_plain = _('Greetings %(full_name)s\n\nYour berth reservation has ended %(end_date_finnish)s. The berth is now available for anyone to reserve. Thank you for your reservation. Remember to return the key if you were given one.') % {'full_name': full_name, 'end_date_finnish': end_date_finnish}
+    #topic = _('Your berth reservation has ended')
+
+    topic = 'Venepaikkavarauksesi on päättynyt'
+
+    body_plain = '''Hei {0},\n\n
+    Venepaikkavarauksesi on päättynyt {1}. 
+    Venepaikka on nyt vapaasti kaikkien varattavissa. Kiitos varauksestasi! 
+    Jos venepaikkasi oli lukitulla venelaiturilla, muista palauttaa laiturin avain viikon kuluessa varauksen päättymisestä. 
+    Poletit mitätöityvät automaattisesti eikä niitä tarvitse palauttaa.'''.format(full_name, end_date_finnish)
+    
+    body_html = '''<p>Hei {0},</p>
+    <p>Venepaikkavarauksesi on päättynyt {1}. 
+    Venepaikka on nyt vapaasti kaikkien varattavissa. Kiitos varauksestasi! 
+    Jos venepaikkasi oli lukitulla venelaiturilla, muista palauttaa laiturin avain viikon kuluessa varauksen päättymisestä. 
+    Poletit mitätöityvät automaattisesti eikä niitä tarvitse palauttaa.</p>'''.format(full_name, end_date_finnish)
+
 
     send_mail(
         topic,
@@ -254,7 +304,11 @@ def send_end_sms(reservation):
     phone_number = str(reservation.reservation.reserver_phone_number)
     if phone_number[0] == '0':
         phone_number = '+358' + phone_number[1:]
-    body_plain = _('Greetings %(full_name)s\n\nYour berth reservation has ended %(end_date_finnish)s. The berth is now available for anyone to reserve. Thank you for your reservation. Remember to return the key if you were given one.') % {'full_name': full_name, 'end_date_finnish': end_date_finnish}
+    #body_plain = _('Greetings %(full_name)s\n\nYour berth reservation has ended %(end_date_finnish)s. The berth is now available for anyone to reserve. Thank you for your reservation. Remember to return the key if you were given one.') % {'full_name': full_name, 'end_date_finnish': end_date_finnish}
+    body_plain = '''Hei {0},\n\n
+    Venepaikkavarauksesi on päättynyt {1}. 
+    Venepaikka on nyt kaikille varattavissa. Kiitos varauksestasi!
+    Muista palauttaa venepaikan avain, mikäli olet sellaisen saanut.'''.format(full_name, end_date_finnish)
     send_sms(phone_number, body_plain)
 
 
@@ -264,9 +318,21 @@ def send_key_email(reservation):
     end_date = reservation.reservation.end
     end_date_finnish = str(end_date.day) + '.' + str(end_date.month) + '.' + str(end_date.year)
 
-    body_html = _('<h2>Greetings %(full_name)s,</h2><br><br>Your berth reservation has ended %(end_date_finnish)s but you haven\'t returned the key. Please return the key as soon as possible!') % {'full_name': full_name, 'end_date_finnish': end_date_finnish}
-    body_plain = _('Greetings %(full_name)s\n\nYour berth reservation has ended %(end_date_finnish)s but you haven\'t returned the key. Please return the key as soon as possible!') % {'full_name': full_name, 'end_date_finnish': end_date_finnish}
-    topic = _('You haven\'t returned the key of your berth reservation. Please return the key!')
+    #body_html = _('<h2>Greetings %(full_name)s,</h2><br><br>Your berth reservation has ended %(end_date_finnish)s but you haven\'t returned the key. Please return the key as soon as possible!') % {'full_name': full_name, 'end_date_finnish': end_date_finnish}
+    #body_plain = _('Greetings %(full_name)s\n\nYour berth reservation has ended %(end_date_finnish)s but you haven\'t returned the key. Please return the key as soon as possible!') % {'full_name': full_name, 'end_date_finnish': end_date_finnish}
+    #topic = _('You haven\'t returned the key of your berth reservation. Please return the key!')
+
+    topic = 'Et ole vielä palauttanut varaamasi venelaituripaikan avainta!'
+
+    body_plain = '''Hei {0},\n\n
+    Venepaikkavarauksesi on päättynyt {1}. 
+    Venelaiturin avain tulee palauttaa viikon kuluessa varauksen päättymisestä. 
+    Palauttamattomasta avaimesta peritään hinnaston mukainen maksu.'''.format(full_name, end_date_finnish)
+
+    body_html = '''<p>Hei {0},</p>
+    <p>Venepaikkavarauksesi on päättynyt {1}. 
+    Venelaiturin avain tulee palauttaa viikon kuluessa varauksen päättymisestä. 
+    Palauttamattomasta avaimesta peritään hinnaston mukainen maksu.</p>'''.format(full_name, end_date_finnish)
 
     send_mail(
         topic,
@@ -285,7 +351,11 @@ def send_key_sms(reservation):
     phone_number = str(reservation.reservation.reserver_phone_number)
     if phone_number[0] == '0':
         phone_number = '+358' + phone_number[1:]
-    body_plain = _('Greetings %(full_name)s\n\nYour berth reservation has ended %(end_date_finnish)s but you haven\'t returned the key. Please return the key as soon as possible!') % {'full_name': full_name, 'end_date_finnish': end_date_finnish}
+    #body_plain = _('Greetings %(full_name)s\n\nYour berth reservation has ended %(end_date_finnish)s but you haven\'t returned the key. Please return the key as soon as possible!') % {'full_name': full_name, 'end_date_finnish': end_date_finnish}
+    body_plain = '''Hei {0},\n\n
+    Venepaikkavarauksesi on päättynyt {1}. 
+    Venelaiturin avain tulee palauttaa viikon kuluessa varauksen päättymisestä. 
+    Palauttamattomasta avaimesta peritään hinnaston mukainen maksu.'''.format(full_name, end_date_finnish)
     send_sms(phone_number, body_plain)
 
 
@@ -298,9 +368,31 @@ def send_confirmation_email(reservation):
     begin_date_finnish = str(begin_date.day) + '.' + str(begin_date.month) + '.' + str(begin_date.year)
     berth_name = reservation.berth.get_name_and_unit()
 
-    body_html = _('<h2>Greetings %(full_name)s,</h2><br><br>Thank you for your berth reservation! Here is a summary of your reservation: <br><br>Begin:%(begin_date_finnish)s <br>End: %(end_date_finnish)s <br>Berth: %(berth_name)s') % {'full_name': full_name, 'begin_date_finnish': begin_date_finnish, 'end_date_finnish': end_date_finnish, 'berth_name': berth_name}
-    body_plain = _('Greetings %(full_name)s\n\nThank you for your berth reservation! Here is a summary of your reservation: \n\nBegin:%(begin_date_finnish)s \nEnd: %(end_date_finnish)s \nBerth: %(berth_name)s') % {'full_name': full_name, 'begin_date_finnish': begin_date_finnish, 'end_date_finnish': end_date_finnish, 'berth_name': berth_name}
-    topic = _('A confirmation of your berth reservation')
+    #body_html = _('<h2>Greetings %(full_name)s,</h2><br><br>Thank you for your berth reservation! Here is a summary of your reservation: <br><br>Begin:%(begin_date_finnish)s <br>End: %(end_date_finnish)s <br>Berth: %(berth_name)s') % {'full_name': full_name, 'begin_date_finnish': begin_date_finnish, 'end_date_finnish': end_date_finnish, 'berth_name': berth_name}
+    #body_plain = _('Greetings %(full_name)s\n\nThank you for your berth reservation! Here is a summary of your reservation: \n\nBegin:%(begin_date_finnish)s \nEnd: %(end_date_finnish)s \nBerth: %(berth_name)s') % {'full_name': full_name, 'begin_date_finnish': begin_date_finnish, 'end_date_finnish': end_date_finnish, 'berth_name': berth_name}
+    #topic = _('A confirmation of your berth reservation')
+
+    topic = 'Vahvistus venepaikkavarauksestasi'
+
+    body_plain = '''Hei {0},\n\n
+    Kiitos venepaikkavarauksestasi! Tässä yhteenveto varauksestasi:\n
+    Alkupäivä: {1}\n
+    Loppupäivä: {2}\n
+    Venepaikka: {3}\n\n
+    Lukittujen laituripaikkojen avaimet ja maallevetoalueiden poletit noudetaan palvelupiste Kastellista. 
+    Palvelupisteiden yhteystiedot löydät osoitteesta www.hameenlinna.fi/Asiointi/Palvelupisteet/. 
+    Hakiessasi avainta tai polettia varauduthan todistamaan henkilöllisyytesi. 
+    Lisää venerantojen sekä laituripaikkojen käytöstä osoitteessa www.hameenlinna.fi/venepaikat'''.format(full_name, begin_date_finnish, end_date_finnish, berth_name)
+    
+    body_html = '''<p>Hei {0},</p>
+    <p>Kiitos venepaikkavarauksestasi! Tässä yhteenveto varauksestasi:</p>
+    <p><strong>Alkupäivä</strong>: {1}</p>
+    <p><strong>Loppupäivä</strong>: {2}</p>
+    <p><strong>Venepaikka</strong>: {3}</p>
+    <p>Lukittujen laituripaikkojen avaimet ja maallevetoalueiden poletit noudetaan palvelupiste Kastellista.
+    Palvelupisteiden yhteystiedot löydät osoitteesta www.hameenlinna.fi/Asiointi/Palvelupisteet/. 
+    Hakiessasi avainta tai polettia varauduthan todistamaan henkilöllisyytesi. 
+    Lisää venerantojen sekä laituripaikkojen käytöstä osoitteessa www.hameenlinna.fi/venepaikat</p>'''.format(full_name, begin_date_finnish, end_date_finnish, berth_name)
 
     send_mail(
         topic,
@@ -322,7 +414,16 @@ def send_confirmation_sms(reservation):
     phone_number = str(reservation.reservation.reserver_phone_number)
     if phone_number[0] == '0':
         phone_number = '+358' + phone_number[1:]
-    body_plain = _('Greetings %(full_name)s\n\nThank you for your berth reservation! Here is a summary of your reservation: \n\nBegin:%(begin_date_finnish)s \nEnd: %(end_date_finnish)s \nBerth: %(berth_name)s') % {'full_name': full_name, 'begin_date_finnish': begin_date_finnish, 'end_date_finnish': end_date_finnish, 'berth_name': berth_name}
+    #body_plain = _('Greetings %(full_name)s\n\nThank you for your berth reservation! Here is a summary of your reservation: \n\nBegin:%(begin_date_finnish)s \nEnd: %(end_date_finnish)s \nBerth: %(berth_name)s') % {'full_name': full_name, 'begin_date_finnish': begin_date_finnish, 'end_date_finnish': end_date_finnish, 'berth_name': berth_name}
+    body_plain = '''Hei {0},\n\n
+    Kiitos venepaikkavarauksestasi! Tässä yhteenveto varauksestasi:\n
+    Alkupäivä: {1}\n
+    Loppupäivä: {2}\n
+    Venepaikka: {3}\n\n
+    Lukittujen laituripaikkojen avaimet ja maallevetoalueiden poletit noudetaan palvelupiste Kastellista. 
+    Palvelupisteiden yhteystiedot löydät osoitteesta www.hameenlinna.fi/Asiointi/Palvelupisteet/. 
+    Hakiessasi avainta tai polettia varauduthan todistamaan henkilöllisyytesi. 
+    Lisää venerantojen sekä laituripaikkojen käytöstä osoitteessa www.hameenlinna.fi/venepaikat'''.format(full_name, begin_date_finnish, end_date_finnish, berth_name)
     send_sms(phone_number, body_plain)
 
 
@@ -335,9 +436,30 @@ def send_cancel_email(reservation):
     begin_date_finnish = str(begin_date.day) + '.' + str(begin_date.month) + '.' + str(begin_date.year)
     berth_name = reservation.berth.get_name_and_unit()
 
-    body_html = _('<h2>Greetings %(full_name)s,</h2><br><br>Your berth reservation has been cancelled due to problems in payment process! Here is a summary of the cancelled reservation: <br><br>Begin:%(begin_date_finnish)s <br>End: %(end_date_finnish)s <br>Berth: %(berth_name)s') % {'full_name': full_name, 'begin_date_finnish': begin_date_finnish, 'end_date_finnish': end_date_finnish, 'berth_name': berth_name}
-    body_plain = _('Greetings %(full_name)s\n\nYour berth reservation has been cancelled due to problems in payment process! Here is a summary of the cancelled reservation: \n\nBegin:%(begin_date_finnish)s \nEnd: %(end_date_finnish)s \nBerth: %(berth_name)s') % {'full_name': full_name, 'begin_date_finnish': begin_date_finnish, 'end_date_finnish': end_date_finnish, 'berth_name': berth_name}
-    topic = _('Your berth reservation has been cancelled')
+    #body_html = _('<h2>Greetings %(full_name)s,</h2><br><br>Your berth reservation has been cancelled due to problems in payment process! Here is a summary of the cancelled reservation: <br><br>Begin:%(begin_date_finnish)s <br>End: %(end_date_finnish)s <br>Berth: %(berth_name)s') % {'full_name': full_name, 'begin_date_finnish': begin_date_finnish, 'end_date_finnish': end_date_finnish, 'berth_name': berth_name}
+    #body_plain = _('Greetings %(full_name)s\n\nYour berth reservation has been cancelled due to problems in payment process! Here is a summary of the cancelled reservation: \n\nBegin:%(begin_date_finnish)s \nEnd: %(end_date_finnish)s \nBerth: %(berth_name)s') % {'full_name': full_name, 'begin_date_finnish': begin_date_finnish, 'end_date_finnish': end_date_finnish, 'berth_name': berth_name}
+    #topic = _('Your berth reservation has been cancelled')
+
+    topic = 'Vahvistus venepaikkavarauksestasi'
+
+    body_plain = '''Hei {0},\n\n
+    Venepaikkavarauksesi on peruutettu maksupalvelujärjestelmän teknisen häiriön vuoksi! 
+    Tässä yhteenveto peruutetusta varauksesta:\n
+    Alkupäivä: {1}\n
+    Loppupäivä: {2}\n
+    Venepaikka: {3}\n\n
+    Pahoittelemme järjestelmässä tapahtunutta häiriöitä. 
+    Jos venepaikan varaaminen ei onnistu järjestelmän kautta, voit tehdä varauksen sellaisessa palvelupisteessä, josta löytyy kassapalvelut. 
+    Palvelupisteiden yhteystiedot löydät osoitteesta http://www.hameenlinna.fi/Asiointi/Palvelupisteet/.'''.format(full_name, begin_date_finnish, end_date_finnish, berth_name)
+    
+    body_html = '''<p>Hei {0},</p>
+    <p>Venepaikkavarauksesi on peruutettu maksupalvelujärjestelmän teknisen häiriön vuoksi! Tässä yhteenveto peruutetusta varauksesta:</p>
+    <p><strong>Alkupäivä</strong>: {1}</p>
+    <p><strong>Loppupäivä</strong>: {2}</p>
+    <p><strong>Venepaikka</strong>: {3}</p>
+    <p>Pahoittelemme järjestelmässä tapahtunutta häiriöitä. 
+    Jos venepaikan varaaminen ei onnistu järjestelmän kautta, voit tehdä varauksen sellaisessa palvelupisteessä, josta löytyy kassapalvelut. 
+    Palvelupisteiden yhteystiedot löydät osoitteesta http://www.hameenlinna.fi/Asiointi/Palvelupisteet/.</p>'''.format(full_name, begin_date_finnish, end_date_finnish, berth_name)
 
     send_mail(
         topic,
@@ -359,5 +481,14 @@ def send_cancel_sms(reservation):
     phone_number = str(reservation.reservation.reserver_phone_number)
     if phone_number[0] == '0':
         phone_number = '+358' + phone_number[1:]
-    body_plain = _('Greetings %(full_name)s\n\nYour berth reservation has been cancelled due to problems in payment process! Here is a summary of the cancelled reservation: \n\nBegin:%(begin_date_finnish)s \nEnd: %(end_date_finnish)s \nBerth: %(berth_name)s') % {'full_name': full_name, 'begin_date_finnish': begin_date_finnish, 'end_date_finnish': end_date_finnish, 'berth_name': berth_name}
+    #body_plain = _('Greetings %(full_name)s\n\nYour berth reservation has been cancelled due to problems in payment process! Here is a summary of the cancelled reservation: \n\nBegin:%(begin_date_finnish)s \nEnd: %(end_date_finnish)s \nBerth: %(berth_name)s') % {'full_name': full_name, 'begin_date_finnish': begin_date_finnish, 'end_date_finnish': end_date_finnish, 'berth_name': berth_name}
+    body_plain = '''Hei {0},\n\n
+    Venepaikkavarauksesi on peruutettu maksupalvelujärjestelmän teknisen häiriön vuoksi! 
+    Tässä yhteenveto peruutetusta varauksesta:\n
+    Alkupäivä: {1}\n
+    Loppupäivä: {2}\n
+    Venepaikka: {3}\n\n
+    Pahoittelemme järjestelmässä tapahtunutta häiriöitä. 
+    Jos venepaikan varaaminen ei onnistu järjestelmän kautta, voit tehdä varauksen sellaisessa palvelupisteessä, josta löytyy kassapalvelut. 
+    Palvelupisteiden yhteystiedot löydät osoitteesta http://www.hameenlinna.fi/Asiointi/Palvelupisteet/.'''.format(full_name, begin_date_finnish, end_date_finnish, berth_name)
     send_sms(phone_number, body_plain)
