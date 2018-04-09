@@ -34,8 +34,10 @@ class BerthSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSerializer)
         fields = ['id', 'width_cm', 'length_cm', 'depth_cm', 'resource', 'type', 'is_disabled', 'price', 'current_reservation', 'is_deleted']
 
     def get_current_reservation(self, berth):
-        return berth.hml_reservations.filter(reservation__state='confirmed').values('id', 'is_paid', 'reserver_ssn', 'reservation', 'state_updated_at', 'is_paid_at', 'key_returned', 'key_returned_at', 'reservation__reserver_name', 'reservation__begin', 'reservation__end', 'reservation__comments', 'reservation__state',).first()
-
+        if self.context['request'].user.is_staff:
+            return berth.hml_reservations.filter(reservation__state='confirmed').values('id', 'is_paid', 'reserver_ssn', 'reservation', 'state_updated_at', 'is_paid_at', 'key_returned', 'key_returned_at', 'reservation__reserver_name', 'reservation__begin', 'reservation__end', 'reservation__comments', 'reservation__state',).first()
+        else:
+            return {}
 
     def create(self, validated_data):
         resource_data = validated_data.pop('resource')
