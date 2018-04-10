@@ -15,6 +15,18 @@ from django.db.models import Q
 import hashlib
 import time
 
+@app.task
+def retry_sms():
+    from hmlvaraus.models.sms_message import SMSMessage
+    from resources.models.reservation import Reservation
+    three_days_ago = timezone.now() - timedelta(days=3)
+    hour_ago = timezone.now() - timedelta(hours=1)
+    sms_messages = SMSMessage.objects.filter(hml_reservation__reservation__state=Reservation.CONFIRMED, success=False, created_at__gte=three_days_ago, created_at__lte=hour_ago)
+
+    for sms_message in sms_messages:
+        send_sms(sms_message.to_phone_number, sms_message.message_body, sms_message.hml_reservation, sms_message)
+        time.sleep(1)
+
 
 @app.task
 def check_reservability():
@@ -70,6 +82,7 @@ def cancel_failed_reservations():
         if berth.type == Berth.GROUND and not berth.is_disabled:
             berth.is_disabled = True
             berth.save()
+        time.sleep(1)
 
 @app.task
 def check_key_returned():
@@ -89,6 +102,7 @@ def check_key_returned():
         if sent:
             reservation.key_return_notification_sent_at = timezone.now()
             reservation.save()
+            time.sleep(1)
 
 
 @app.task
@@ -115,6 +129,7 @@ def check_ended_reservations():
         if sent:
             reservation.end_notification_sent_at = timezone.now()
             reservation.save()
+            time.sleep(1)
 
 #This task is run manually once after initial deployment
 @app.task
@@ -153,6 +168,7 @@ def check_and_handle_reservation_renewals():
             if sent:
                 reservation.renewal_notification_day_sent_at = timezone.now()
                 reservation.save()
+                time.sleep(1)
 
         elif reservation.reservation.end < now_plus_week:
             if reservation.renewal_notification_week_sent_at:
@@ -168,6 +184,7 @@ def check_and_handle_reservation_renewals():
             if sent:
                 reservation.renewal_notification_week_sent_at = timezone.now()
                 reservation.save()
+                time.sleep(1)
         else:
             if reservation.renewal_notification_month_sent_at:
                 continue
@@ -182,6 +199,7 @@ def check_and_handle_reservation_renewals():
             if sent:
                 reservation.renewal_notification_month_sent_at = timezone.now()
                 reservation.save()
+                time.sleep(1)
 
 @app.task
 def send_confirmation(reservation_id):
@@ -265,7 +283,7 @@ Voit uusia venepaikkavarauksesi alla olevasta linkistä tai asioimalla sellaises
 Palvelupisteiden yhteystiedot löydät osoitteesta www.hameenlinna.fi/Asiointi/Palvelupisteet/. 
 Mikäli et uusi varaustasi ennen sen päättymistä, venepaikka vapautuu järjestelmään avoimesti varattavaksi.\n\n
 Uusi varauksesi osoitteesta: {2}'''.format(full_name, end_date_finnish, renewal_link)
-    send_sms(phone_number, body_plain)
+    send_sms(phone_number, body_plain, reservation)
 
 
 def send_end_email(reservation):
@@ -315,7 +333,7 @@ def send_end_sms(reservation):
 Venepaikkavarauksesi on päättynyt {1}. 
 Venepaikka on nyt kaikille varattavissa. Kiitos varauksestasi!
 Muista palauttaa venepaikan avain, mikäli olet sellaisen saanut.'''.format(full_name, end_date_finnish)
-    send_sms(phone_number, body_plain)
+    send_sms(phone_number, body_plain, reservation)
 
 
 def send_key_email(reservation):
@@ -362,7 +380,7 @@ def send_key_sms(reservation):
 Venepaikkavarauksesi on päättynyt {1}. 
 Venelaiturin avain tulee palauttaa viikon kuluessa varauksen päättymisestä. 
 Palauttamattomasta avaimesta peritään hinnaston mukainen maksu.'''.format(full_name, end_date_finnish)
-    send_sms(phone_number, body_plain)
+    send_sms(phone_number, body_plain, reservation)
 
 
 def send_confirmation_email(reservation):
@@ -430,7 +448,7 @@ Lukittujen laituripaikkojen avaimet ja maallevetoalueiden poletit noudetaan palv
 Palvelupisteiden yhteystiedot löydät osoitteesta www.hameenlinna.fi/Asiointi/Palvelupisteet/. 
 Hakiessasi avainta tai polettia varauduthan todistamaan henkilöllisyytesi. 
 Lisää venerantojen sekä laituripaikkojen käytöstä osoitteessa www.hameenlinna.fi/venepaikat'''.format(full_name, begin_date_finnish, end_date_finnish, berth_name)
-    send_sms(phone_number, body_plain)
+    send_sms(phone_number, body_plain, reservation)
 
 
 def send_cancel_email(reservation):
@@ -497,4 +515,4 @@ Venepaikka: {3}\n\n
 Pahoittelemme järjestelmässä tapahtunutta häiriöitä. 
 Jos venepaikan varaaminen ei onnistu järjestelmän kautta, voit tehdä varauksen sellaisessa palvelupisteessä, josta löytyy kassapalvelut. 
 Palvelupisteiden yhteystiedot löydät osoitteesta http://www.hameenlinna.fi/Asiointi/Palvelupisteet/.'''.format(full_name, begin_date_finnish, end_date_finnish, berth_name)
-    send_sms(phone_number, body_plain)
+    send_sms(phone_number, body_plain, reservation)

@@ -1,7 +1,7 @@
 from hmlvaraus import admin
 from django.conf.urls import include, url
 from rest_framework.routers import DefaultRouter
-from hmlvaraus.api.hml_reservation import PurchaseView, RenewalView, HMLReservationViewSet
+from hmlvaraus.api.hml_reservation import PurchaseView, RenewalView, HMLReservationViewSet, SmsView
 from hmlvaraus.api.berth import BerthViewSet, GroundBerthPriceView
 from hmlvaraus.api.unit import UnitViewSet
 from hmlvaraus.api.user import UserViewSet
@@ -20,6 +20,7 @@ urlpatterns = [
     url(r'^sysadmin/', include(admin.site.urls)),
     url(r'^$', IndexView.as_view()),
     url(r'^api/purchase/', PurchaseView.as_view()),
+    url(r'^api/sms/', SmsView.as_view()),
     url(r'^api/renewal/', RenewalView.as_view()),
     url(r'^api/ground_berth_price/', GroundBerthPriceView.as_view()),
     url(r'^api/importer/', ImporterView.as_view()),

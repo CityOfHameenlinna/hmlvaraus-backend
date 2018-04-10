@@ -29,6 +29,7 @@ from datetime import timedelta
 from django.db.models import Q
 from rest_framework.exceptions import ParseError
 from hmlvaraus import tasks
+from hmlvaraus.models.sms_message import SMSMessage
 
 LOG = logging.getLogger(__name__)
 
@@ -794,5 +795,20 @@ class RenewalView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         return Response(None, status=status.HTTP_404_NOT_FOUND)
+
+class SmsView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, format=None):
+        if request.data.get('AccountSid') != settings.TWILIO_ACCOUNT_SID:
+            raise PermissionDenied(_('Authentication failed'))
+
+        if request.data.get('SmsStatus') == 'delivered':
+            sms = SMSMessage.objects.get(twilio_id=request.data.get('SmsSid'))
+            sms.success = True
+            sms.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 register_view(HMLReservationViewSet, 'hml_reservation')
