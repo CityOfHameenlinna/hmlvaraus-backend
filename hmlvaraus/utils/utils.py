@@ -29,7 +29,7 @@ def test_group_send_initial_renewal_notifications():
         'Varjonen Jyrki',
         'Nieminen Juha',
         'Kokkonen Jukka',
-        'Sonja Sajantola'
+        'Sajantola Sonja'
     ]
     reservations = HMLReservation.objects.filter(reservation__reserver_name__in=test_group_list, reservation__begin='2017-11-30 22:00:00+00:00', reservation__end='2018-05-31 21:00:00+00:00', reservation__state=Reservation.CONFIRMED, child=None)
     if len(reservations) != 5:
