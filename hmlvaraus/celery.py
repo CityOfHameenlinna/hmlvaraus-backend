@@ -14,7 +14,7 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     'retry_sms': {
         'task': 'hmlvaraus.tasks.retry_sms',
-        'schedule': crontab(minute=0, hour='11,12,13,15,16')
+        'schedule': crontab(minute=0, hour='12,13,14,15,16,17,18')
     },
     'cancel_failed_reservations': {
         'task': 'hmlvaraus.tasks.cancel_failed_reservations',
