@@ -321,7 +321,7 @@ msgstr "Venepaikkavarauksesi päättyy viikon päästä. Uusi varauksesi nyt!"
 
 #: hmlvaraus/tasks.py:151
 msgid "Your berth reservation will end. Renew your reservation now!"
-msgstr "Venepaikkavarauksesi päättyy tänään. Uusi varauksesi nyt!"
+msgstr "Venepaikkavarauksesi päättyy. Uusi varauksesi nyt!"
 
 #: hmlvaraus/tasks.py:182
 #, python-format

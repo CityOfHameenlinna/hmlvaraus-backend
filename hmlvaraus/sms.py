@@ -10,11 +10,12 @@ from twilio.rest import TwilioRestClient
 from twilio.rest import Client
 from django.conf import settings
 from twilio.base.exceptions import TwilioRestException
+from hmlvaraus.models.sms_message import SMSMessage
 
 LOG = logging.getLogger(__name__)
 
 
-def send_sms(phone_number, msg):
+def send_sms(phone_number, msg, reservation, sms=None):
   if settings.DEBUG:
     LOG.info('In debug mode. Not sending SMS')
     return
@@ -29,9 +30,32 @@ def send_sms(phone_number, msg):
 
   LOG.debug('sending sms to %s  ' % (phone_number))
   client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+
+
   try:
-    client.messages.create(body=str(msg), to=str(phone_number),
-      from_=settings.TWILIO_FROM_NUMBER)
+    if not sms:
+      sms = SMSMessage.objects.create(
+        message_body=str(msg),
+        to_phone_number=str(phone_number),
+        hml_reservation=reservation
+      )
+
+    callback_url = 'https://varaukset.hameenlinna.fi/api/sms/'
+    if settings.DEBUG:
+      callback_url = 'https://varaukset.haltudemo.fi/api/sms/'
+
+    twilio_sms = client.messages.create(
+      body=str(msg),
+      to=str(phone_number),
+      from_=settings.TWILIO_FROM_NUMBER,
+      status_callback=callback_url
+    )
+
+    sms.twilio_id = twilio_sms.sid
+    if twilio_sms.status == 'delivered':
+      sms.success = True
+    sms.save()
+
   except TwilioRestException:
     LOG.exception('Could not send sms to number %s' % repr(phone_number))
   LOG.debug('message: %s' % msg)

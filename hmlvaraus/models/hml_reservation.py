@@ -98,5 +98,6 @@ class HMLReservation(models.Model):
                 self.berth.save()
             else:
                 resource = self.reservation.resource
-                resource.reservable = True
-                resource.save()
+                if not HMLReservation.objects.filter(berth=self.berth, reservation__end__gte=timezone.now(), reservation__state=Reservation.CONFIRMED).exists():
+                    resource.reservable = True
+                    resource.save()

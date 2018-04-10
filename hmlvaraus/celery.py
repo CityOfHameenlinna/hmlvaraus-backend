@@ -12,21 +12,25 @@ app.autodiscover_tasks()
 
 
 app.conf.beat_schedule = {
+    'retry_sms': {
+        'task': 'hmlvaraus.tasks.retry_sms',
+        'schedule': crontab(minute=0, hour='12,13,14,15,16,17,18')
+    },
     'cancel_failed_reservations': {
         'task': 'hmlvaraus.tasks.cancel_failed_reservations',
-        'schedule': crontab(minute=0, hour=0)
+        'schedule': crontab(minute=0, hour='12')
     },
     'check_and_handle_reservation_renewals': {
         'task': 'hmlvaraus.tasks.check_and_handle_reservation_renewals',
-        'schedule': crontab(minute=0, hour=12)
+        'schedule': crontab(minute=0, hour='13')
     },
     'check_ended_reservations': {
         'task': 'hmlvaraus.tasks.check_ended_reservations',
-        'schedule': crontab(minute=0, hour='12')
+        'schedule': crontab(minute=0, hour='14')
     },
     'check_key_returned': {
         'task': 'hmlvaraus.tasks.check_key_returned',
-        'schedule': crontab(minute=0, hour='12')
+        'schedule': crontab(minute=0, hour='15')
     },
     'check_reservability': {
         'task': 'hmlvaraus.tasks.check_reservability',
