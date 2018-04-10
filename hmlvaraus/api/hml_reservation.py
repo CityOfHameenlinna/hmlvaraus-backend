@@ -105,7 +105,8 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
         resource.reservable = False
         resource.save()
         validated_data.pop('berth')
-        hmlReservation = HMLReservation.objects.create(reservation=reservation, berth=resource.berth, **validated_data)
+        key_returned = resource.berth.type == Berth.DOCK
+        hmlReservation = HMLReservation.objects.create(reservation=reservation, key_returned=key_returned, berth=resource.berth, **validated_data)
         return hmlReservation
 
     def update(self, instance, validated_data):
