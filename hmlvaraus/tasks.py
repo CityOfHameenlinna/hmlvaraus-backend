@@ -31,6 +31,13 @@ def check_reservability():
             resource.reservable = True
             resource.save()
 
+    reservations = HMLReservation.objects.filter(reservation__end__gte=timezone.now(), reservation__state=Reservation.CONFIRMED)
+    berths = Berth.objects.filter(hml_reservations__in=reservations, resource__reservable=True)
+    for berth in berths:
+        resource = berth.resource
+        resource.reservable = False
+        resource.save()
+
 @app.task
 def cancel_failed_reservation(purchase_id):
     from hmlvaraus.models.purchase import Purchase
@@ -114,7 +121,6 @@ def check_ended_reservations():
 def send_initial_renewal_notification(reservation_id):
     from hmlvaraus.models.hml_reservation import HMLReservation
     reservation = HMLReservation.objects.get(pk=reservation_id)
-    sent = False
     if not reservation.renewal_code:
         reservation.set_renewal_code()
     if reservation.reservation.reserver_email_address:

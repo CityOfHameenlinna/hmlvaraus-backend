@@ -23,11 +23,25 @@ def set_reservation_renew(sender, instance, **kwargs):
         cancel_eta = timezone.now() + timedelta(minutes=20)
         tasks.cancel_failed_reservation.apply_async((instance.id,), eta=cancel_eta)
 
+def test_group_send_initial_renewal_notifications():
+    test_group_list = [
+        'Rökman Rauno',
+        'Varjonen Jyrki',
+        'Nieminen Juha',
+        'Kokkonen Jukka',
+        'Sonja Sajantola'
+    ]
+    reservations = HMLReservation.objects.filter(reservation__reserver_name__in=test_group_list, reservation__begin='2017-11-30 22:00:00+00:00', reservation__end='2018-05-31 21:00:00+00:00', reservation__state=Reservation.CONFIRMED, child=None)
+    if len(reservations) != 5:
+        print('Reservation count doesnt match with test group user count. Exiting...')
+        return
+    for reservation in reservations:
+        tasks.send_initial_renewal_notification.delay(reservation.id)
 
 def send_initial_renewal_notifications():
     reservations = HMLReservation.objects.filter(reservation__begin='2017-11-30 22:00:00+00:00', reservation__end='2018-05-31 21:00:00+00:00', reservation__state=Reservation.CONFIRMED, child=None)
     for reservation in reservations:
-        tasks.send_initial_renewal_notification.delay((reservation.id,))
+        tasks.send_initial_renewal_notification.delay(reservation.id)
 
 def set_reserved_berths_unreservable():
     reservations = HMLReservation.objects.filter(reservation__end__gte=timezone.now(), reservation__state=Reservation.CONFIRMED)
