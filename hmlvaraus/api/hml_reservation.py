@@ -383,18 +383,7 @@ class HMLReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
         if 'state' in data:
             id = int(self.kwargs.get('id'))
             hml_reservation = HMLReservation.objects.get(pk=id)
-            reservation = hml_reservation.reservation
-            reservation.set_state(data['state'], self.request.user)
-            hml_reservation.state_updated_at = timezone.now()
-            hml_reservation.save()
-            if data['state'] == reservation.CANCELLED:
-                if hml_reservation.berth.type == Berth.GROUND:
-                    hml_reservation.berth.is_disabled = True
-                    hml_reservation.berth.save()
-                else:
-                    resource = reservation.resource
-                    resource.reservable = True
-                    resource.save()
+            hml_reservation.cancel_reservation(self.request.user)
         return serializer.save()
 
 class PurchaseView(APIView):

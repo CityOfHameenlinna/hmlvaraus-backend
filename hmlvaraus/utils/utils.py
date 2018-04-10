@@ -13,6 +13,7 @@ from django.utils import timezone
 
 from hmlvaraus import tasks
 from hmlvaraus.models.hml_reservation import HMLReservation
+from hmlvaraus.models.berth import Berth
 from resources.models.reservation import Reservation
 from hmlvaraus.models.purchase import Purchase
 
@@ -28,6 +29,13 @@ def send_initial_renewal_notifications():
     for reservation in reservations:
         tasks.send_initial_renewal_notification.delay((reservation.id,))
 
+def set_reserved_berths_unreservable():
+    reservations = HMLReservation.objects.filter(reservation__end__gte=timezone.now(), reservation__state=Reservation.CONFIRMED)
+    berths = Berth.objects.filter(hml_reservations__in=reservations, resource__reservable=True)
+    for berth in berths:
+        resource = berth.resource
+        resource.reservable = False
+        resource.save()
 
 class RelatedOrderingFilter(OrderingFilter):
     """
