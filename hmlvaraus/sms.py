@@ -31,7 +31,6 @@ def send_sms(phone_number, msg, reservation, sms=None):
   LOG.debug('sending sms to %s  ' % (phone_number))
   client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
 
-
   try:
     if not sms:
       sms = SMSMessage.objects.create(
@@ -58,6 +57,7 @@ def send_sms(phone_number, msg, reservation, sms=None):
 
   except TwilioRestException:
     LOG.exception('Could not send sms to number %s' % repr(phone_number))
+    pass
   LOG.debug('message: %s' % msg)
 
 # vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2

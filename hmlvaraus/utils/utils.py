@@ -16,6 +16,7 @@ from hmlvaraus.models.hml_reservation import HMLReservation
 from hmlvaraus.models.berth import Berth
 from resources.models.reservation import Reservation
 from hmlvaraus.models.purchase import Purchase
+import time
 
 @receiver(post_save, sender=Purchase)
 def set_reservation_renew(sender, instance, **kwargs):
@@ -39,7 +40,14 @@ def test_group_send_initial_renewal_notifications():
         tasks.send_initial_renewal_notification.delay(reservation.id)
 
 def send_initial_renewal_notifications():
-    reservations = HMLReservation.objects.filter(reservation__begin='2017-11-30 22:00:00+00:00', reservation__end='2018-05-31 21:00:00+00:00', reservation__state=Reservation.CONFIRMED, child=None)
+    test_group_list = [
+        'Rökman Rauno',
+        'Varjonen Jyrki',
+        'Nieminen Juha',
+        'Kokkonen Jukka',
+        'Sonja Sajantola'
+    ]
+    reservations = HMLReservation.objects.filter(reservation__end='2018-05-31 21:00:00+00:00', reservation__state=Reservation.CONFIRMED, child=None).exclude(reservation__reserver_name__in=test_group_list)
     for reservation in reservations:
         tasks.send_initial_renewal_notification.delay(reservation.id)
 
