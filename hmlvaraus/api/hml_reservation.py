@@ -55,7 +55,7 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
         return obj.reservation.end < timezone.now()
 
     def get_is_renewed(self, obj):
-        return obj.child.exists() and obj.child.first().reservation.state == Reservation.CONFIRMED
+        return obj.child.filter(reservation__state=Reservation.CONFIRMED).exists()
 
     def validate(self, data):
         request_user = self.context['request'].user
