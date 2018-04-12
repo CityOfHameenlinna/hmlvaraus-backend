@@ -19,9 +19,9 @@ import time
 def retry_sms():
     from hmlvaraus.models.sms_message import SMSMessage
     from resources.models.reservation import Reservation
-    three_days_ago = timezone.now() - timedelta(days=3)
+    two_days_ago = timezone.now() - timedelta(days=2)
     hour_ago = timezone.now() - timedelta(hours=1)
-    sms_messages = SMSMessage.objects.filter(hml_reservation__reservation__state=Reservation.CONFIRMED, success=False, created_at__gte=three_days_ago, created_at__lte=hour_ago)
+    sms_messages = SMSMessage.objects.filter(hml_reservation__reservation__state=Reservation.CONFIRMED, success=False, created_at__gte=two_days_ago, created_at__lte=hour_ago)
 
     for sms_message in sms_messages:
         send_sms(sms_message.to_phone_number, sms_message.message_body, sms_message.hml_reservation, sms_message)
