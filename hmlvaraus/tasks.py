@@ -88,8 +88,9 @@ def cancel_failed_reservations():
 def check_key_returned():
     from hmlvaraus.models.hml_reservation import HMLReservation
     from hmlvaraus.models.berth import Berth
+    from resources.models.reservation import Reservation
     now_minus_week = timezone.now() - timedelta(weeks=1)
-    reservations = HMLReservation.objects.filter(Q(key_return_notification_sent_at__lte=now_minus_week) | Q(key_return_notification_sent_at=None), berth__type=Berth.DOCK, reservation__end__lte=timezone.now(), child=None, key_returned=False).distinct()
+    reservations = HMLReservation.objects.filter(Q(child=None) | ~Q(child__reservation__state=Reservation.CONFIRMED), Q(key_return_notification_sent_at__lte=now_minus_week) | Q(key_return_notification_sent_at=None), berth__type=Berth.DOCK, reservation__end__lte=timezone.now(), key_returned=False).distinct()
 
     for reservation in reservations:
         sent = False
@@ -110,7 +111,7 @@ def check_ended_reservations():
     from hmlvaraus.models.hml_reservation import HMLReservation
     from hmlvaraus.models.berth import Berth
     now_minus_day = timezone.now() - timedelta(hours=24)
-    reservations = HMLReservation.objects.filter(reservation__end__range=(now_minus_day, timezone.now()), child=None)
+    reservations = HMLReservation.objects.filter(Q(child=None) | ~Q(child__reservation__state=Reservation.CONFIRMED), reservation__end__range=(now_minus_day, timezone.now())).distinct()
 
     for reservation in reservations:
         berth = reservation.berth
@@ -150,7 +151,7 @@ def check_and_handle_reservation_renewals():
     now_plus_month = timezone.now() + timedelta(days=30)
     now_plus_week = timezone.now() + timedelta(days=7)
     now_plus_day = timezone.now() + timedelta(days=1)
-    reservations = HMLReservation.objects.filter(reservation__end__lte=now_plus_month, reservation__end__gte=timezone.now(), reservation__state=Reservation.CONFIRMED, child=None)
+    reservations = HMLReservation.objects.filter(Q(child=None) | ~Q(child__reservation__state=Reservation.CONFIRMED), reservation__end__lte=now_plus_month, reservation__end__gte=timezone.now(), reservation__state=Reservation.CONFIRMED).distinct()
 
     for reservation in reservations:
         sent = False

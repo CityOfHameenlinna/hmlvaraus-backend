@@ -55,7 +55,7 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
         return obj.reservation.end < timezone.now()
 
     def get_is_renewed(self, obj):
-        return obj.child.exists()
+        return obj.child.filter(reservation__state=Reservation.CONFIRMED).exists()
 
     def validate(self, data):
         request_user = self.context['request'].user
@@ -608,10 +608,12 @@ class RenewalView(APIView):
             if not code:
                 raise ValidationError(_('Invalid renewal code'))
 
-            old_hml_reservation = HMLReservation.objects.get(renewal_code=code)
+            old_hml_reservation_qs = HMLReservation.objects.filter(Q(child=None) | ~Q(child__reservation__state=Reservation.CONFIRMED), renewal_code=code, reservation__state=Reservation.CONFIRMED, reservation__end__gte=timezone.now()).distinct()
 
-            if not old_hml_reservation:
-                raise ValidationError(_('Invalid renewal code'))
+            if len(old_hml_reservation_qs) != 1:
+                raise ValidationError(_('Invalid reservation id'))
+
+            old_hml_reservation = old_hml_reservation_qs.first()
 
             old_reservation = old_hml_reservation.reservation
 
@@ -735,10 +737,12 @@ class RenewalView(APIView):
             if not request.user.is_authenticated() or not request.user.is_staff:
                 raise PermissionDenied(_('This API is only for authenticated users'))
 
-            old_hml_reservation = HMLReservation.objects.get(pk=request.data.get('reservation_id'), child=None, reservation__state=Reservation.CONFIRMED, reservation__end__gte=timezone.now())
+            old_hml_reservation_qs = HMLReservation.objects.filter(Q(child=None) | ~Q(child__reservation__state=Reservation.CONFIRMED), pk=request.data.get('reservation_id'), reservation__state=Reservation.CONFIRMED, reservation__end__gte=timezone.now()).distinct()
 
-            if not old_hml_reservation:
+            if len(old_hml_reservation_qs) != 1:
                 raise ValidationError(_('Invalid reservation id'))
+
+            old_hml_reservation = old_hml_reservation_qs.first()
 
             old_reservation = old_hml_reservation.reservation
 
@@ -789,7 +793,11 @@ class RenewalView(APIView):
     def get(self, request, format=None):
         if request.GET.get('code', None):
             code = request.GET.get('code', None)
-            reservation = HMLReservation.objects.get(Q(child=None) | ~Q(child__reservation__state=Reservation.CONFIRMED), reservation__state=Reservation.CONFIRMED, renewal_code=code)
+            reservation_qs = HMLReservation.objects.filter(Q(child=None) | ~Q(child__reservation__state=Reservation.CONFIRMED), reservation__state=Reservation.CONFIRMED, renewal_code=code).distinct()
+            if len(reservation_qs) != 1:
+                raise ValidationError(_('Invalid renewal code'))
+
+            reservation = reservation_qs.first()
             if reservation.reservation.end < timezone.now():
                 return Response(None, status=status.HTTP_404_NOT_FOUND)
             serializer = HMLReservationSerializer(reservation, context={'request': request})
