@@ -92,6 +92,7 @@ class HMLReservation(models.Model):
         if self.reservation.state != Reservation.CANCELLED:
             self.reservation.set_state(Reservation.CANCELLED, user)
             self.state_updated_at = timezone.now()
+            self.parent = None
             self.save()
             if self.berth.type == Berth.GROUND:
                 self.berth.is_disabled = True

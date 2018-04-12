@@ -8,7 +8,7 @@ from django.contrib.auth.models import AnonymousUser
 from hmlvaraus import tasks
 
 class Purchase(ModifiableModel):
-    hml_reservation = models.OneToOneField(HMLReservation, verbose_name=_('HMLReservation'), db_index=True, on_delete=models.SET_NULL)
+    hml_reservation = models.OneToOneField(HMLReservation, verbose_name=_('HMLReservation'), db_index=True, null=True, on_delete=models.SET_NULL)
     purchase_code = models.CharField(verbose_name=_('Purchase code'), max_length=40)
     reserver_name = models.CharField(verbose_name=_('Reserver name'), max_length=100, blank=True)
     reserver_email_address = models.EmailField(verbose_name=_('Reserver email address'), blank=True)
@@ -16,7 +16,7 @@ class Purchase(ModifiableModel):
     reserver_address_street = models.CharField(verbose_name=_('Reserver address street'), max_length=100, blank=True)
     reserver_address_zip = models.CharField(verbose_name=_('Reserver address zip'), max_length=30, blank=True)
     reserver_address_city = models.CharField(verbose_name=_('Reserver address city'), max_length=100, blank=True)
-    vat_percent = models.IntegerField(choices=[0, 10, 14, 24], default=24)
+    vat_percent = models.IntegerField(choices=[(0, '0'), (10, '10'), (14, '24'), (24, '24')], default=24)
     price_vat = models.DecimalField(max_digits=6, decimal_places=2, default=0.00)
     product_name = models.CharField(verbose_name=_('Product name'), max_length=100, blank=True)
     purchase_process_started = models.DateTimeField(verbose_name=_('Purchase process started'), default=timezone.now)

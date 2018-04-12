@@ -55,7 +55,7 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
         return obj.reservation.end < timezone.now()
 
     def get_is_renewed(self, obj):
-        return obj.child.exists()
+        return obj.child.exists() and obj.child.first().reservation.state == Reservation.CONFIRMED
 
     def validate(self, data):
         request_user = self.context['request'].user
@@ -735,7 +735,7 @@ class RenewalView(APIView):
             if not request.user.is_authenticated() or not request.user.is_staff:
                 raise PermissionDenied(_('This API is only for authenticated users'))
 
-            old_hml_reservation = HMLReservation.objects.get(pk=request.data.get('reservation_id'), child=None, reservation__state=Reservation.CONFIRMED, reservation__end__gte=timezone.now())
+            old_hml_reservation = HMLReservation.objects.get(Q(child=None) | ~Q(child__reservation__state=Reservation.CONFIRMED), pk=request.data.get('reservation_id'), reservation__state=Reservation.CONFIRMED, reservation__end__gte=timezone.now())
 
             if not old_hml_reservation:
                 raise ValidationError(_('Invalid reservation id'))
