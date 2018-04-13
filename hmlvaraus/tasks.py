@@ -110,6 +110,7 @@ def check_key_returned():
 def check_ended_reservations():
     from hmlvaraus.models.hml_reservation import HMLReservation
     from hmlvaraus.models.berth import Berth
+    from resources.models.reservation import Reservation
     now_minus_day = timezone.now() - timedelta(hours=24)
     reservations = HMLReservation.objects.filter(Q(child=None) | ~Q(child__reservation__state=Reservation.CONFIRMED), reservation__end__range=(now_minus_day, timezone.now())).distinct()
 
