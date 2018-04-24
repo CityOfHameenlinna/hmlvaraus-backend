@@ -1,6 +1,7 @@
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 from resources.models import Resource
+from users.models import User
 
 class Berth(models.Model):
     DOCK = 'dock'
@@ -21,6 +22,7 @@ class Berth(models.Model):
     type = models.CharField(choices=TYPE_CHOICES, verbose_name=_('Berth type'), default=DOCK, max_length=20)
     is_disabled = models.BooleanField(default=False)
     reserving = models.DateTimeField(verbose_name=_('Reserving'), blank=True, null=True)
+    reserving_staff_member = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     is_deleted = models.BooleanField(default=False)
 
     def __str__(self):

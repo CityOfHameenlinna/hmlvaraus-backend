@@ -74,10 +74,10 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
                 if overlaps_existing:
                     raise serializers.ValidationError(_('New reservation overlaps existing reservation'))
 
-                if request_user.is_staff:
-                    two_minutes_ago = timezone.now() - timedelta(minutes=2)
-                    if resource.berth.reserving and resource.berth.reserving > two_minutes_ago:
-                        raise serializers.ValidationError(_('Someone is reserving the berth at the moment'))
+                # if request_user.is_staff:
+                #     two_minutes_ago = timezone.now() - timedelta(minutes=2)
+                #     if resource.berth.reserving and resource.berth.reserving > two_minutes_ago:
+                #         raise serializers.ValidationError(_('Someone is reserving the berth at the moment'))
 
         return data
 
@@ -377,6 +377,13 @@ class HMLReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
         return HMLReservationSerializer
 
     def perform_create(self, serializer):
+        request = self.request
+        if request.data.get('berth').get('type') != Berth.GROUND:
+            code = request.data.pop('code')
+            berth = Berth.objects.get(pk=request.data['berth']['id'], is_deleted=False)
+
+            if code != hashlib.sha1(str(berth.reserving).encode('utf-8')).hexdigest():
+                raise ValidationError(_('Invalid meta data'))
         hml_reservation = serializer.save()
         tasks.send_confirmation.delay(hml_reservation.pk)
 
@@ -590,8 +597,12 @@ class PurchaseView(APIView):
         if body.get('resource', None):
             time = timezone.now()
             berth = Berth.objects.get(resource_id=body.get('resource', None), is_deleted=False)
-            if not berth.reserving or (time - berth.reserving).total_seconds() > 59:
+            if not berth.reserving or (time - berth.reserving).total_seconds() > 59 or berth.reserving_staff_member == request.user:
                 berth.reserving = time
+                if request.user and request.user.is_staff:
+                    berth.reserving_staff_member = request.user
+                else:
+                    berth.reserving_staff_member = None
                 berth.save()
             else:
                 return Response(None, status=status.HTTP_404_NOT_FOUND)
