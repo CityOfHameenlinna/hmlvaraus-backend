@@ -50,6 +50,8 @@ def check_reservability():
         resource.reservable = False
         resource.save()
 
+    Berth.objects.exclude(hml_reservations__in=reservations).filter(is_disabled=False, type=Berth.GROUND).update(is_disabled=True)
+
 @app.task
 def cancel_failed_reservation(purchase_id):
     from hmlvaraus.models.purchase import Purchase
