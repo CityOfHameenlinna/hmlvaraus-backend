@@ -41,12 +41,16 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
     has_ended = serializers.SerializerMethodField()
     is_renewed = serializers.SerializerMethodField()
     has_started = serializers.SerializerMethodField()
+    reserved_by_citizen = serializers.SerializerMethodField()
     resend_renewal = serializers.BooleanField(required=False)
     partial = True
 
     class Meta:
         model = HMLReservation
-        fields = ['id', 'berth', 'is_paid', 'reserver_ssn', 'reservation', 'state_updated_at', 'is_paid_at', 'key_returned', 'key_returned_at', 'has_ended', 'is_renewed', 'has_started', 'resend_renewal']
+        fields = ['id', 'berth', 'is_paid', 'reserver_ssn', 'reservation', 'state_updated_at', 'is_paid_at', 'key_returned', 'key_returned_at', 'has_ended', 'is_renewed', 'has_started', 'resend_renewal', 'reserved_by_citizen']
+
+    def get_reserved_by_citizen(self, obj):
+        return hasattr(self, 'purchase') and self.purchase != None
 
     def get_has_started(self, obj):
         return obj.reservation.begin > timezone.now()

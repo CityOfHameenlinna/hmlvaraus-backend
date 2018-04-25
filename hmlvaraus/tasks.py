@@ -250,14 +250,14 @@ Venepaikkavarauksesi päättyy {1}.
 Voit uusia venepaikkavarauksesi alla olevasta linkistä tai asioimalla sellaisessa palvelupisteessä, josta löytyy kassapalvelut. 
 Palvelupisteiden yhteystiedot löydät osoitteesta www.hameenlinna.fi/Asiointi/Palvelupisteet/. 
 Mikäli et uusi varaustasi ennen sen päättymistä, venepaikka vapautuu järjestelmään avoimesti varattavaksi.\n\n
-Uusi varauksesi osoitteesta: {2}'''.format(full_name, end_date_finnish, renewal_link)
+Linkki on käytettävissä n. 20min päästä uudelleen, mikäli venepaikan uusinta epäonnistuu (ei mene kokonaisuudessaan läpi). Uusi varauksesi osoitteesta: {2}'''.format(full_name, end_date_finnish, renewal_link)
     
     body_html = '''<p>Hei {0},</p>
     <p>Venepaikkavarauksesi päättyy {1}. 
     Voit uusia venepaikkavarauksesi alla olevasta linkistä tai asioimalla sellaisessa palvelupisteessä, josta löytyy kassapalvelut. 
     Palvelupisteiden yhteystiedot löydät osoitteesta www.hameenlinna.fi/Asiointi/Palvelupisteet/. 
     Mikäli et uusi varaustasi ennen sen päättymistä, venepaikka vapautuu järjestelmään avoimesti varattavaksi.</p>
-    <p>Uusi venepaikkavarauksesi <a href="{2}">tästä</a>.</p>'''.format(full_name, end_date_finnish, renewal_link)
+    <p>Uusi venepaikkavarauksesi <a href="{2}">tästä</a>.</p> <p>Linkki on käytettävissä n. 20min päästä uudelleen, mikäli venepaikan uusinta epäonnistuu (ei mene kokonaisuudessaan läpi).</p>'''.format(full_name, end_date_finnish, renewal_link)
 
     send_mail(
         topic,
