@@ -92,7 +92,7 @@ def check_key_returned():
     from hmlvaraus.models.berth import Berth
     from resources.models.reservation import Reservation
     now_minus_week = timezone.now() - timedelta(weeks=1)
-    reservations = HMLReservation.objects.filter(Q(child=None) | ~Q(child__reservation__state=Reservation.CONFIRMED), Q(key_return_notification_sent_at__lte=now_minus_week) | Q(key_return_notification_sent_at=None), berth__type=Berth.DOCK, reservation__end__lte=timezone.now(), key_returned=False).distinct()
+    reservations = HMLReservation.objects.filter(Q(child=None) | ~Q(child__reservation__state=Reservation.CONFIRMED), Q(key_return_notification_sent_at__lte=now_minus_week) | Q(key_return_notification_sent_at=None), berth__type=Berth.DOCK, reservation__end__lte=timezone.now(), key_returned=False, reservation__state=Reservation.CONFIRMED).distinct()
 
     for reservation in reservations:
         sent = False
