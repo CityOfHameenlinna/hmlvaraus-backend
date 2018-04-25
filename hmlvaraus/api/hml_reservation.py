@@ -50,7 +50,7 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
         fields = ['id', 'berth', 'is_paid', 'reserver_ssn', 'reservation', 'state_updated_at', 'is_paid_at', 'key_returned', 'key_returned_at', 'has_ended', 'is_renewed', 'has_started', 'resend_renewal', 'reserved_by_citizen']
 
     def get_reserved_by_citizen(self, obj):
-        return hasattr(self, 'purchase') and self.purchase != None
+        return hasattr(obj, 'purchase') and obj.purchase != None
 
     def get_has_started(self, obj):
         return obj.reservation.begin > timezone.now()
