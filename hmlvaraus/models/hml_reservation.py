@@ -11,7 +11,7 @@ class HMLReservation(models.Model):
     reservation = models.OneToOneField(Reservation, verbose_name=_('Reservation'), db_index=True, on_delete=models.CASCADE, related_name='hml_reservation')
     is_paid = models.BooleanField(verbose_name=_('Is paid'), default=False)
     reserver_ssn = models.CharField(verbose_name=_('Reserver ssn'), default='', max_length=11)
-    state_updated_at = models.DateTimeField(verbose_name=_('Time of modification'), default=timezone.now)
+    state_updated_at = models.DateTimeField(verbose_name=_('Time of modification'), blank=True, null=True)
     is_paid_at = models.DateTimeField(verbose_name=_('Time of payment'), null=True, blank=True)
     key_returned = models.BooleanField(verbose_name=_('Key returned'), default=False)
     key_returned_at = models.DateTimeField(verbose_name=_('Time of key returned'), null=True, blank=True)

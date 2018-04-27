@@ -138,6 +138,8 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
 
     def update_reservation_status(self, instance, validated_data):
         is_paid = validated_data.get('is_paid')
+        key_returned = validated_data.get('key_returned')
+        resend_renewal = validated_data.get('resend_renewal')
         if is_paid != None:
             if is_paid:
                 instance.is_paid_at = timezone.now()
@@ -146,18 +148,17 @@ class HMLReservationSerializer(TranslatedModelSerializer, munigeo_api.GeoModelSe
             else:
                 instance.is_paid_at = None
                 instance.is_paid = False
-        key_returned = validated_data.get('key_returned')
-        if key_returned != None:
+        elif key_returned != None:
             if key_returned:
                 instance.key_returned_at = timezone.now()
                 instance.key_returned = True
             else:
                 instance.key_returned_at = None
                 instance.key_returned = False
-
-        resend_renewal = validated_data.get('resend_renewal')
-        if resend_renewal:
+        elif resend_renewal:
             tasks.send_initial_renewal_notification.delay(instance.pk)
+        else:
+            instance.cancel_reservation(self.context['request'].user)
 
         instance.save()
 
@@ -304,7 +305,7 @@ class HMLReservationFilterBackend(filters.BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         params = request.query_params
         times = {}
-        filter_type = 'all';
+        filter_type = 'all'
 
         if not 'show_cancelled' in params:
             queryset = queryset.exclude(reservation__state='cancelled')
@@ -390,14 +391,6 @@ class HMLReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
                 raise ValidationError(_('Invalid meta data'))
         hml_reservation = serializer.save()
         tasks.send_confirmation.delay(hml_reservation.pk)
-
-    def perform_update(self, serializer):
-        data = self.request._data
-        if 'state' in data:
-            id = int(self.kwargs.get('id'))
-            hml_reservation = HMLReservation.objects.get(pk=id)
-            hml_reservation.cancel_reservation(self.request.user)
-        return serializer.save()
 
 class PurchaseView(APIView):
     permission_classes = (permissions.AllowAny,)
