@@ -76,3 +76,6 @@ class Purchase(ModifiableModel):
 
     def is_finished(self):
         return bool(self.finished)
+
+    def __str__(self):
+        return "%s" % (self.hml_reservation)

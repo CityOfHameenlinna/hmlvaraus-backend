@@ -10,13 +10,13 @@ class HMLReservation(models.Model):
     berth = models.ForeignKey('Berth', verbose_name=_('Berth'), db_index=True, related_name='hml_reservations', null=True, on_delete=models.SET_NULL)
     reservation = models.OneToOneField(Reservation, verbose_name=_('Reservation'), db_index=True, on_delete=models.CASCADE, related_name='hml_reservation')
     is_paid = models.BooleanField(verbose_name=_('Is paid'), default=False)
-    reserver_ssn = models.CharField(verbose_name=_('Reserver ssn'), default='', max_length=11)
+    reserver_ssn = models.CharField(verbose_name=_('Reserver ssn'), blank=True, default='', max_length=11)
     state_updated_at = models.DateTimeField(verbose_name=_('Time of modification'), blank=True, null=True)
     is_paid_at = models.DateTimeField(verbose_name=_('Time of payment'), null=True, blank=True)
     key_returned = models.BooleanField(verbose_name=_('Key returned'), default=False)
     key_returned_at = models.DateTimeField(verbose_name=_('Time of key returned'), null=True, blank=True)
     renewal_code = models.CharField(verbose_name=_('Renewal code'), max_length=40, null=True, default=None)
-    parent = models.ForeignKey('self', null=True, related_name='child')
+    parent = models.ForeignKey('self', blank=True, null=True, related_name='child')
     renewal_notification_month_sent_at = models.DateTimeField(verbose_name=_('Renewal notification month before end sent at'), blank=True, null=True)
     renewal_notification_week_sent_at = models.DateTimeField(verbose_name=_('Renewal notification week before end sent at'), blank=True, null=True)
     renewal_notification_day_sent_at = models.DateTimeField(verbose_name=_('Renewal notification day before end sent at'), blank=True, null=True)
@@ -102,3 +102,6 @@ class HMLReservation(models.Model):
                 if not HMLReservation.objects.filter(berth=self.berth, reservation__end__gte=timezone.now(), reservation__state=Reservation.CONFIRMED).exists():
                     resource.reservable = True
                     resource.save()
+
+    def __str__(self):
+        return "%s - %s - %s" % (self.pk, self.reservation.reserver_name, self.berth.resource.name)
