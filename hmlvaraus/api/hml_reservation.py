@@ -616,7 +616,7 @@ class RenewalView(APIView):
             if not code:
                 raise ValidationError(_('Invalid renewal code'))
 
-            old_hml_reservation_qs = HMLReservation.objects.filter(Q(child=None) | ~Q(child__reservation__state=Reservation.CONFIRMED), renewal_code=code, reservation__state=Reservation.CONFIRMED, reservation__end__gte=timezone.now()).distinct()
+            old_hml_reservation_qs = HMLReservation.objects.filter(renewal_code=code, reservation__state=Reservation.CONFIRMED, reservation__end__gte=timezone.now()).exclude(child__reservation__state=Reservation.CONFIRMED).distinct()
 
             if len(old_hml_reservation_qs) != 1:
                 raise ValidationError(_('Invalid reservation id'))
@@ -745,7 +745,7 @@ class RenewalView(APIView):
             if not request.user.is_authenticated() or not request.user.is_staff:
                 raise PermissionDenied(_('This API is only for authenticated users'))
 
-            old_hml_reservation_qs = HMLReservation.objects.filter(Q(child=None) | ~Q(child__reservation__state=Reservation.CONFIRMED), pk=request.data.get('reservation_id'), reservation__state=Reservation.CONFIRMED, reservation__end__gte=timezone.now()).distinct()
+            old_hml_reservation_qs = HMLReservation.objects.filter(pk=request.data.get('reservation_id'), reservation__state=Reservation.CONFIRMED, reservation__end__gte=timezone.now()).exclude(child__reservation__state=Reservation.CONFIRMED).distinct()
 
             if len(old_hml_reservation_qs) != 1:
                 raise ValidationError(_('Invalid reservation id'))
@@ -801,7 +801,7 @@ class RenewalView(APIView):
     def get(self, request, format=None):
         if request.GET.get('code', None):
             code = request.GET.get('code', None)
-            reservation_qs = HMLReservation.objects.filter(Q(child=None) | ~Q(child__reservation__state=Reservation.CONFIRMED), reservation__state=Reservation.CONFIRMED, renewal_code=code).distinct()
+            reservation_qs = HMLReservation.objects.filter(reservation__state=Reservation.CONFIRMED, renewal_code=code).exclude(child__reservation__state=Reservation.CONFIRMED).distinct()
             if len(reservation_qs) != 1:
                 raise ValidationError(_('Invalid renewal code'))
 
