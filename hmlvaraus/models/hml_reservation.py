@@ -15,7 +15,7 @@ class HMLReservation(models.Model):
     is_paid_at = models.DateTimeField(verbose_name=_('Time of payment'), null=True, blank=True)
     key_returned = models.BooleanField(verbose_name=_('Key returned'), default=False)
     key_returned_at = models.DateTimeField(verbose_name=_('Time of key returned'), null=True, blank=True)
-    renewal_code = models.CharField(verbose_name=_('Renewal code'), max_length=40, null=True, default=None)
+    renewal_code = models.CharField(verbose_name=_('Renewal code'), max_length=40, blank=True, null=True, default=None)
     parent = models.ForeignKey('self', blank=True, null=True, related_name='child')
     renewal_notification_month_sent_at = models.DateTimeField(verbose_name=_('Renewal notification month before end sent at'), blank=True, null=True)
     renewal_notification_week_sent_at = models.DateTimeField(verbose_name=_('Renewal notification week before end sent at'), blank=True, null=True)
