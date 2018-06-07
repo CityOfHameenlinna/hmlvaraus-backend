@@ -361,7 +361,7 @@ class StaffWriteOnly(permissions.BasePermission):
         return request.method in permissions.SAFE_METHODS or request.user.is_staff
 
 class HMLReservationViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
-    queryset = HMLReservation.objects.all().select_related('reservation', 'reservation__user', 'reservation__resource', 'reservation__resource__unit')
+    queryset = HMLReservation.objects.all().select_related('reservation', 'reservation__user', 'reservation__resource', 'reservation__resource__unit').distinct()
     serializer_class = HMLReservationSerializer
     lookup_field = 'id'
     permission_classes = [StaffWriteOnly, permissions.IsAuthenticated]

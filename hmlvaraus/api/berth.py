@@ -227,7 +227,7 @@ class BerthViewSet(munigeo_api.GeoModelAPIView, viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        qs = Berth.objects.filter(is_deleted=False).select_related('resource', 'resource__unit');
+        qs = Berth.objects.filter(is_deleted=False).select_related('resource', 'resource__unit').distinct()
         if user.is_staff:
             return qs
         else:
